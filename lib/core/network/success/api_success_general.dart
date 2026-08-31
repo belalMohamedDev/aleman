@@ -1,14 +1,10 @@
-import 'package:elminiawy/core/common/shared/shared_imports.dart'; //
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'api_success_general.g.dart';
 
-
 @JsonSerializable()
 class ApiSuccessGeneralModel {
-  ApiSuccessGeneralModel({
-    required this.message,
-    this.status,
-  });
+  ApiSuccessGeneralModel({required this.message, this.status});
 
   factory ApiSuccessGeneralModel.fromJson(Map<String, dynamic> json) =>
       _$ApiSuccessGeneralModelFromJson(json);

@@ -1,9 +1,6 @@
-import 'package:elminiawy/core/common/shared/shared_imports.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'pagination_ruslt_response.g.dart';
-
-
-
 
 @JsonSerializable()
 class PaginationRuslt {
@@ -12,8 +9,12 @@ class PaginationRuslt {
   int? numberOfPages;
   int? next;
 
-  PaginationRuslt(
-      {this.currentPage, this.limit, this.numberOfPages, this.next});
+  PaginationRuslt({
+    this.currentPage,
+    this.limit,
+    this.numberOfPages,
+    this.next,
+  });
 
   factory PaginationRuslt.fromJson(Map<String, dynamic> json) =>
       _$PaginationRusltFromJson(json);
@@ -21,4 +22,3 @@ class PaginationRuslt {
   //to json
   Map<String, dynamic> toJson() => _$PaginationRusltToJson(this);
 }
-

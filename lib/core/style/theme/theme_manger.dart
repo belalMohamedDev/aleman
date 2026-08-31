@@ -19,7 +19,7 @@ ThemeData getApplicationTheme(BuildContext context) {
     // //elevated button theme
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: ColorManger.brun,
+        backgroundColor: ColorManger.buttonColor,
         textStyle: getSemiBoldStyle(fontSize: 14.sp, color: ColorManger.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),
@@ -31,7 +31,7 @@ ThemeData getApplicationTheme(BuildContext context) {
     // //appbar theme
     appBarTheme: AppBarTheme(
       iconTheme: IconThemeData(
-        color: ColorManger.brun,
+        color: ColorManger.primary,
         size: responsive.setIconSize(5),
       ),
       systemOverlayStyle: SystemUiOverlayStyle(
@@ -47,7 +47,7 @@ ThemeData getApplicationTheme(BuildContext context) {
       // using in text on boarding
       titleLarge: getMediumStyle(
         fontSize: responsive.setTextSize(5),
-        color: ColorManger.brun,
+        color: ColorManger.primary,
       ),
 
       //using in profile page
@@ -68,12 +68,12 @@ ThemeData getApplicationTheme(BuildContext context) {
 
       bodyLarge: TextStyle(
         fontSize: responsive.setTextSize(3),
-        color: ColorManger.brunLight,
+        color: ColorManger.primaryLight,
       ),
 
       titleMedium: getMediumStyle(
         fontSize: responsive.setTextSize(5),
-        color: ColorManger.brunLight,
+        color: ColorManger.primaryLight,
       ),
 
       bodyMedium: getMediumStyle(
@@ -100,12 +100,12 @@ ThemeData getApplicationTheme(BuildContext context) {
       ),
       prefixIconColor: WidgetStateColor.resolveWith(
         (states) => states.contains(WidgetState.focused)
-            ? ColorManger.brunLight
+            ? ColorManger.buttonColor
             : ColorManger.black26,
       ),
       suffixIconColor: WidgetStateColor.resolveWith(
         (states) => states.contains(WidgetState.focused)
-            ? ColorManger.brunLight
+            ? ColorManger.buttonColor
             : ColorManger.black26,
       ),
       labelStyle: getMediumStyle(fontSize: 10.sp, color: ColorManger.black26),

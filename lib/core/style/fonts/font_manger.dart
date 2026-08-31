@@ -16,7 +16,11 @@ class FontConsistent {
   /// Returns the correct font family from the in-memory cache.
   /// O(1) — no disk / SharedPreferences access.
   static String geLocalozedFontFamily() {
-    return fontFamilyCairo;
+    if (_cachedLangCode == 'ar') {
+      return fontFamilyCairo;
+    } else {
+      return 'Roboto';
+    }
   }
 }
 

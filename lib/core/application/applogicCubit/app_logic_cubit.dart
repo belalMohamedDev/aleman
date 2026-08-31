@@ -2,6 +2,7 @@ import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'app_logic_state.dart';
 part 'app_logic_cubit.freezed.dart';

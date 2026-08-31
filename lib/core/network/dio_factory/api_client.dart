@@ -1,6 +1,7 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class TokenInterceptor extends Interceptor {
@@ -106,20 +107,22 @@ class TokenInterceptor extends Interceptor {
   }
 
   void _showSessionExpiredMessage() {
-    final context = navigatorKey.currentState?.context;
+    // final context = navigatorKey.currentState?.context;
 
-    if (context != null) {
-      ShowToast.showToastErrorTop(
-        errorMessage: context.translate(AppStrings.sessionExpired),
-        context: context,
-      );
+    //TODO: make dialog instead of toast
 
-      // Show session expired message
-      navigatorKey.currentState?.pushNamedAndRemoveUntil(
-        Routes.loginRoute,
-        (Route<dynamic> route) => false,
-        arguments: context.translate(AppStrings.sessionExpired),
-      );
-    }
+    // if (context != null) {
+    //   ShowToast.showToastErrorTop(
+    //     errorMessage: context.translate(AppStrings.sessionExpired),
+    //     context: context,
+    //   );
+
+    //   // Show session expired message
+    //   navigatorKey.currentState?.pushNamedAndRemoveUntil(
+    //     Routes.loginRoute,
+    //     (Route<dynamic> route) => false,
+    //     arguments: context.translate(AppStrings.sessionExpired),
+    //   );
+    // }
   }
 }

@@ -1,3 +1,5 @@
+import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,23 +13,27 @@ import '../widget/onboarding_page_content.dart';
 class OnBoardingView extends StatelessWidget {
   const OnBoardingView({super.key});
 
-  void _navigateToHome(BuildContext context) {
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 550),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            const Homescreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: CurvedAnimation(
-              parent: animation,
-              curve: Curves.easeInOut,
-            ),
-            child: child,
-          );
-        },
-      ),
-    );
+  void _saveOnboardingAndNavigateToHome(BuildContext context) async {
+    await SharedPrefHelper.setData(PrefKeys.prefsKeyOnBoardingScreenView, true);
+
+    if (context.mounted) {
+      Navigator.of(context).pushReplacement(
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 550),
+          pageBuilder: (context, animation, secondaryAnimation) =>
+              const HomeScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(
+              opacity: CurvedAnimation(
+                parent: animation,
+                curve: Curves.easeInOut,
+              ),
+              child: child,
+            );
+          },
+        ),
+      );
+    }
   }
 
   @override
@@ -45,7 +51,7 @@ class OnBoardingView extends StatelessWidget {
         body: BlocListener<OnboardingCubit, OnboardingState>(
           listener: (context, state) {
             if (state is OnboardingCompletedState) {
-              _navigateToHome(context);
+              _saveOnboardingAndNavigateToHome(context);
             }
           },
           child: Padding(

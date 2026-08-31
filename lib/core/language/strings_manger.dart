@@ -194,7 +194,7 @@ class AppStrings {
   static const String shopping = 'shopping';
   static const String profile = 'profile';
   static const String location = 'location';
-  static const String findYourPatisserie = 'findYourPatisserie';
+  static const String findYourProducts = 'findYourProducts';
   static const String category = 'category';
   static const String viewAll = 'viewAll';
   static const String seeAll = 'seeAll';

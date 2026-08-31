@@ -1,4 +1,6 @@
-import 'package:elminiawy/core/common/shared/shared_imports.dart'; // Import shared utilities
+import 'dart:async';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ConnectivityController {
   /// Private constructor
@@ -33,7 +35,6 @@ class ConnectivityController {
       _connectivityStreamController.sink.add(true);
     }
   }
-
 
   /// Close the controller
   void close() {

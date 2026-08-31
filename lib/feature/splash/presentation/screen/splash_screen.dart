@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/shared_pref_helper.dart';
+import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -54,17 +57,23 @@ class _SplashScreenState extends State<SplashScreen>
     // Smooth transition to OnBoarding after ~2.1 seconds
     _navigationTimer = Timer(
       const Duration(milliseconds: 2100),
+
       _navigateToOnBoarding,
     );
   }
 
   void _navigateToOnBoarding() {
+    final bool isOnBoardingScreenView = SharedPrefHelper.getBool(
+      PrefKeys.prefsKeyOnBoardingScreenView,
+    );
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         transitionDuration: const Duration(milliseconds: 550),
         pageBuilder: (context, animation, secondaryAnimation) =>
-            const OnBoardingScreen(),
+            isOnBoardingScreenView
+            ? const OnBoardingScreen()
+            : const HomeScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
             opacity: CurvedAnimation(
@@ -99,68 +108,68 @@ class _SplashScreenState extends State<SplashScreen>
       ),
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 18, 34, 18),
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Center: Animated Logo in original natural colors with Scale (0.7 -> 1.0) + Fade In
-          Center(
-            child: AnimatedBuilder(
-              animation: _entranceController,
-              builder: (context, child) {
-                return Opacity(
-                  opacity: _logoFade.value,
-                  child: Transform.scale(
-                    scale: _logoScale.value,
-                    child: Image.asset(
-                      'assets/image/logo.png',
-                      width: logoSize,
-                      height: logoSize,
-                      fit: BoxFit.contain,
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Center: Animated Logo in original natural colors with Scale (0.7 -> 1.0) + Fade In
+            Center(
+              child: AnimatedBuilder(
+                animation: _entranceController,
+                builder: (context, child) {
+                  return Opacity(
+                    opacity: _logoFade.value,
+                    child: Transform.scale(
+                      scale: _logoScale.value,
+                      child: Image.asset(
+                        'assets/image/logo.png',
+                        width: logoSize,
+                        height: logoSize,
+                        fit: BoxFit.contain,
+                      ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ),
-
-          // Bottom: 3 Calm Subtle Indicator Dots (• • •)
-          Positioned(
-            bottom: 48,
-            child: AnimatedBuilder(
-              animation: _entranceController,
-              builder: (context, child) {
-                return Opacity(opacity: _logoFade.value, child: child);
-              },
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: List.generate(3, (index) {
-                  return AnimatedBuilder(
-                    animation: _dotsController,
-                    builder: (context, child) {
-                      final offset = index * 0.25;
-                      final t = (_dotsController.value + offset) % 1.0;
-                      final alpha = 0.35 + 0.55 * (1 - (2 * (t - 0.5)).abs());
-                      final scale = 0.85 + 0.25 * (1 - (2 * (t - 0.5)).abs());
-
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 4),
-                        width: 6.5 * scale,
-                        height: 6.5 * scale,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: const Color(0xFF8AEF48)
-                              .withValues(alpha: alpha),
-                        ),
-                      );
-                    },
                   );
-                }),
+                },
               ),
             ),
-          ),
-        ],
+
+            // Bottom: 3 Calm Subtle Indicator Dots (• • •)
+            Positioned(
+              bottom: 48,
+              child: AnimatedBuilder(
+                animation: _entranceController,
+                builder: (context, child) {
+                  return Opacity(opacity: _logoFade.value, child: child);
+                },
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: List.generate(3, (index) {
+                    return AnimatedBuilder(
+                      animation: _dotsController,
+                      builder: (context, child) {
+                        final offset = index * 0.25;
+                        final t = (_dotsController.value + offset) % 1.0;
+                        final alpha = 0.35 + 0.55 * (1 - (2 * (t - 0.5)).abs());
+                        final scale = 0.85 + 0.25 * (1 - (2 * (t - 0.5)).abs());
+
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 4),
+                          width: 6.5 * scale,
+                          height: 6.5 * scale,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF8AEF48)
+                                .withValues(alpha: alpha),
+                          ),
+                        );
+                      },
+                    );
+                  }),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
     );
   }
 }

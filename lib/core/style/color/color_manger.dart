@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 
 class ColorManger {
-  static Color brun = const Color(0xff533334);
-  static Color brown = const Color(0xff533334).withAlpha(220);
-  static Color brownLight = const Color(0xff533334).withAlpha(40);
-  static Color brunLight = const Color(0xff9B8470);
+  static Color primary = const Color(0xFF122912);
+  static Color primaryLight = const Color.fromARGB(255, 60, 100, 34);
+  static Color buttonColor = const Color(0xFF65CA28);
+  static Color highlight = const Color(0xFF8AEF48);
+  static Color iconsBackgroundColor = const Color.fromARGB(255, 223, 242, 208);
+
   static Color grey = const Color(0xff454444);
   static Color unselectedButton = const Color(0xff685252);
   static Color white = Colors.white;
-  static Color selected = const Color(0xffb5734c);
+  static Color selected = const Color(0xFF65CA28);
 
-////////////////////////////////////////////////////////////
-  static Color primary = const Color(0xff1e3a52).withAlpha(220);
-
-  static Color darkBlue = const Color(0xFF1A2F4B);
+  ////////////////////////////////////////////////////////////
   static Color offWhite = const Color(0xfffff6e9);
   static Color black = Colors.black;
   static Color black54 = Colors.black54;

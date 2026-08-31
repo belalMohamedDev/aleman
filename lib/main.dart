@@ -1,8 +1,14 @@
 import 'package:aleman/app.dart';
+import 'package:aleman/core/application/di.dart';
+import 'package:aleman/core/services/app_logger.dart';
+import 'package:aleman/core/services/shared_pref_helper.dart';
+import 'package:device_preview/device_preview.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-void main() {
+void main() async {
+  DevicePreview.enable(enabled: kDebugMode);
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -13,5 +19,12 @@ void main() {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
+
+  await SharedPrefHelper.getInstancePreferences();
+  appLogger.info('Shared Preferences initialized');
+
+  await initAppModule();
+  appLogger.info('Dependency Injection initialized');
+
   runApp(const MyApp());
 }

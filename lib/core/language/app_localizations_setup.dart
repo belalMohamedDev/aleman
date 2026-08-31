@@ -10,6 +10,7 @@ class AppLocalizationsSetup {
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ];
 
   static Locale? localeResolutionCallback(

@@ -79,7 +79,7 @@ class ErrorInfo extends StatelessWidget {
                             50,
                           ), // Make button full width and 50 height
                           backgroundColor: ColorManger
-                              .brun, // Set button color to primary color
+                              .buttonColor, // Set button color to primary color
                           foregroundColor:
                               ColorManger.white, // Set text color to white
                           shape: const RoundedRectangleBorder(

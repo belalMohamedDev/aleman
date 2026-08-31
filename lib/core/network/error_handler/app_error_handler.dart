@@ -1,7 +1,8 @@
-import 'package:elminiawy/core/common/shared/shared_imports.dart';
-import 'package:elminiawy/core/services/app_logger.dart';
+import 'dart:ui';
 
+import 'package:aleman/core/services/app_logger.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/material.dart';
 
 class AppErrorHandler {
   static void init() {
