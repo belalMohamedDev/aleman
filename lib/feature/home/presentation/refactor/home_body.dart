@@ -1,34 +1,55 @@
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
+import 'package:aleman/feature/home/presentation/widget/banner_carousel_slider.dart';
+import 'package:aleman/feature/home/presentation/widget/category_list_view_builder.dart';
+import 'package:aleman/feature/home/presentation/widget/product_gride_view.dart';
 import 'package:aleman/feature/home/presentation/widget/search_row.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
-class HomeBody extends StatelessWidget {
+class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
+
+  @override
+  State<HomeBody> createState() => _HomeBodyState();
+}
+
+class _HomeBodyState extends State<HomeBody> {
+  String selectedCategory = 'علف ارانب';
 
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveUtils(context);
 
-    return Padding(
-      padding: responsive.setPadding(left: 5.5, right: 5.5, bottom: 2, top: 1),
-      child: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _welcomAndNotificationRow(context),
+    return SafeArea(
+      bottom: false,
+      child: SingleChildScrollView(
+        padding: responsive.setPadding(left: 5.5, right: 5.5, top: 1),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _welcomAndNotificationRow(context),
 
-              responsive.setSizeBox(height: 2),
-              const SearchRow(),
-              responsive.setSizeBox(height: 3),
-              // const BannerCarouselSlider(),
-              // responsive.setSizeBox(height: 3),
-              // const CategoryListViewBuilder(),
-              // const NewProductGrideView(),
-            ],
-          ),
+            responsive.setSizeBox(height: 2),
+            const SearchRow(),
+            responsive.setSizeBox(height: 3),
+            const BannerCarouselSlider(),
+            responsive.setSizeBox(height: 3),
+            CategoryListViewBuilder(
+              selectedCategory: selectedCategory,
+              onCategorySelected: (category) {
+                setState(() {
+                  selectedCategory = category;
+                });
+              },
+            ),
+            responsive.setSizeBox(height: 2),
+            NewProductGrideView(selectedCategory: selectedCategory),
+            responsive.setSizeBox(
+              height: 10,
+            ), // Extra space for floating bottom nav
+          ],
         ),
       ),
     );
@@ -39,48 +60,54 @@ class HomeBody extends StatelessWidget {
 
     return Row(
       children: [
+        Image.asset(
+          ImageAsset.alemanLogo,
+          height: responsive.setHeight(5),
+          width: responsive.setWidth(14),
+        ),
         Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            responsive.setSizeBox(height: 1),
             Text(
               'أعلاف الإيمان',
               style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                fontSize: responsive.setTextSize(4),
+                fontSize: responsive.setTextSize(3.2),
                 fontWeight: FontWeight.bold,
               ),
             ),
-            responsive.setSizeBox(height: 0.9),
+            responsive.setSizeBox(height: 0.3),
             Text(
               'شركائك فى النجاح',
               maxLines: 1,
               textAlign: TextAlign.start,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodyMedium!
-                  .copyWith(fontSize: responsive.setTextSize(3)),
+                  .copyWith(fontSize: responsive.setTextSize(2.5)),
             ),
           ],
         ),
         const Spacer(),
 
+        // Container(
+        //   height: responsive.setHeight(4.5),
+        //   width: responsive.setWidth(9.8),
+        //   decoration: BoxDecoration(
+        //     color: ColorManger.iconsBackgroundColor,
+        //     borderRadius: BorderRadius.circular(responsive.setBorderRadius(5)),
+        //   ),
+        //   child: Icon(Iconsax.bag, color: ColorManger.primary),
+        // ),
+        // responsive.setSizeBox(width: 1),
         Container(
           height: responsive.setHeight(4.5),
           width: responsive.setWidth(9.8),
           decoration: BoxDecoration(
-            color: ColorManger.iconsBackgroundColor,
+            color: ColorManger.backgroundItem,
             borderRadius: BorderRadius.circular(responsive.setBorderRadius(5)),
           ),
-          child: Icon(Iconsax.bag, color: ColorManger.primary),
-        ),
-        responsive.setSizeBox(width: 1),
-        Container(
-          height: responsive.setHeight(4.5),
-          width: responsive.setWidth(9.8),
-          decoration: BoxDecoration(
-            color: ColorManger.iconsBackgroundColor,
-            borderRadius: BorderRadius.circular(responsive.setBorderRadius(5)),
-          ),
-          child: Icon(Iconsax.notification, color: ColorManger.primary),
+          child: Icon(Iconsax.notification, color: ColorManger.primaryLight),
         ),
 
         // GestureDetector(

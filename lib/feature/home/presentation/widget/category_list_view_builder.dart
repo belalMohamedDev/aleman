@@ -1,207 +1,115 @@
-// import 'package:elminiawy/core/common/shared/shared_imports.dart';
+import 'package:flutter/material.dart';
 
-// /// A widget that builds a list view of categories in a horizontal scrollable list.
-// /// It handles the category states (loading, success, and error) using a [BlocBuilder]
-// /// for the [CategoryCubit].
-// class CategoryListViewBuilder extends StatelessWidget {
-//   const CategoryListViewBuilder({
-//     super.key,
-//   });
+import '../../../../core/style/color/color_manger.dart';
+import '../../../../core/utils/responsive_utils.dart';
 
-//   @override
-//   Widget build(BuildContext context) {
-//     // Initialize the ResponsiveUtils to handle responsive layout adjustments
-//     final responsive = ResponsiveUtils(context);
-//     final bool isEnLocale = AppLocalizations.of(context)?.isEnLocale ?? true;
+class CategoryListViewBuilder extends StatelessWidget {
+  final String selectedCategory;
+  final Function(String) onCategorySelected;
 
-//     return Column(
-//       children: [
-//         // Header Row: Category title and 'View All' button
+  const CategoryListViewBuilder({
+    super.key,
+    required this.selectedCategory,
+    required this.onCategorySelected,
+  });
 
-//         Row(
-//           children: [
-//             Icon(
-//               IconlyBold.category,
-//               color: ColorManger.brun,
-//               size: responsive.setIconSize(5),
-//             ),
-//             responsive.setSizeBox(width: 2),
-//             // Category title
-//             Text(context.translate(AppStrings.categories),
-//                 style: Theme.of(context)
-//                     .textTheme
-//                     .titleLarge!
-//                     .copyWith(fontSize: responsive.setTextSize(4))),
-//             const Spacer(), // Spacer to push 'View All' button to the right
+  @override
+  Widget build(BuildContext context) {
+    final responsive = ResponsiveUtils(context);
 
-//             // 'View All' button, navigates to category page when tapped
-//             GestureDetector(
-//               onTap: () {
-//                 context
-//                     .read<AppLogicCubit>()
-//                     .bottomNavBarController
-//                     .jumpToTab(1); // Switches to the category tab
-//               },
-//               child: Text(context.translate(AppStrings.viewAll),
-//                   style: Theme.of(context)
-//                       .textTheme
-//                       .titleMedium!
-//                       .copyWith(fontSize: responsive.setTextSize(3.5))),
-//             ),
-//           ],
-//         ),
-//         responsive.setSizeBox(height: 3), // Spacing between title and content
+    final List<Map<String, String>> demoCategories = [
+      {'title': 'علف ارانب', 'image': 'assets/image/rabbit.png'},
+      {'title': 'علف بط', 'image': 'assets/image/duck.png'},
+      {'title': 'علف دواجن', 'image': 'assets/image/hen.png'},
+      {'title': 'علف ماشية', 'image': 'assets/image/cow.png'},
+    ];
 
-//         // BlocBuilder to handle category states
-//         BlocConsumer<CategoryCubit, CategoryState>(
-//           listener: (context, state) {
-//             if (state is GetCategoriesError) {
-//               context.read<CategoryCubit>().getCategories(active: 'true');
-//             }
-//           },
-//           builder: (context, state) {
-//             if (state is GetCategoriesSuccess) {
-//               // If categories are successfully loaded, display the category list
-//               return _categorySuccessState(state, responsive, isEnLocale);
-//             }
-//             // If the state is loading or error, show loading shimmer effect
-//             return _categoryLoadingAndErrorState(responsive);
-//           },
-//         ),
-//       ],
-//     );
-//   }
+    return Column(
+      children: [
+        Row(children: []),
+        SizedBox(
+          height: responsive.setHeight(12),
+          child: ListView.builder(
+            itemCount: demoCategories.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              final category = demoCategories[index];
+              final isSelected = selectedCategory == category['title'];
 
-//   /// Builds a loading shimmer effect for the category list while categories are being loaded.
-//   /// It mimics the appearance of categories and their titles while loading.
-//   SizedBox _categoryLoadingAndErrorState(ResponsiveUtils responsive) {
-//     return SizedBox(
-//       height: responsive.setHeight(15), // Height of the loading shimmer list
-//       child: ListView.builder(
-//         itemCount: 8, // Display 8 shimmer placeholders
-//         scrollDirection: Axis.horizontal, // Horizontal scrolling for categories
-//         itemBuilder: (context, index) {
-//           return Padding(
-//             padding: responsive.setPadding(right: 4), // Padding between items
-//             child: Column(
-//               children: [
-//                 // Loading shimmer for category image
-//                 LoadingShimmer(
-//                   height: responsive.setHeight(8), // Image height
-//                   width: responsive.setWidth(18), // Image width
-//                   borderRadius:
-//                       responsive.setBorderRadius(2), // Rounded corners
-//                 ),
-//                 responsive.setSizeBox(
-//                     height: 1.5), // Space between image and title
-
-//                 // Loading shimmer for category title
-//                 LoadingShimmer(
-//                   width: responsive.setWidth(13), // Title width
-//                   height: responsive.setHeight(1), // Title height
-//                   borderRadius:
-//                       responsive.setBorderRadius(2), // Rounded corners
-//                 ),
-//               ],
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-
-//   /// Builds the success state for the category list. It displays the categories
-//   /// in a horizontal scrollable list with their images and titles.
-//   SizedBox _categorySuccessState(
-//       GetCategoriesSuccess state, ResponsiveUtils responsive, bool isEnLocale) {
-//     return SizedBox(
-//       height: responsive.setHeight(15), // Height of the category list
-//       child: ListView.builder(
-//         addAutomaticKeepAlives: true, // Keep items alive when scrolling
-//         itemCount: state.data.length, // Number of categories to display
-//         scrollDirection: Axis.horizontal, // Horizontal scrolling for categories
-//         itemBuilder: (context, index) {
-//           return Padding(
-//             padding: responsive.setPadding(
-//                 left: isEnLocale ? null : 3,
-//                 right: isEnLocale ? 3.5 : null), // Padding between items
-//             child: InkWell(
-//               onTap: () {
-//                 // Navigate to the ProductBaseOnCategory screen when a category is tapped
-
-//                 Navigator.of(context, rootNavigator: !false).push(
-//                   MaterialPageRoute(
-//                     builder: (context) => MultiBlocProvider(
-//                       providers: [
-//                         BlocProvider(
-//                           create: (context) => instance<
-//                               ProductBasedOnCategoryCubit>(), // Create the cubit
-//                         ),
-//                         BlocProvider.value(
-//                           value: instance<CartCubit>(),
-//                         ),
-//                         BlocProvider.value(
-//                           value: instance<WishListCubit>(),
-//                         ),
-//                       ],
-//                       child: ProductBaseOnCategory(
-//                         categoryId: state.data[index].sId!, // Pass category ID
-//                         categoryName:
-//                             state.data[index].title!, // Pass category name
-//                       ),
-//                     ),
-//                   ),
-//                 );
-//               },
-//               child: Column(
-//                 children: [
-//                   // Category image container
-//                   InkWell(
-//                     child: Container(
-//                       height: responsive.setHeight(8), // Image container height
-//                       width: responsive.setHeight(8.5), // Image container width
-//                       decoration: BoxDecoration(
-//                         borderRadius: BorderRadius.circular(responsive
-//                             .setBorderRadius(2)), // Rounded corners for image
-//                         color: ColorManger.backgroundItem, // Background color
-//                       ),
-//                       child: Padding(
-//                         padding: responsive.setPadding(
-//                             top: 1,
-//                             bottom: 1,
-//                             left: 1,
-//                             right: 1), // Padding inside container
-//                         child: CachedNetworkImage(
-//                           imageUrl: state.data[index]
-//                               .image!, // Load category image from network
-//                           placeholder: (context, url) => LoadingShimmer(
-//                             height: responsive
-//                                 .setHeight(9), // Placeholder image height
-//                             width: responsive
-//                                 .setWidth(9), // Placeholder image width
-//                             borderRadius: responsive.setBorderRadius(
-//                                 2), // Rounded corners for placeholder
-//                           ),
-//                           errorWidget: (context, url, error) => const Icon(Icons
-//                               .error), // Display error icon if image fails to load
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                   responsive.setSizeBox(
-//                       height: 1.5), // Space between image and title
-
-//                   // Category title
-//                   Text(state.data[index].title!,
-//                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-//                           fontSize: responsive.setTextSize(
-//                               3.2))), // Category title with responsive text size
-//                 ],
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
-// }
+              return Padding(
+                padding: responsive.setPadding(left: 4.2),
+                child: InkWell(
+                  onTap: () {
+                    onCategorySelected(category['title']!);
+                  },
+                  borderRadius: BorderRadius.circular(
+                    responsive.setBorderRadius(2),
+                  ),
+                  child: Column(
+                    children: [
+                      // Category image container
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        height: responsive.setHeight(8),
+                        width: responsive.setHeight(8.5),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            responsive.setBorderRadius(2),
+                          ),
+                          color: isSelected
+                              ? ColorManger.primary.withValues(alpha: 0.05)
+                              : ColorManger.primaryLight.withValues(
+                                  alpha: 0.04,
+                                ),
+                          border: isSelected
+                              ? Border.all(
+                                  color: ColorManger.primaryLight.withValues(
+                                    alpha: 0.02,
+                                  ),
+                                  width: 2,
+                                )
+                              : Border.all(color: Colors.transparent, width: 2),
+                        ),
+                        child: Padding(
+                          padding: responsive.setPadding(
+                            top: 1.5,
+                            bottom: 1.5,
+                            left: 1.5,
+                            right: 1.5,
+                          ),
+                          child: Image.asset(
+                            category['image']!,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(
+                                  Icons.broken_image,
+                                  color: Colors.grey,
+                                ),
+                          ),
+                        ),
+                      ),
+                      responsive.setSizeBox(
+                        height: 1.5,
+                      ), // Space between image and title
+                      // Category title
+                      Text(
+                        category['title']!,
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontSize: responsive.setTextSize(3.2),
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w600,
+                          color: isSelected ? ColorManger.primary : null,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}

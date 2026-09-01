@@ -7,6 +7,8 @@ import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
+import 'falling_eggs_animation.dart';
+
 /// A widget that provides a search input field and a filter button.
 /// When tapped, it navigates to the search screen.
 class SearchRow extends StatelessWidget {
@@ -75,15 +77,18 @@ class SearchRow extends StatelessWidget {
                 responsive.setBorderRadius(2),
               ),
             ),
-            child: IconButton(
-              icon: Image.asset(
-                ImageAsset.chickenIcon,
-                color: ColorManger.white,
-              ),
-              onPressed: () {
-                // Navigate to the search screen when the filter button is tapped.
-                // Navigator.of(context, rootNavigator: !false)
-                //     .pushNamed(Routes.search);
+            child: Builder(
+              builder: (btnContext) {
+                return IconButton(
+                  icon: Image.asset(
+                    ImageAsset.chickenIcon,
+                    color: ColorManger.white,
+                  ),
+                  onPressed: () {
+                    // Show fun Easter egg animation!
+                    showFallingEggs(btnContext);
+                  },
+                );
               },
             ),
           ),

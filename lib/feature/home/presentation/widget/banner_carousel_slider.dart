@@ -1,161 +1,95 @@
-// import 'package:flutter/material.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 
-// class BannerCarouselSlider extends StatelessWidget {
-//   const BannerCarouselSlider({
-//     super.key,
-//   });
+import '../../../../core/style/color/color_manger.dart';
+import '../../../../core/utils/responsive_utils.dart';
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final responsive = ResponsiveUtils(context);
+class BannerCarouselSlider extends StatefulWidget {
+  const BannerCarouselSlider({super.key});
 
-//     return BlocConsumer<BannerCubit, BannerState>(
-//       listener: (context, state) {
-//         if (state is GetBannersError) {
-//           context.read<BannerCubit>().getBanners(endDate: 'true');
-//         }
-//       },
+  @override
+  State<BannerCarouselSlider> createState() => _BannerCarouselSliderState();
+}
 
-//       buildWhen: (previous, current) =>
-//           current is GetBannersLoading ||
-//           current is GetBannersSuccess ||
-//           current is GetBannersError,
-//       builder: (context, state) {
-//         if (state is GetBannersSuccess) {
+class _BannerCarouselSliderState extends State<BannerCarouselSlider> {
+  int _currentIndex = 0;
 
-//           return _bannersSuccessState(state, context, responsive);
-//         }
+  final List<String> demoBanners = [
+    'assets/image/banner_1.png',
+    'assets/image/banner_2.png',
+    'assets/image/banner_3.png',
+    'assets/image/banner_4.png',
+  ];
 
-//         return Center(
-//           child: LoadingShimmer(
-//             height: responsive.setHeight(15),
-//             width: double.infinity,
-//             borderRadius: responsive.setBorderRadius(2),
-//           ),
-//         );
-//       },
-//     );
-//   }
+  @override
+  Widget build(BuildContext context) {
+    final responsive = ResponsiveUtils(context);
 
-//   CarouselSlider _bannersSuccessState(GetBannersSuccess state,
-//       BuildContext context, ResponsiveUtils responsive) {
-//     return CarouselSlider(
-//       options: CarouselOptions(
+    return Column(
+      children: [
+        CarouselSlider(
+          options: CarouselOptions(
+            height: responsive.setHeight(
+              18,
+            ), // Increased slightly for better visibility
+            enableInfiniteScroll: true,
+            autoPlay: true,
+            viewportFraction:
+                0.98, // Changed from 1.1 to 0.98 for better padding
+            enlargeCenterPage: true, // Added for a nice visual effect
+            autoPlayInterval: const Duration(seconds: 3),
+            autoPlayAnimationDuration: const Duration(seconds: 1),
+            autoPlayCurve: Curves.easeInOutCubic,
+            scrollDirection: Axis.horizontal,
+            onPageChanged: (index, reason) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+          ),
+          items: demoBanners
+              .map(
+                (imagePath) => ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                    responsive.setBorderRadius(2),
+                  ),
+                  child: Image.asset(
+                    imagePath,
+                    width: responsive.setWidth(120),
+                    fit: BoxFit.fill,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey.shade300,
+                      child: const Center(
+                        child: Icon(Icons.broken_image, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+              .toList(),
+        ),
 
-//         height: responsive.setHeight(15),
-//         enableInfiniteScroll: true,
-//         autoPlay: true,
-//         viewportFraction: 1.1,
-//         autoPlayInterval: const Duration(seconds: 3),
-//         autoPlayAnimationDuration:
-//             const Duration(seconds: 1),
-//         autoPlayCurve: Curves.easeInOutCubic,
-//         scrollDirection: Axis.horizontal,
-//       ),
-//       items: state.data
-//           .map((banner) => ClipRRect(
-//                 borderRadius: BorderRadius.circular(responsive
-//                     .setBorderRadius(2)),
-//                 child: CachedNetworkImage(
-
-//                   imageUrl:
-//                       banner.image!,
-//                   width: responsive.setWidth(89),
-//                   fit: BoxFit.fill,
-//                   placeholder: (context, url) => LoadingShimmer(
-//                     height: responsive
-//                         .setHeight(15),
-//                     width: responsive
-//                         .setWidth(89),
-//                     borderRadius: responsive
-//                         .setBorderRadius(2),
-//                   ),
-//                   errorWidget: (context, url, error) => const Icon(Icons
-//                       .error),
-//                 ),
-//               ))
-//           .toList(),
-//     );
-//   }
-// }
-
-// import 'package:flutter/material.dart';
-
-// class BannerCarouselSlider extends StatelessWidget {
-//   const BannerCarouselSlider({
-//     super.key,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final responsive = ResponsiveUtils(context);
-
-//     return BlocConsumer<BannerCubit, BannerState>(
-//       listener: (context, state) {
-//         if (state is GetBannersError) {
-//           context.read<BannerCubit>().getBanners(endDate: 'true');
-//         }
-//       },
-
-//       buildWhen: (previous, current) =>
-//           current is GetBannersLoading ||
-//           current is GetBannersSuccess ||
-//           current is GetBannersError,
-//       builder: (context, state) {
-//         if (state is GetBannersSuccess) {
-
-//           return _bannersSuccessState(state, context, responsive);
-//         }
-
-//         return Center(
-//           child: LoadingShimmer(
-//             height: responsive.setHeight(15),
-//             width: double.infinity,
-//             borderRadius: responsive.setBorderRadius(2),
-//           ),
-//         );
-//       },
-//     );
-//   }
-
-//   CarouselSlider _bannersSuccessState(GetBannersSuccess state,
-//       BuildContext context, ResponsiveUtils responsive) {
-//     return CarouselSlider(
-//       options: CarouselOptions(
-
-//         height: responsive.setHeight(15),
-//         enableInfiniteScroll: true,
-//         autoPlay: true,
-//         viewportFraction: 1.1,
-//         autoPlayInterval: const Duration(seconds: 3),
-//         autoPlayAnimationDuration:
-//             const Duration(seconds: 1),
-//         autoPlayCurve: Curves.easeInOutCubic,
-//         scrollDirection: Axis.horizontal,
-//       ),
-//       items: state.data
-//           .map((banner) => ClipRRect(
-//                 borderRadius: BorderRadius.circular(responsive
-//                     .setBorderRadius(2)),
-//                 child: CachedNetworkImage(
-
-//                   imageUrl:
-//                       banner.image!,
-//                   width: responsive.setWidth(89),
-//                   fit: BoxFit.fill,
-//                   placeholder: (context, url) => LoadingShimmer(
-//                     height: responsive
-//                         .setHeight(15),
-//                     width: responsive
-//                         .setWidth(89),
-//                     borderRadius: responsive
-//                         .setBorderRadius(2),
-//                   ),
-//                   errorWidget: (context, url, error) => const Icon(Icons
-//                       .error),
-//                 ),
-//               ))
-//           .toList(),
-//     );
-//   }
-// }
+        // Page Indicators (Dots)
+        SizedBox(height: responsive.setHeight(2.5)),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(demoBanners.length, (index) {
+            bool isActive = _currentIndex == index;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: const EdgeInsets.symmetric(horizontal: 4),
+              height: 8,
+              width: isActive ? 24 : 8, // Active dot is wider (pill shape)
+              decoration: BoxDecoration(
+                color: isActive
+                    ? ColorManger.primary
+                    : ColorManger.primaryLight.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(4),
+              ),
+            );
+          }),
+        ),
+      ],
+    );
+  }
+}
