@@ -6,7 +6,12 @@ class ColorManger {
   static Color buttonColor = const Color(0xFF65CA28);
   static Color highlight = const Color(0xFF8AEF48);
   static Color iconsBackgroundColor = const Color.fromARGB(255, 223, 242, 208);
-
+  
+  // New Onboarding / Brand Colors
+  static Color gold = const Color(0xFFF0C94A);
+  static Color goldDark = const Color(0xFFD6A83A);
+  static Color darkGreen = const Color(0xFF092512);
+  static Color agriculturalGreen = const Color(0xFF7BCB3A);
   static Color grey = const Color(0xff454444);
   static Color unselectedButton = const Color(0xff685252);
   static Color white = Colors.white;

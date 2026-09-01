@@ -2,6 +2,7 @@ import 'package:aleman/core/language/app_localizations.dart';
 import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -38,7 +39,8 @@ class SearchRow extends StatelessWidget {
                   prefixIcon: Icon(
                     Iconsax.search_favorite,
                     size: responsive.setIconSize(5),
-                    color: ColorManger.primary, // Icon color for the search
+                    color:
+                        ColorManger.primaryLight, // Icon color for the search
                   ),
 
                   hintStyle: Theme.of(context).textTheme.titleMedium!
@@ -66,16 +68,17 @@ class SearchRow extends StatelessWidget {
               left: isEnLocale ? 2 : null,
             ), // Margin for spacing
             decoration: BoxDecoration(
-              color:
-                  ColorManger.primary, // Background color for the filter button
+              color: ColorManger.primaryLight.withValues(
+                alpha: 0.8,
+              ), // Background color for the filter button
               borderRadius: BorderRadius.circular(
                 responsive.setBorderRadius(2),
               ),
             ),
             child: IconButton(
-              icon: Icon(
-                Iconsax.filter, // Icon representing the filter
-                color: ColorManger.white, // White color for the filter icon
+              icon: Image.asset(
+                ImageAsset.chickenIcon,
+                color: ColorManger.white,
               ),
               onPressed: () {
                 // Navigate to the search screen when the filter button is tapped.

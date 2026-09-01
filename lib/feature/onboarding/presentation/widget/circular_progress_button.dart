@@ -1,6 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
+
+import '../../../../core/style/color/color_manger.dart';
 
 class CircularProgressButton extends StatelessWidget {
   final double progress; // 0.0 to 1.0 (e.g. 0.25, 0.5, 0.75, 1.0)
@@ -18,8 +21,9 @@ class CircularProgressButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double outerSize = 85.0;
-    const double innerSize = 58.0;
+    const double outerSize = 110.0;
+    const double trackRadius = 42.0;
+    const double innerSize = 62.0;
 
     return Semantics(
       button: true,
@@ -32,7 +36,7 @@ class CircularProgressButton extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Segmented Animated Circular Progress Ring with gaps between steps
+              // Wheat Spike Orbit Animated Circular Progress Ring
               TweenAnimationBuilder<double>(
                 tween: Tween<double>(begin: 0.0, end: progress),
                 duration: const Duration(milliseconds: 450),
@@ -40,13 +44,13 @@ class CircularProgressButton extends StatelessWidget {
                 builder: (context, value, child) {
                   return CustomPaint(
                     size: const Size(outerSize, outerSize),
-                    painter: _ProgressRingPainter(
+                    painter: _OrbitProgressPainter(
                       progress: value,
-                      totalSteps: totalSteps,
-                      trackColor: Colors.white.withValues(alpha: 0.18),
-                      progressColor: const Color(0xFFFFFFFF),
-                      strokeWidth: 4,
-                      gapDistance: 10.0,
+                      trackRadius: trackRadius,
+                      trackColor: ColorManger.gold.withValues(alpha: 0.2),
+                      progressColor: ColorManger.gold,
+                      dotColor: ColorManger.agriculturalGreen,
+                      strokeWidth: 3.0,
                     ),
                   );
                 },
@@ -58,22 +62,14 @@ class CircularProgressButton extends StatelessWidget {
                 height: innerSize,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color.fromARGB(255, 60, 100, 34),
-                      Color(0xFF65CA28),
-                    ],
+                  gradient: LinearGradient(
+                    colors: [ColorManger.gold, ColorManger.goldDark],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color.fromARGB(
-                        255,
-                        169,
-                        215,
-                        142,
-                      ).withValues(alpha: 0.35),
+                      color: ColorManger.gold.withValues(alpha: 0.15),
                       blurRadius: 16,
                       offset: const Offset(0, 4),
                       spreadRadius: 1,
@@ -85,20 +81,12 @@ class CircularProgressButton extends StatelessWidget {
                     duration: const Duration(milliseconds: 300),
                     transitionBuilder: (child, animation) =>
                         ScaleTransition(scale: animation, child: child),
-                    child: isLastPage
-                        ? Image.asset(
-                            "assets/icons/bag.png",
-                            key: const ValueKey('cart_image'),
-                            color: Colors.white,
-                            width: 24,
-                            height: 24,
-                          )
-                        : const Icon(
-                            Icons.arrow_forward,
-                            key: ValueKey('arrow_icon'),
-                            color: Color(0xFFFFFFFF),
-                            size: 28,
-                          ),
+                    child: Icon(
+                      isLastPage ? Iconsax.bag_happy4 : Iconsax.arrow_left_35,
+                      key: const ValueKey('arrow_icon'),
+                      color: ColorManger.primaryLight,
+                      size: 28,
+                    ),
                   ),
                 ),
               ),
@@ -110,28 +98,26 @@ class CircularProgressButton extends StatelessWidget {
   }
 }
 
-class _ProgressRingPainter extends CustomPainter {
+class _OrbitProgressPainter extends CustomPainter {
   final double progress;
-  final int totalSteps;
+  final double trackRadius;
   final Color trackColor;
   final Color progressColor;
+  final Color dotColor;
   final double strokeWidth;
-  final double gapDistance;
 
-  _ProgressRingPainter({
+  _OrbitProgressPainter({
     required this.progress,
-    required this.totalSteps,
+    required this.trackRadius,
     required this.trackColor,
     required this.progressColor,
+    required this.dotColor,
     required this.strokeWidth,
-    this.gapDistance = 10.0,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = (math.min(size.width, size.height) - strokeWidth) / 2;
-    final rect = Rect.fromCircle(center: center, radius: radius);
 
     final trackPaint = Paint()
       ..color = trackColor
@@ -139,63 +125,103 @@ class _ProgressRingPainter extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-    final progressPaint = Paint()
+    final activePaint = Paint()
       ..color = progressColor
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.round;
 
-    if (totalSteps <= 1) {
-      // Single continuous ring if only 1 step
-      canvas.drawCircle(center, radius, trackPaint);
-      if (progress > 0) {
-        canvas.drawArc(
-          rect,
-          -math.pi / 2,
-          2 * math.pi * progress.clamp(0.0, 1.0),
-          false,
-          progressPaint,
-        );
-      }
-      return;
+    // The arc starts from bottom-left (135 degrees) and sweeps to bottom-right
+    double startAngle = 3 * math.pi / 4;
+    double totalSweep = 1.5 * math.pi;
+
+    // 1. Draw full background track (dimmed)
+    _drawTrack(canvas, center, trackRadius, trackPaint);
+
+    if (progress > 0) {
+      // 2. Draw active track, clipped by a wedge based on current progress
+      canvas.save();
+      Path clipPath = Path();
+      clipPath.moveTo(center.dx, center.dy);
+      clipPath.arcTo(
+        Rect.fromCircle(center: center, radius: trackRadius * 2),
+        startAngle,
+        totalSweep * progress.clamp(0.0, 1.0),
+        false,
+      );
+      clipPath.lineTo(center.dx, center.dy);
+      clipPath.close();
+      canvas.clipPath(clipPath);
+
+      _drawTrack(canvas, center, trackRadius, activePaint);
+      canvas.restore();
+
+      // 3. Draw the glowing dot at the tip of the current progress
+      double currentAngle = startAngle + totalSweep * progress.clamp(0.0, 1.0);
+      final Offset tipOffset = Offset(
+        center.dx + trackRadius * math.cos(currentAngle),
+        center.dy + trackRadius * math.sin(currentAngle),
+      );
+
+      final glowPaint = Paint()
+        ..color = dotColor.withValues(alpha: 0.4)
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(tipOffset, strokeWidth * 2.5, glowPaint);
+
+      final dotPaint = Paint()
+        ..color = dotColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(tipOffset, strokeWidth * 1.5, dotPaint);
     }
+  }
 
-    // Segmented ring with empty gaps between each step
-    final double stepSweep = (2 * math.pi) / totalSteps;
-    final double gapAngle = gapDistance / radius;
-    final double segmentSweep = stepSweep - gapAngle;
+  // Helper to draw the wheat spike and arc path
+  void _drawTrack(Canvas canvas, Offset center, double radius, Paint paint) {
+    double startAngle = 3 * math.pi / 4;
+    double totalSweep = 1.5 * math.pi;
 
-    for (int i = 0; i < totalSteps; i++) {
-      // Start of this segment (centered between gaps)
-      final double segmentStart =
-          -math.pi / 2 + (i * stepSweep) + (gapAngle / 2);
+    // Main orbit arc
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      startAngle,
+      totalSweep,
+      false,
+      paint,
+    );
 
-      // 1. Draw background track segment
-      canvas.drawArc(rect, segmentStart, segmentSweep, false, trackPaint);
+    // Wheat Spike (Leaves)
+    int numLeaves = 7;
+    // Spread leaves along the left side (from ~140 deg to ~220 deg)
+    double leafStartAngle = 3.15 * math.pi / 4;
+    double leafEndAngle = 4.85 * math.pi / 4;
 
-      // 2. Draw active progress segment
-      final double stepStart = i / totalSteps;
-      final double stepEnd = (i + 1) / totalSteps;
+    for (int i = 0; i <= numLeaves; i++) {
+      double t = i / numLeaves;
+      double a = leafStartAngle + t * (leafEndAngle - leafStartAngle);
 
-      if (progress > stepStart) {
-        final double segmentFraction =
-            ((progress - stepStart) / (stepEnd - stepStart)).clamp(0.0, 1.0);
-        final double activeSweep = segmentSweep * segmentFraction;
+      Offset p = center + Offset(radius * math.cos(a), radius * math.sin(a));
 
-        if (activeSweep > 0.001) {
-          canvas.drawArc(rect, segmentStart, activeSweep, false, progressPaint);
-        }
-      }
+      // Tangent pointing forward
+      double forward = a + math.pi / 2;
+      double leafLen = 7.0; // length of the grain
+
+      // Outward grain
+      double angleOut = forward - math.pi / 3.0;
+      Offset pOut =
+          p +
+          Offset(leafLen * math.cos(angleOut), leafLen * math.sin(angleOut));
+      canvas.drawLine(p, pOut, paint);
+
+      // Inward grain
+      double angleIn = forward + math.pi / 3.0;
+      Offset pIn =
+          p + Offset(leafLen * math.cos(angleIn), leafLen * math.sin(angleIn));
+      canvas.drawLine(p, pIn, paint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant _ProgressRingPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.totalSteps != totalSteps ||
-        oldDelegate.trackColor != trackColor ||
-        oldDelegate.progressColor != progressColor ||
-        oldDelegate.strokeWidth != strokeWidth ||
-        oldDelegate.gapDistance != gapDistance;
+  bool shouldRepaint(covariant _OrbitProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }

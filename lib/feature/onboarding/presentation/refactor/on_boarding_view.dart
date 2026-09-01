@@ -1,5 +1,6 @@
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
+import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +10,7 @@ import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 import '../widget/circular_progress_button.dart';
 import '../widget/onboarding_page_content.dart';
+import '../../../../core/style/color/color_manger.dart';
 
 class OnBoardingView extends StatelessWidget {
   const OnBoardingView({super.key});
@@ -39,6 +41,7 @@ class OnBoardingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<OnboardingCubit>();
+    final responsive = ResponsiveUtils(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -55,7 +58,7 @@ class OnBoardingView extends StatelessWidget {
             }
           },
           child: Padding(
-            padding: const EdgeInsets.only(top: 120, bottom: 100),
+            padding: responsive.setPadding(top: 8, bottom: 4),
             child: Column(
               children: [
                 // PageView Content
@@ -73,11 +76,39 @@ class OnBoardingView extends StatelessWidget {
                 // Bottom Controls: Action Text + Circular Progress Indicator Button
                 BlocBuilder<OnboardingCubit, OnboardingState>(
                   builder: (context, state) {
-                    return CircularProgressButton(
-                      progress: state.progress,
-                      totalSteps: cubit.items.length,
-                      isLastPage: state.isLastPage,
-                      onTap: cubit.onNext,
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressButton(
+                          progress: state.progress,
+                          totalSteps: cubit.items.length,
+                          isLastPage: state.isLastPage,
+                          onTap: cubit.onNext,
+                        ),
+                        const SizedBox(
+                          height: 32,
+                        ), // Spacing between button and dots
+                        // Page Indicators
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(cubit.items.length, (index) {
+                            bool isActive = state.currentIndex == index;
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 300),
+                              margin: const EdgeInsets.symmetric(horizontal: 5),
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isActive
+                                    ? ColorManger.gold
+                                    : ColorManger.gold.withValues(alpha: 0.15),
+                              ),
+                            );
+                          }),
+                        ),
+                        const SizedBox(height: 16), // Bottom spacing
+                      ],
                     );
                   },
                 ),

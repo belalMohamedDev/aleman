@@ -95,52 +95,52 @@ class OnboardingPageContent extends StatelessWidget {
             ),
           ),
 
-          // 4. Badges (for page 2 or any page with badges)
-          if (item.badges != null && item.badges!.isNotEmpty) ...[
-            const SizedBox(height: 14),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                alignment: WrapAlignment.center,
-                children: item.badges!.map((badge) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1B381C).withValues(alpha: 0.85),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: const Color(0xFF78DC3D).withValues(alpha: 0.4),
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Text(
-                      badge,
-                      style: const TextStyle(
-                        fontFamily: 'Cairo',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFFE2FBD2),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-          ],
+          // // 4. Badges (for page 2 or any page with badges)
+          // if (item.badges != null && item.badges!.isNotEmpty) ...[
+          //   const SizedBox(height: 14),
+          //   Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          //     child: Wrap(
+          //       spacing: 8,
+          //       runSpacing: 8,
+          //       alignment: WrapAlignment.center,
+          //       children: item.badges!.map((badge) {
+          //         return Container(
+          //           padding: const EdgeInsets.symmetric(
+          //             horizontal: 14,
+          //             vertical: 6,
+          //           ),
+          //           decoration: BoxDecoration(
+          //             color: const Color(0xFF1B381C).withValues(alpha: 0.85),
+          //             borderRadius: BorderRadius.circular(20),
+          //             border: Border.all(
+          //               color: const Color(0xFF78DC3D).withValues(alpha: 0.4),
+          //               width: 1,
+          //             ),
+          //             boxShadow: [
+          //               BoxShadow(
+          //                 color: Colors.black.withValues(alpha: 0.2),
+          //                 blurRadius: 6,
+          //                 offset: const Offset(0, 2),
+          //               ),
+          //             ],
+          //           ),
+          //           child: Text(
+          //             badge,
+          //             style: const TextStyle(
+          //               fontFamily: 'Cairo',
+          //               fontSize: 13,
+          //               fontWeight: FontWeight.w600,
+          //               color: Color(0xFFE2FBD2),
+          //             ),
+          //           ),
+          //         );
+          //       }).toList(),
+          //     ),
+          //   ),
+          // ],
 
-          const SizedBox(height: 12),
+          // const SizedBox(height: 12),
 
           // 5. Description Text
           Padding(

@@ -72,8 +72,8 @@ class _SplashScreenState extends State<SplashScreen>
         transitionDuration: const Duration(milliseconds: 550),
         pageBuilder: (context, animation, secondaryAnimation) =>
             isOnBoardingScreenView
-            ? const OnBoardingScreen()
-            : const HomeScreen(),
+            ? const HomeScreen()
+            : const OnBoardingScreen(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
             opacity: CurvedAnimation(
