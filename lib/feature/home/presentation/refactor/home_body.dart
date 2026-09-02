@@ -1,3 +1,4 @@
+import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
@@ -100,19 +101,29 @@ class _HomeBodyState extends State<HomeBody> {
           child: Icon(Iconsax.notification, color: ColorManger.primaryLight),
         ),
         responsive.setSizeBox(width: 3),
-        Container(
-          height: responsive.setHeight(4.5),
-          width: responsive.setWidth(9.8),
-          decoration: BoxDecoration(
-            color: ColorManger.backgroundItem,
-            borderRadius: BorderRadius.circular(responsive.setBorderRadius(5)),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(
+              context,
+              rootNavigator: true,
+            ).pushNamed(Routes.loginRoute);
+          },
+          child: Container(
+            height: responsive.setHeight(4.5),
+            width: responsive.setWidth(9.8),
+            decoration: BoxDecoration(
+              color: ColorManger.backgroundItem,
+              borderRadius: BorderRadius.circular(
+                responsive.setBorderRadius(5),
+              ),
+            ),
+            child: Image.asset(
+              ImageAsset.farmer,
+              fit: BoxFit.contain,
+              color: ColorManger.primaryLight,
+            ),
+            //    Icon(Iconsax.user, color: ColorManger.primaryLight),
           ),
-          child: Image.asset(
-            ImageAsset.farmer,
-            fit: BoxFit.contain,
-            color: ColorManger.primaryLight,
-          ),
-          //    Icon(Iconsax.user, color: ColorManger.primaryLight),
         ),
 
         // GestureDetector(

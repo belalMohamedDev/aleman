@@ -1,12 +1,7 @@
 // ignore: always_use_package_imports
 
 import 'package:aleman/core/application/di.dart';
-import 'package:aleman/core/language/localization_extensions.dart';
-import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/network/failure/api_error_model.dart';
-import 'package:aleman/core/network/failure/api_error_model.dart';
-import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
-import 'package:aleman/feature/Authentication/data/repository/authentication_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -23,15 +18,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   // Global key for the login form
   final loginFormKey = GlobalKey<FormState>();
 
-  // Repository for handling login-related requests
-  final AuthenticationRepositoryImplement _loginRepository;
+  // // Repository for handling login-related requests
+  // final AuthenticationRepositoryImplement _loginRepository;
 
-  // Flags for password visibility and button validation state
+  // // Flags for password visibility and button validation state
   bool showPass = true;
   bool isButtonInVaildator = false;
 
-  /// Constructs a [LoginBloc] with the provided [LoginRepository].
-  LoginBloc(this._loginRepository) : super(const _Initial()) {
+  LoginBloc() : super(const _Initial()) {
     // Event handlers
     // on<UserLoginButton>(loginButton);
 
@@ -74,55 +68,55 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     // }
 
     /// Validates the login button's enabled state based on user input.
-    Future<void> validateLoginButton(
-      LoginEvent event,
-      Emitter<LoginState> emit,
-    ) async {
-      // Check if email and password are valid
-      //   if (!AppRegex.isPasswordValid(userLoginPassword.text) ||
-      //       !AppRegex.isEmailValid(userLoginEmailAddress.text)) {
-      //     isButtonInVaildator = false;
-      //   } else {
-      //     isButtonInVaildator = true;
-      //   }
+    // Future<void> validateLoginButton(
+    //   LoginEvent event,
+    //   Emitter<LoginState> emit,
+    // ) async {
+    //   // Check if email and password are valid
+    //   //   if (!AppRegex.isPasswordValid(userLoginPassword.text) ||
+    //   //       !AppRegex.isEmailValid(userLoginEmailAddress.text)) {
+    //   //     isButtonInVaildator = false;
+    //   //   } else {
+    //   //     isButtonInVaildator = true;
+    //   //   }
 
-      //   // Emit the validation state
-      //   emit(LoginState.buttonLoginVaildation(isButtonInVaildator));
-      // }
+    //   //   // Emit the validation state
+    //   //   emit(LoginState.buttonLoginVaildation(isButtonInVaildator));
+    //   // }
 
-      /// Handles the login button press event.
-      Future<void> loginButton(
-        LoginEvent event,
-        Emitter<LoginState> emit,
-      ) async {
-        await event.whenOrNull(
-          userLoginButton: () async {
-            emit(const LoginState.loading());
+    //   /// Handles the login button press event.
+    //   // Future<void> loginButton(
+    //   //   LoginEvent event,
+    //   //   Emitter<LoginState> emit,
+    //   // ) async {
+    //   //   await event.whenOrNull(
+    //   //     userLoginButton: () async {
+    //   //       emit(const LoginState.loading());
 
-            // Attempt to log in the user
-            // final response = await _loginRepository.loginRepo(
-            //   LoginRequestBody(
-            //     email: userLoginEmailAddress.text.trim(),
-            //     password: userLoginPassword.text.trim(),
-            //   ),
-            // );
+    //   //       // Attempt to log in the user
+    //   //       // final response = await _loginRepository.loginRepo(
+    //   //       //   LoginRequestBody(
+    //   //       //     email: userLoginEmailAddress.text.trim(),
+    //   //       //     password: userLoginPassword.text.trim(),
+    //   //       //   ),
+    //   //       // );
 
-            // Handle the login response
-            // response.when(
-            //   success: (loginResponse) async {
-            //     emit(LoginState.suceess(loginResponse));
-            //   },
-            //   failure: (error) {
-            //     // Emit error state with error details
+    //   //       // Handle the login response
+    //   //       // response.when(
+    //   //       //   success: (loginResponse) async {
+    //   //       //     emit(LoginState.suceess(loginResponse));
+    //   //       //   },
+    //   //       //   failure: (error) {
+    //   //       //     // Emit error state with error details
 
-            //     emit(
-            //       LoginState.error(error),
-            //     );
-            //   },
-            // );
-          },
-        );
-      }
-    }
+    //   //       //     emit(
+    //   //       //       LoginState.error(error),
+    //   //       //     );
+    //   //       //   },
+    //   //       // );
+    //   //     },
+    //   //   );
+    //   // }
+    // }
   }
 }
