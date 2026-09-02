@@ -32,14 +32,14 @@ class _HomeScreenState extends State<HomeScreen> {
         // Important: this allows the body to flow underneath the transparent/floating nav bar
         extendBody: true,
         body: _buildBody(),
-        bottomNavigationBar: CustomBottomNavBar(
-          currentIndex: _currentIndex,
-          onTabSelected: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-        ),
+        // bottomNavigationBar: CustomBottomNavBar(
+        //   currentIndex: _currentIndex,
+        //   onTabSelected: (index) {
+        //     setState(() {
+        //       _currentIndex = index;
+        //     });
+        //   },
+        // ),
       ),
     );
   }

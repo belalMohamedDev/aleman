@@ -1,24 +1,31 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 
-void showFallingEggs(BuildContext context) {
+Future<void> showFallingEggs(BuildContext context) async {
   final RenderBox renderBox = context.findRenderObject() as RenderBox;
   final Offset position = renderBox.localToGlobal(Offset.zero);
   final Size size = renderBox.size;
-  
+
   // Center of the button
   final double startX = position.dx + (size.width / 2);
   // Bottom of the button
   final double startY = position.dy + size.height;
 
+  // Play the chicken sound and wait for it to actually start
+  final player = AudioPlayer();
+  await player.play(
+    AssetSource('sounds/dragon-studio-chicken-sounds-487676.mp3'),
+    position: const Duration(milliseconds: 500),
+  );
+
+  if (!context.mounted) return;
+
   final overlayState = Overlay.of(context);
   final overlayEntry = OverlayEntry(
-    builder: (context) => FallingEggsOverlay(
-      startX: startX,
-      startY: startY,
-    ),
+    builder: (context) => FallingEggsOverlay(startX: startX, startY: startY),
   );
 
   overlayState.insert(overlayEntry);
@@ -27,6 +34,7 @@ void showFallingEggs(BuildContext context) {
   Future.delayed(const Duration(milliseconds: 2500), () {
     if (overlayEntry.mounted) {
       overlayEntry.remove();
+      player.dispose();
     }
   });
 }
@@ -96,7 +104,11 @@ class _FallingEggsOverlayState extends State<FallingEggsOverlay>
               // Start at button's bottom, fall down
               double yPos = egg.startY + (progress * (size.height) * egg.speed);
               // Center the egg horizontally around the button's center
-              double xPos = egg.startX - (egg.size / 2) + (_random.nextDouble() * 10 - 5); // Add slight horizontal flutter
+              double xPos =
+                  egg.startX -
+                  (egg.size / 2) +
+                  (_random.nextDouble() * 10 -
+                      5); // Add slight horizontal flutter
 
               return Positioned(
                 left: xPos,
