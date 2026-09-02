@@ -29,7 +29,7 @@ class _HomeBodyState extends State<HomeBody> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _welcomAndNotificationRow(context),
+            _titleAndNotificationRow(context),
 
             responsive.setSizeBox(height: 2),
             const SearchRow(),
@@ -55,7 +55,7 @@ class _HomeBodyState extends State<HomeBody> {
     );
   }
 
-  Row _welcomAndNotificationRow(BuildContext context) {
+  Row _titleAndNotificationRow(BuildContext context) {
     final responsive = ResponsiveUtils(context);
 
     return Row(
@@ -90,16 +90,6 @@ class _HomeBodyState extends State<HomeBody> {
         ),
         const Spacer(),
 
-        // Container(
-        //   height: responsive.setHeight(4.5),
-        //   width: responsive.setWidth(9.8),
-        //   decoration: BoxDecoration(
-        //     color: ColorManger.iconsBackgroundColor,
-        //     borderRadius: BorderRadius.circular(responsive.setBorderRadius(5)),
-        //   ),
-        //   child: Icon(Iconsax.bag, color: ColorManger.primary),
-        // ),
-        // responsive.setSizeBox(width: 1),
         Container(
           height: responsive.setHeight(4.5),
           width: responsive.setWidth(9.8),
@@ -108,6 +98,21 @@ class _HomeBodyState extends State<HomeBody> {
             borderRadius: BorderRadius.circular(responsive.setBorderRadius(5)),
           ),
           child: Icon(Iconsax.notification, color: ColorManger.primaryLight),
+        ),
+        responsive.setSizeBox(width: 3),
+        Container(
+          height: responsive.setHeight(4.5),
+          width: responsive.setWidth(9.8),
+          decoration: BoxDecoration(
+            color: ColorManger.backgroundItem,
+            borderRadius: BorderRadius.circular(responsive.setBorderRadius(5)),
+          ),
+          child: Image.asset(
+            ImageAsset.farmer,
+            fit: BoxFit.contain,
+            color: ColorManger.primaryLight,
+          ),
+          //    Icon(Iconsax.user, color: ColorManger.primaryLight),
         ),
 
         // GestureDetector(

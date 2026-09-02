@@ -33,6 +33,36 @@ class NewProductGrideView extends StatelessWidget {
         'image': 'assets/image/henbag.png',
         'category': 'علف دواجن',
       },
+      {
+        'name': 'علف كتاكيت بادي 24%',
+        'price': '870 ج.م',
+        'image': 'assets/image/henbag.png',
+        'category': 'علف دواجن',
+      },
+      {
+        'name': 'علف بياض إنتاجي 16%',
+        'price': '750 ج.م',
+        'image': 'assets/image/henbag.png',
+        'category': 'علف دواجن',
+      },
+      {
+        'name': 'علف بياض بادي 18%',
+        'price': '780 ج.م',
+        'image': 'assets/image/henbag.png',
+        'category': 'علف دواجن',
+      },
+      {
+        'name': 'علف بياض نامي 14%',
+        'price': '730 ج.م',
+        'image': 'assets/image/henbag.png',
+        'category': 'علف دواجن',
+      },
+      {
+        'name': 'علف دواجن تسمين 22%',
+        'price': '840 ج.م',
+        'image': 'assets/image/henbag.png',
+        'category': 'علف دواجن',
+      },
       // ماشية
       {
         'name': 'علف ماشية حلاب 18%',
@@ -49,6 +79,36 @@ class NewProductGrideView extends StatelessWidget {
       {
         'name': 'علف عجول بادي 20%',
         'price': '750 ج.م',
+        'image': 'assets/image/cawbag.png',
+        'category': 'علف ماشية',
+      },
+      {
+        'name': 'علف ماشية حلاب 21%',
+        'price': '760 ج.م',
+        'image': 'assets/image/cawbag.png',
+        'category': 'علف ماشية',
+      },
+      {
+        'name': 'علف ماشية حلاب 16%',
+        'price': '680 ج.م',
+        'image': 'assets/image/cawbag.png',
+        'category': 'علف ماشية',
+      },
+      {
+        'name': 'علف عجول نامي 18%',
+        'price': '720 ج.م',
+        'image': 'assets/image/cawbag.png',
+        'category': 'علف ماشية',
+      },
+      {
+        'name': 'علف ماشية صيانة 12%',
+        'price': '650 ج.م',
+        'image': 'assets/image/cawbag.png',
+        'category': 'علف ماشية',
+      },
+      {
+        'name': 'علف ماشية جاف 14%',
+        'price': '670 ج.م',
         'image': 'assets/image/cawbag.png',
         'category': 'علف ماشية',
       },
@@ -71,6 +131,36 @@ class NewProductGrideView extends StatelessWidget {
         'image': 'assets/image/dugbag.png',
         'category': 'علف بط',
       },
+      {
+        'name': 'علف بط نامي 20%',
+        'price': '690 ج.م',
+        'image': 'assets/image/dugbag.png',
+        'category': 'علف بط',
+      },
+      {
+        'name': 'علف بط ناهي 18%',
+        'price': '670 ج.م',
+        'image': 'assets/image/dugbag.png',
+        'category': 'علف بط',
+      },
+      {
+        'name': 'علف بط تسمين سوبر',
+        'price': '720 ج.م',
+        'image': 'assets/image/dugbag.png',
+        'category': 'علف بط',
+      },
+      {
+        'name': 'علف بط إنتاجي 16%',
+        'price': '650 ج.م',
+        'image': 'assets/image/dugbag.png',
+        'category': 'علف بط',
+      },
+      {
+        'name': 'علف بط تسمين مبكر',
+        'price': '700 ج.م',
+        'image': 'assets/image/dugbag.png',
+        'category': 'علف بط',
+      },
       // أرانب
       {
         'name': 'علف أرانب مرضع',
@@ -87,6 +177,36 @@ class NewProductGrideView extends StatelessWidget {
       {
         'name': 'علف أرانب صيانة',
         'price': '850 ج.م',
+        'image': 'assets/image/rabbitbag.png',
+        'category': 'علف ارانب',
+      },
+      {
+        'name': 'علف أرانب فطام 18%',
+        'price': '880 ج.م',
+        'image': 'assets/image/rabbitbag.png',
+        'category': 'علف ارانب',
+      },
+      {
+        'name': 'علف أرانب حوامل',
+        'price': '890 ج.م',
+        'image': 'assets/image/rabbitbag.png',
+        'category': 'علف ارانب',
+      },
+      {
+        'name': 'علف أرانب إحلال',
+        'price': '860 ج.م',
+        'image': 'assets/image/rabbitbag.png',
+        'category': 'علف ارانب',
+      },
+      {
+        'name': 'علف أرانب تسمين سوبر',
+        'price': '920 ج.م',
+        'image': 'assets/image/rabbitbag.png',
+        'category': 'علف ارانب',
+      },
+      {
+        'name': 'علف أرانب ذكور',
+        'price': '840 ج.م',
         'image': 'assets/image/rabbitbag.png',
         'category': 'علف ارانب',
       },

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'app_logic_cubit.dart';
@@ -9,6 +9,7 @@ part of 'app_logic_cubit.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$AppLogicState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppLogicState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AppLogicState);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AppLogicState()';
+    return 'AppLogicState()';
 }
 
 
@@ -197,7 +198,7 @@ class _Initial implements AppLogicState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
 }
 
 
@@ -206,7 +207,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AppLogicState.initial()';
+    return 'AppLogicState.initial()';
 }
 
 
@@ -234,16 +235,18 @@ $ThemeChangeModeStateCopyWith<ThemeChangeModeState> get copyWith => _$ThemeChang
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeChangeModeState&&(identical(other.isDark, isDark) || other.isDark == isDark));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeChangeModeState&&(identical(other.isDark, isDark) || other.isDark == isDark));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isDark);
+int get hashCode {
+    return Object.hash(runtimeType,isDark);
+}
 
 @override
 String toString() {
-  return 'AppLogicState.themeChangeMode(isDark: $isDark)';
+    return 'AppLogicState.themeChangeMode(isDark: $isDark)';
 }
 
 
@@ -300,16 +303,18 @@ $LanguageChangeStateCopyWith<LanguageChangeState> get copyWith => _$LanguageChan
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LanguageChangeState&&(identical(other.locale, locale) || other.locale == locale));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LanguageChangeState&&(identical(other.locale, locale) || other.locale == locale));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,locale);
+int get hashCode {
+    return Object.hash(runtimeType,locale);
+}
 
 @override
 String toString() {
-  return 'AppLogicState.languageChange(locale: $locale)';
+    return 'AppLogicState.languageChange(locale: $locale)';
 }
 
 
