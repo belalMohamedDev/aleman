@@ -19,7 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<HomeCuibtCubit>().fetchBanners();
+    context.read<HomeCuibtCubit>().fetchHomeData();
   }
 
   @override

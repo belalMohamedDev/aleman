@@ -15,30 +15,73 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeCuibtState {
 
-
+ RequestStatus get bannersStatus; List<BannerEntity> get banners; int get bannerIndex; String? get bannersError; RequestStatus get categoriesStatus; List<CategoryEntity> get categories; String get selectedCategory; String? get categoriesError;
+/// Create a copy of HomeCuibtState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$HomeCuibtStateCopyWith<HomeCuibtState> get copyWith => _$HomeCuibtStateCopyWithImpl<HomeCuibtState>(this as HomeCuibtState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeCuibtState);
+  final _this = this as HomeCuibtState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeCuibtState&&(identical(other.bannersStatus, _this.bannersStatus) || other.bannersStatus == _this.bannersStatus)&&const DeepCollectionEquality().equals(other.banners, _this.banners)&&(identical(other.bannerIndex, _this.bannerIndex) || other.bannerIndex == _this.bannerIndex)&&(identical(other.bannersError, _this.bannersError) || other.bannersError == _this.bannersError)&&(identical(other.categoriesStatus, _this.categoriesStatus) || other.categoriesStatus == _this.categoriesStatus)&&const DeepCollectionEquality().equals(other.categories, _this.categories)&&(identical(other.selectedCategory, _this.selectedCategory) || other.selectedCategory == _this.selectedCategory)&&(identical(other.categoriesError, _this.categoriesError) || other.categoriesError == _this.categoriesError));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode {
+  final _this = this as HomeCuibtState;
+  return Object.hash(runtimeType,_this.bannersStatus,const DeepCollectionEquality().hash(_this.banners),_this.bannerIndex,_this.bannersError,_this.categoriesStatus,const DeepCollectionEquality().hash(_this.categories),_this.selectedCategory,_this.categoriesError);
+}
 
 @override
 String toString() {
-    return 'HomeCuibtState()';
+  final _this = this as HomeCuibtState;
+  return 'HomeCuibtState(bannersStatus: ${_this.bannersStatus}, banners: ${_this.banners}, bannerIndex: ${_this.bannerIndex}, bannersError: ${_this.bannersError}, categoriesStatus: ${_this.categoriesStatus}, categories: ${_this.categories}, selectedCategory: ${_this.selectedCategory}, categoriesError: ${_this.categoriesError})';
 }
 
 
 }
 
 /// @nodoc
-class $HomeCuibtStateCopyWith<$Res>  {
-$HomeCuibtStateCopyWith(HomeCuibtState _, $Res Function(HomeCuibtState) __);
+abstract mixin class $HomeCuibtStateCopyWith<$Res>  {
+  factory $HomeCuibtStateCopyWith(HomeCuibtState value, $Res Function(HomeCuibtState) _then) = _$HomeCuibtStateCopyWithImpl;
+@useResult
+$Res call({
+ RequestStatus bannersStatus, List<BannerEntity> banners, int bannerIndex, String? bannersError, RequestStatus categoriesStatus, List<CategoryEntity> categories, String selectedCategory, String? categoriesError
+});
+
+
+
+
+}
+/// @nodoc
+class _$HomeCuibtStateCopyWithImpl<$Res>
+    implements $HomeCuibtStateCopyWith<$Res> {
+  _$HomeCuibtStateCopyWithImpl(this._self, this._then);
+
+  final HomeCuibtState _self;
+  final $Res Function(HomeCuibtState) _then;
+
+/// Create a copy of HomeCuibtState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? bannersStatus = null,Object? banners = null,Object? bannerIndex = null,Object? bannersError = freezed,Object? categoriesStatus = null,Object? categories = null,Object? selectedCategory = null,Object? categoriesError = freezed,}) {
+  return _then(HomeCuibtState(
+bannersStatus: null == bannersStatus ? _self.bannersStatus : bannersStatus // ignore: cast_nullable_to_non_nullable
+as RequestStatus,banners: null == banners ? _self.banners : banners // ignore: cast_nullable_to_non_nullable
+as List<BannerEntity>,bannerIndex: null == bannerIndex ? _self.bannerIndex : bannerIndex // ignore: cast_nullable_to_non_nullable
+as int,bannersError: freezed == bannersError ? _self.bannersError : bannersError // ignore: cast_nullable_to_non_nullable
+as String?,categoriesStatus: null == categoriesStatus ? _self.categoriesStatus : categoriesStatus // ignore: cast_nullable_to_non_nullable
+as RequestStatus,categories: null == categories ? _self.categories : categories // ignore: cast_nullable_to_non_nullable
+as List<CategoryEntity>,selectedCategory: null == selectedCategory ? _self.selectedCategory : selectedCategory // ignore: cast_nullable_to_non_nullable
+as String,categoriesError: freezed == categoriesError ? _self.categoriesError : categoriesError // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
 }
 
 
@@ -56,14 +99,11 @@ extension HomeCuibtStatePatterns on HomeCuibtState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( GetBannersLoading value)?  getBannersLoading,TResult Function( GetBannersSuccess value)?  getBannersSuccess,TResult Function( GetBannersError value)?  getBannersError,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _HomeCuibtState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial(_that);case GetBannersLoading() when getBannersLoading != null:
-return getBannersLoading(_that);case GetBannersSuccess() when getBannersSuccess != null:
-return getBannersSuccess(_that);case GetBannersError() when getBannersError != null:
-return getBannersError(_that);case _:
+case _HomeCuibtState() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -81,14 +121,11 @@ return getBannersError(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( GetBannersLoading value)  getBannersLoading,required TResult Function( GetBannersSuccess value)  getBannersSuccess,required TResult Function( GetBannersError value)  getBannersError,}){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _HomeCuibtState value)  $default,){
 final _that = this;
 switch (_that) {
-case _Initial():
-return initial(_that);case GetBannersLoading():
-return getBannersLoading(_that);case GetBannersSuccess():
-return getBannersSuccess(_that);case GetBannersError():
-return getBannersError(_that);case _:
+case _HomeCuibtState():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -105,14 +142,11 @@ return getBannersError(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( GetBannersLoading value)?  getBannersLoading,TResult? Function( GetBannersSuccess value)?  getBannersSuccess,TResult? Function( GetBannersError value)?  getBannersError,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _HomeCuibtState value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial(_that);case GetBannersLoading() when getBannersLoading != null:
-return getBannersLoading(_that);case GetBannersSuccess() when getBannersSuccess != null:
-return getBannersSuccess(_that);case GetBannersError() when getBannersError != null:
-return getBannersError(_that);case _:
+case _HomeCuibtState() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -129,13 +163,10 @@ return getBannersError(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  getBannersLoading,TResult Function( List<BannerEntity> banners,  int bannerIndex)?  getBannersSuccess,TResult Function( String error)?  getBannersError,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  String selectedCategory,  String? categoriesError)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial();case GetBannersLoading() when getBannersLoading != null:
-return getBannersLoading();case GetBannersSuccess() when getBannersSuccess != null:
-return getBannersSuccess(_that.banners,_that.bannerIndex);case GetBannersError() when getBannersError != null:
-return getBannersError(_that.error);case _:
+case _HomeCuibtState() when $default != null:
+return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategory,_that.categoriesError);case _:
   return orElse();
 
 }
@@ -153,13 +184,10 @@ return getBannersError(_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  getBannersLoading,required TResult Function( List<BannerEntity> banners,  int bannerIndex)  getBannersSuccess,required TResult Function( String error)  getBannersError,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  String selectedCategory,  String? categoriesError)  $default,) {final _that = this;
 switch (_that) {
-case _Initial():
-return initial();case GetBannersLoading():
-return getBannersLoading();case GetBannersSuccess():
-return getBannersSuccess(_that.banners,_that.bannerIndex);case GetBannersError():
-return getBannersError(_that.error);case _:
+case _HomeCuibtState():
+return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategory,_that.categoriesError);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -176,13 +204,10 @@ return getBannersError(_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  getBannersLoading,TResult? Function( List<BannerEntity> banners,  int bannerIndex)?  getBannersSuccess,TResult? Function( String error)?  getBannersError,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  String selectedCategory,  String? categoriesError)?  $default,) {final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial();case GetBannersLoading() when getBannersLoading != null:
-return getBannersLoading();case GetBannersSuccess() when getBannersSuccess != null:
-return getBannersSuccess(_that.banners,_that.bannerIndex);case GetBannersError() when getBannersError != null:
-return getBannersError(_that.error);case _:
+case _HomeCuibtState() when $default != null:
+return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategory,_that.categoriesError);case _:
   return null;
 
 }
@@ -193,116 +218,64 @@ return getBannersError(_that.error);case _:
 /// @nodoc
 
 
-class _Initial implements HomeCuibtState {
-  const _Initial();
+class _HomeCuibtState implements HomeCuibtState {
+  const _HomeCuibtState({this.bannersStatus = RequestStatus.initial,  List<BannerEntity> banners = const [], this.bannerIndex = 0, this.bannersError, this.categoriesStatus = RequestStatus.initial,  List<CategoryEntity> categories = const [], this.selectedCategory = 'علف ارانب', this.categoriesError}): _banners = banners,_categories = categories;
   
 
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-    return 'HomeCuibtState.initial()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class GetBannersLoading implements HomeCuibtState {
-  const GetBannersLoading();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetBannersLoading);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-    return 'HomeCuibtState.getBannersLoading()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class GetBannersSuccess implements HomeCuibtState {
-  const GetBannersSuccess( List<BannerEntity> banners, {this.bannerIndex = 0}): _banners = banners;
-  
-
+@override@JsonKey() final  RequestStatus bannersStatus;
  final  List<BannerEntity> _banners;
- List<BannerEntity> get banners {
+@override@JsonKey() List<BannerEntity> get banners {
   if (_banners is EqualUnmodifiableListView) return _banners;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_banners);
 }
 
-@JsonKey() final  int bannerIndex;
+@override@JsonKey() final  int bannerIndex;
+@override final  String? bannersError;
+@override@JsonKey() final  RequestStatus categoriesStatus;
+ final  List<CategoryEntity> _categories;
+@override@JsonKey() List<CategoryEntity> get categories {
+  if (_categories is EqualUnmodifiableListView) return _categories;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_categories);
+}
+
+@override@JsonKey() final  String selectedCategory;
+@override final  String? categoriesError;
 
 /// Create a copy of HomeCuibtState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$GetBannersSuccessCopyWith<GetBannersSuccess> get copyWith => _$GetBannersSuccessCopyWithImpl<GetBannersSuccess>(this, _$identity);
+_$HomeCuibtStateCopyWith<_HomeCuibtState> get copyWith => __$HomeCuibtStateCopyWithImpl<_HomeCuibtState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetBannersSuccess&&const DeepCollectionEquality().equals(other.banners, _banners)&&(identical(other.bannerIndex, bannerIndex) || other.bannerIndex == bannerIndex));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeCuibtState&&(identical(other.bannersStatus, bannersStatus) || other.bannersStatus == bannersStatus)&&const DeepCollectionEquality().equals(other.banners, _banners)&&(identical(other.bannerIndex, bannerIndex) || other.bannerIndex == bannerIndex)&&(identical(other.bannersError, bannersError) || other.bannersError == bannersError)&&(identical(other.categoriesStatus, categoriesStatus) || other.categoriesStatus == categoriesStatus)&&const DeepCollectionEquality().equals(other.categories, _categories)&&(identical(other.selectedCategory, selectedCategory) || other.selectedCategory == selectedCategory)&&(identical(other.categoriesError, categoriesError) || other.categoriesError == categoriesError));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_banners),bannerIndex);
+    return Object.hash(runtimeType,bannersStatus,const DeepCollectionEquality().hash(_banners),bannerIndex,bannersError,categoriesStatus,const DeepCollectionEquality().hash(_categories),selectedCategory,categoriesError);
 }
 
 @override
 String toString() {
-    return 'HomeCuibtState.getBannersSuccess(banners: $banners, bannerIndex: $bannerIndex)';
+    return 'HomeCuibtState(bannersStatus: $bannersStatus, banners: $banners, bannerIndex: $bannerIndex, bannersError: $bannersError, categoriesStatus: $categoriesStatus, categories: $categories, selectedCategory: $selectedCategory, categoriesError: $categoriesError)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $GetBannersSuccessCopyWith<$Res> implements $HomeCuibtStateCopyWith<$Res> {
-  factory $GetBannersSuccessCopyWith(GetBannersSuccess value, $Res Function(GetBannersSuccess) _then) = _$GetBannersSuccessCopyWithImpl;
-@useResult
+abstract mixin class _$HomeCuibtStateCopyWith<$Res> implements $HomeCuibtStateCopyWith<$Res> {
+  factory _$HomeCuibtStateCopyWith(_HomeCuibtState value, $Res Function(_HomeCuibtState) _then) = __$HomeCuibtStateCopyWithImpl;
+@override @useResult
 $Res call({
- List<BannerEntity> banners, int bannerIndex
+ RequestStatus bannersStatus, List<BannerEntity> banners, int bannerIndex, String? bannersError, RequestStatus categoriesStatus, List<CategoryEntity> categories, String selectedCategory, String? categoriesError
 });
 
 
@@ -310,88 +283,26 @@ $Res call({
 
 }
 /// @nodoc
-class _$GetBannersSuccessCopyWithImpl<$Res>
-    implements $GetBannersSuccessCopyWith<$Res> {
-  _$GetBannersSuccessCopyWithImpl(this._self, this._then);
+class __$HomeCuibtStateCopyWithImpl<$Res>
+    implements _$HomeCuibtStateCopyWith<$Res> {
+  __$HomeCuibtStateCopyWithImpl(this._self, this._then);
 
-  final GetBannersSuccess _self;
-  final $Res Function(GetBannersSuccess) _then;
+  final _HomeCuibtState _self;
+  final $Res Function(_HomeCuibtState) _then;
 
 /// Create a copy of HomeCuibtState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? banners = null,Object? bannerIndex = null,}) {
-  return _then(GetBannersSuccess(
-null == banners ? _self._banners : banners // ignore: cast_nullable_to_non_nullable
+@override @pragma('vm:prefer-inline') $Res call({Object? bannersStatus = null,Object? banners = null,Object? bannerIndex = null,Object? bannersError = freezed,Object? categoriesStatus = null,Object? categories = null,Object? selectedCategory = null,Object? categoriesError = freezed,}) {
+  return _then(_HomeCuibtState(
+bannersStatus: null == bannersStatus ? _self.bannersStatus : bannersStatus // ignore: cast_nullable_to_non_nullable
+as RequestStatus,banners: null == banners ? _self._banners : banners // ignore: cast_nullable_to_non_nullable
 as List<BannerEntity>,bannerIndex: null == bannerIndex ? _self.bannerIndex : bannerIndex // ignore: cast_nullable_to_non_nullable
-as int,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class GetBannersError implements HomeCuibtState {
-  const GetBannersError(this.error);
-  
-
- final  String error;
-
-/// Create a copy of HomeCuibtState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$GetBannersErrorCopyWith<GetBannersError> get copyWith => _$GetBannersErrorCopyWithImpl<GetBannersError>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is GetBannersError&&(identical(other.error, error) || other.error == error));
-}
-
-
-@override
-int get hashCode {
-    return Object.hash(runtimeType,error);
-}
-
-@override
-String toString() {
-    return 'HomeCuibtState.getBannersError(error: $error)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $GetBannersErrorCopyWith<$Res> implements $HomeCuibtStateCopyWith<$Res> {
-  factory $GetBannersErrorCopyWith(GetBannersError value, $Res Function(GetBannersError) _then) = _$GetBannersErrorCopyWithImpl;
-@useResult
-$Res call({
- String error
-});
-
-
-
-
-}
-/// @nodoc
-class _$GetBannersErrorCopyWithImpl<$Res>
-    implements $GetBannersErrorCopyWith<$Res> {
-  _$GetBannersErrorCopyWithImpl(this._self, this._then);
-
-  final GetBannersError _self;
-  final $Res Function(GetBannersError) _then;
-
-/// Create a copy of HomeCuibtState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? error = null,}) {
-  return _then(GetBannersError(
-null == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
-as String,
+as int,bannersError: freezed == bannersError ? _self.bannersError : bannersError // ignore: cast_nullable_to_non_nullable
+as String?,categoriesStatus: null == categoriesStatus ? _self.categoriesStatus : categoriesStatus // ignore: cast_nullable_to_non_nullable
+as RequestStatus,categories: null == categories ? _self._categories : categories // ignore: cast_nullable_to_non_nullable
+as List<CategoryEntity>,selectedCategory: null == selectedCategory ? _self.selectedCategory : selectedCategory // ignore: cast_nullable_to_non_nullable
+as String,categoriesError: freezed == categoriesError ? _self.categoriesError : categoriesError // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

@@ -2,6 +2,7 @@ import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/network/error_handler/api_error_handler.dart';
 import 'package:aleman/feature/home/data/mapper/banner_mapper.dart';
+import 'package:aleman/feature/home/data/mapper/category_mapper.dart';
 import 'package:aleman/feature/home/data/repository/home_repo.dart';
 
 class HomeRepositoryImplement implements HomeRepository {
@@ -19,6 +20,21 @@ class HomeRepositoryImplement implements HomeRepository {
           .toList();
 
       return ApiResult.success(banners);
+    } catch (error) {
+      return ApiResult.failure(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<List<CategoryEntity>>> getCategoryRepo() async {
+    try {
+      final response = await _apiService.getCategoriesService();
+
+      final List<CategoryEntity> categories = response
+          .map((categoryModel) => categoryModel.toDomain())
+          .toList();
+
+      return ApiResult.success(categories);
     } catch (error) {
       return ApiResult.failure(ApiErrorHandler.handle(error));
     }

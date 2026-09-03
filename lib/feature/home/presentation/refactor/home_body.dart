@@ -7,17 +7,12 @@ import 'package:aleman/feature/home/presentation/widget/category_list_view_build
 import 'package:aleman/feature/home/presentation/widget/product_gride_view.dart';
 import 'package:aleman/feature/home/presentation/widget/search_row.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 
-class HomeBody extends StatefulWidget {
+class HomeBody extends StatelessWidget {
   const HomeBody({super.key});
-
-  @override
-  State<HomeBody> createState() => _HomeBodyState();
-}
-
-class _HomeBodyState extends State<HomeBody> {
-  String selectedCategory = 'علف ارانب';
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +31,14 @@ class _HomeBodyState extends State<HomeBody> {
             const SearchRow(),
             responsive.setSizeBox(height: 3),
             const BannerCarouselSlider(),
-            CategoryListViewBuilder(
-              selectedCategory: selectedCategory,
-              onCategorySelected: (category) {
-                setState(() {
-                  selectedCategory = category;
-                });
+            const CategoryListViewBuilder(),
+            responsive.setSizeBox(height: 2),
+            BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
+              buildWhen: (previous, current) => previous.selectedCategory != current.selectedCategory,
+              builder: (context, state) {
+                return NewProductGrideView(selectedCategory: state.selectedCategory);
               },
             ),
-            responsive.setSizeBox(height: 2),
-            NewProductGrideView(selectedCategory: selectedCategory),
             responsive.setSizeBox(
               height: 10,
             ), // Extra space for floating bottom nav
