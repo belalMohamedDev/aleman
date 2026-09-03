@@ -14,7 +14,15 @@ abstract class HomeCuibtState with _$HomeCuibtState {
     // Categories
     @Default(RequestStatus.initial) RequestStatus categoriesStatus,
     @Default([]) List<CategoryEntity> categories,
-    @Default('علف ارانب') String selectedCategory,
+    @Default(1) int selectedCategoryId,
     String? categoriesError,
+
+    // Products
+    @Default(RequestStatus.initial) RequestStatus productsStatus,
+    @Default([]) List<ProductEntity> products,
+    String? productsError,
+
+    // Product Details Bottom Sheet
+    @Default(1) int quantity,
   }) = _HomeCuibtState;
 }

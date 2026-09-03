@@ -16,7 +16,7 @@ class CategoryListViewBuilder extends StatelessWidget {
     final responsive = ResponsiveUtils(context);
 
     return BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
-      buildWhen: (previous, current) => previous.categoriesStatus != current.categoriesStatus || previous.selectedCategory != current.selectedCategory,
+      buildWhen: (previous, current) => previous.categoriesStatus != current.categoriesStatus || previous.selectedCategoryId != current.selectedCategoryId,
       builder: (context, state) {
         if (state.categoriesStatus == RequestStatus.loading) {
           return Column(
@@ -82,13 +82,13 @@ class CategoryListViewBuilder extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   final category = categories[index];
-                  final isSelected = state.selectedCategory == category.name;
+                  final isSelected = state.selectedCategoryId == category.id;
 
                   return Padding(
                     padding: responsive.setPadding(left: 4.2),
                     child: InkWell(
                       onTap: () {
-                        context.read<HomeCuibtCubit>().changeSelectedCategory(category.name);
+                        context.read<HomeCuibtCubit>().changeSelectedCategory(category.id);
                       },
                       borderRadius: BorderRadius.circular(
                         responsive.setBorderRadius(2),

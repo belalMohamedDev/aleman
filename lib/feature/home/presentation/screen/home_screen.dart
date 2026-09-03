@@ -33,7 +33,14 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         // Important: this allows the body to flow underneath the transparent/floating nav bar
         extendBody: true,
-        body: const HomeBody(),
+        body: RefreshIndicator(
+          color: ColorManger.primary,
+          backgroundColor: ColorManger.white,
+          onRefresh: () async {
+            await context.read<HomeCuibtCubit>().fetchHomeData();
+          },
+          child: const HomeBody(),
+        ),
         // bottomNavigationBar: CustomBottomNavBar(
         //   currentIndex: _currentIndex,
         //   onTabSelected: (index) {

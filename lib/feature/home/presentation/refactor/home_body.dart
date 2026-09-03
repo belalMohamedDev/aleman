@@ -33,12 +33,7 @@ class HomeBody extends StatelessWidget {
             const BannerCarouselSlider(),
             const CategoryListViewBuilder(),
             responsive.setSizeBox(height: 2),
-            BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
-              buildWhen: (previous, current) => previous.selectedCategory != current.selectedCategory,
-              builder: (context, state) {
-                return NewProductGrideView(selectedCategory: state.selectedCategory);
-              },
-            ),
+            const NewProductGrideView(),
             responsive.setSizeBox(
               height: 10,
             ), // Extra space for floating bottom nav

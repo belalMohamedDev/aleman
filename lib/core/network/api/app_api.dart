@@ -1,6 +1,7 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
 import 'package:aleman/feature/home/data/model/banner_model.dart';
 import 'package:aleman/feature/home/data/model/category_model.dart';
+import 'package:aleman/feature/home/data/model/product_model.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -15,4 +16,7 @@ abstract class AppServiceClient {
 
   @GET(ApiConstants.category)
   Future<List<CategoryModel>> getCategoriesService();
+
+  @GET(ApiConstants.product)
+  Future<List<ProductModel>> getProductsService();
 }
