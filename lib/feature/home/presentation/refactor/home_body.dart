@@ -36,7 +36,6 @@ class _HomeBodyState extends State<HomeBody> {
             const SearchRow(),
             responsive.setSizeBox(height: 3),
             const BannerCarouselSlider(),
-            responsive.setSizeBox(height: 3),
             CategoryListViewBuilder(
               selectedCategory: selectedCategory,
               onCategorySelected: (category) {

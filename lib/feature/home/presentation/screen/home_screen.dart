@@ -1,7 +1,9 @@
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,11 +16,11 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // int _currentIndex = 0;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // WidgetsBinding.instance.addPostFrameCallback((_) async { ... });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeCuibtCubit>().fetchBanners();
+  }
 
   @override
   Widget build(BuildContext context) {

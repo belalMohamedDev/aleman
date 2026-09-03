@@ -3,6 +3,9 @@ import 'package:aleman/core/application/bloc_observer.dart';
 import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/dio_factory/dio_factory.dart';
 import 'package:aleman/feature/Authentication/logic/loginBloc/login_bloc.dart';
+import 'package:aleman/feature/home/data/repository/home_repo.dart';
+import 'package:aleman/feature/home/data/repository/home_repo_imp.dart';
+import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +17,7 @@ import 'package:image_picker/image_picker.dart';
 final instance = GetIt.instance;
 
 Future<void> initAppModule() async {
-  await Future.wait([_initAppModule(), _initLogin()]);
+  await Future.wait([_initAppModule(), _initLogin(), _initHome()]);
 }
 
 Future<void> _initAppModule() async {
@@ -40,4 +43,13 @@ Future<void> _initAppModule() async {
 
 Future<void> _initLogin() async {
   instance.registerFactory<LoginBloc>(() => LoginBloc());
+}
+
+Future<void> _initHome() async {
+  instance.registerFactory<HomeRepository>(
+    () => HomeRepositoryImplement(instance<AppServiceClient>()),
+  );
+  instance.registerFactory<HomeCuibtCubit>(
+    () => HomeCuibtCubit(instance<HomeRepository>()),
+  );
 }

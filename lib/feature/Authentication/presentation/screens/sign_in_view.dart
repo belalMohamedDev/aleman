@@ -7,7 +7,6 @@ import 'package:aleman/feature/Authentication/presentation/refactors/signIn/emai
 import 'package:aleman/feature/Authentication/presentation/refactors/signIn/password_login_text_form_field.dart';
 import 'package:aleman/feature/Authentication/presentation/refactors/signIn/sign_in_button.dart';
 import 'package:aleman/feature/Authentication/presentation/sharedWidgetBetweenScreen/headline_text_auth_screen.dart';
-import 'package:aleman/feature/Authentication/presentation/sharedWidgetBetweenScreen/or_sign_in_with_text.dart';
 import 'package:aleman/feature/Authentication/presentation/sharedWidgetBetweenScreen/animated_call_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -1,14 +1,10 @@
-import 'dart:async';
-
+import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
-import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-
-import '../../../../feature/onboarding/presentation/screen/on_boarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -41,10 +37,7 @@ class _SplashScreenState extends State<SplashScreen>
     // 0-800ms: Hold steady (opacity 1.0, scale 1.0)
     // 800-1400ms: Fade out to 0.0 and scale up to 1.5
     // Start small (0.55) to match the padded native Android 12 logo, and grow gradually.
-    _logoScale = Tween<double>(
-      begin: 0.55,
-      end: 1.5,
-    ).animate(
+    _logoScale = Tween<double>(begin: 0.55, end: 1.5).animate(
       CurvedAnimation(parent: _exitController, curve: Curves.easeInOut),
     );
 
@@ -65,21 +58,11 @@ class _SplashScreenState extends State<SplashScreen>
       PrefKeys.prefsKeyOnBoardingScreenView,
     );
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 400),
-        pageBuilder: (context, animation, secondaryAnimation) =>
-            isOnBoardingScreenView
-                ? const HomeScreen()
-                : const OnBoardingScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: child,
-          );
-        },
-      ),
-    );
+    final String nextRoute = isOnBoardingScreenView
+        ? Routes.homeRoute
+        : Routes.onBoardingRoute;
+
+    Navigator.of(context).pushReplacementNamed(nextRoute);
   }
 
   @override
