@@ -8,6 +8,15 @@ class ProductModel {
   String? imageUrl;
   bool? isActive;
   String? createdAt;
+  
+  // New properties
+  double? weightPerSackKg;
+  double? pricePerTon;
+  double? proteinPercentage;
+  int? growthStage;
+  int? feedForm;
+  String? ingredients;
+  String? additives;
 
   ProductModel({
     this.id,
@@ -19,6 +28,13 @@ class ProductModel {
     this.imageUrl,
     this.isActive,
     this.createdAt,
+    this.weightPerSackKg,
+    this.pricePerTon,
+    this.proteinPercentage,
+    this.growthStage,
+    this.feedForm,
+    this.ingredients,
+    this.additives,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json) {
@@ -31,5 +47,15 @@ class ProductModel {
     imageUrl = json['imageUrl'];
     isActive = json['isActive'];
     createdAt = json['createdAt'];
+    
+    // Parse new properties
+    weightPerSackKg = json['weightPerSackKg']?.toDouble();
+    pricePerTon = json['pricePerTon']?.toDouble();
+    proteinPercentage = json['proteinPercentage']?.toDouble();
+    growthStage = json['growthStage'];
+    feedForm = json['feedForm'];
+    ingredients = json['ingredients'];
+    additives = json['additives'];
   }
 }
+

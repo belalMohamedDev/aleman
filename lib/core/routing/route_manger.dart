@@ -9,6 +9,7 @@ import 'package:aleman/feature/Authentication/presentation/screens/sign_in_view.
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:aleman/feature/onboarding/presentation/screen/on_boarding_screen.dart';
+import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,6 +34,9 @@ class RouteGenerator {
 
       case Routes.onBoardingRoute:
         return _buildFadeRoute(const OnBoardingScreen());
+
+      case Routes.profileRoute:
+        return _buildFadeRoute(const ProfileView());
 
       // ---------------------- DEFAULT -----------------------
       case Routes.noRoute:

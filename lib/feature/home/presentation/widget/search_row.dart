@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'falling_eggs_animation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
+import 'product_search_delegate.dart';
 
 /// A widget that provides a search input field and a filter button.
 /// When tapped, it navigates to the search screen.
@@ -22,9 +25,11 @@ class SearchRow extends StatelessWidget {
 
     return InkWell(
       onTap: () {
-        // Navigate to the search screen when the row is tapped
-
-        // context.pushNamed(Routes.search);
+        final cubit = context.read<HomeCuibtCubit>();
+        showSearch(
+          context: context,
+          delegate: ProductSearchDelegate(products: cubit.state.products),
+        );
       },
       child: Row(
         children: [

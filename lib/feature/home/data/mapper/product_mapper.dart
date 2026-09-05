@@ -8,6 +8,13 @@ class ProductEntity {
   final double price;
   final String imageUrl;
   final bool isActive;
+  final double weightPerSackKg;
+  final double pricePerTon;
+  final double proteinPercentage;
+  final int growthStage;
+  final int feedForm;
+  final String ingredients;
+  final String additives;
 
   ProductEntity({
     required this.id,
@@ -17,6 +24,13 @@ class ProductEntity {
     required this.price,
     required this.imageUrl,
     required this.isActive,
+    required this.weightPerSackKg,
+    required this.pricePerTon,
+    required this.proteinPercentage,
+    required this.growthStage,
+    required this.feedForm,
+    required this.ingredients,
+    required this.additives,
   });
 }
 
@@ -30,6 +44,13 @@ extension ProductMapper on ProductModel? {
       price: this?.price ?? 0.0,
       imageUrl: this?.imageUrl ?? '',
       isActive: this?.isActive ?? false,
+      weightPerSackKg: this?.weightPerSackKg ?? 0.0,
+      pricePerTon: this?.pricePerTon ?? 0.0,
+      proteinPercentage: this?.proteinPercentage ?? 0.0,
+      growthStage: this?.growthStage ?? 0,
+      feedForm: this?.feedForm ?? 0,
+      ingredients: this?.ingredients ?? '',
+      additives: this?.additives ?? '',
     );
   }
 }

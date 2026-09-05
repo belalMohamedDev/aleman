@@ -10,7 +10,7 @@ class PrefKeys {
   static const String userPhone = 'USER_PHONE';
   static const String refreshToken = 'refreshToken';
   static const String role = 'role';
-  static const String accessToken = 'accessToken';
+
   static const String enLocationArea = 'engLocationArea';
   static const String arLocationArea = 'arabicLocationArea';
   static const String latAddressHome = 'latAddressHome';

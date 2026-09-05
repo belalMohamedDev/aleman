@@ -108,22 +108,31 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
   }
 
   void incrementQuantity() {
-    emit(state.copyWith(quantity: state.quantity + 1));
+    // In ton mode increment by 0.5, otherwise by 1
+    final step = state.isTonMode ? 0.5 : 1.0;
+    emit(state.copyWith(quantity: state.quantity + step));
   }
 
   void decrementQuantity() {
-    if (state.quantity > 1) {
-      emit(state.copyWith(quantity: state.quantity - 1));
+    final step = state.isTonMode ? 0.5 : 1.0;
+    final minVal = state.isTonMode ? 0.5 : 1.0;
+    if (state.quantity > minVal) {
+      emit(state.copyWith(quantity: state.quantity - step));
     }
   }
 
   void resetQuantity() {
-    emit(state.copyWith(quantity: 1));
+    emit(state.copyWith(quantity: 1, isTonMode: false));
   }
 
-  void setQuantity(int val) {
+  void setQuantity(double val) {
     if (val > 0) {
       emit(state.copyWith(quantity: val));
     }
+  }
+
+  void toggleTonMode(bool isTon) {
+    // Reset quantity to sensible default when switching modes
+    emit(state.copyWith(isTonMode: isTon, quantity: isTon ? 1.0 : 1.0));
   }
 }

@@ -23,6 +23,7 @@ abstract class HomeCuibtState with _$HomeCuibtState {
     String? productsError,
 
     // Product Details Bottom Sheet
-    @Default(1) int quantity,
+    @Default(1) double quantity,
+    @Default(false) bool isTonMode,
   }) = _HomeCuibtState;
 }

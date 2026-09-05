@@ -9,6 +9,7 @@ import 'package:aleman/feature/home/presentation/widget/category_list_view_build
 import 'package:aleman/feature/home/presentation/widget/product_gride_view.dart';
 import 'package:aleman/feature/home/presentation/widget/search_row.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 
 class HomeBody extends StatelessWidget {
@@ -91,14 +92,19 @@ class HomeBody extends StatelessWidget {
         GestureDetector(
           onTap: () async {
             final token = await SharedPrefHelper.getSecuredString(
-                PrefKeys.userAccessToken);
+              PrefKeys.userAccessToken,
+            );
             if (context.mounted) {
               if (token.isNotEmpty) {
-                Navigator.of(context, rootNavigator: true)
-                    .pushNamed(Routes.profileRoute);
+                Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pushNamed(Routes.profileRoute);
               } else {
-                Navigator.of(context, rootNavigator: true)
-                    .pushNamed(Routes.loginRoute);
+                Navigator.of(
+                  context,
+                  rootNavigator: true,
+                ).pushNamed(Routes.loginRoute);
               }
             }
           },
@@ -111,10 +117,23 @@ class HomeBody extends StatelessWidget {
                 responsive.setBorderRadius(5),
               ),
             ),
-            child: Image.asset(
-              ImageAsset.farmer,
-              fit: BoxFit.contain,
-              color: ColorManger.primaryLight,
+            child: Stack(
+              children: [
+                Positioned(
+                  right: -1,
+                  top: -1.2,
+                  child: Icon(
+                    Icons.settings,
+                    size: 10.sp,
+                    color: ColorManger.primaryLight,
+                  ),
+                ),
+                Image.asset(
+                  ImageAsset.farmer,
+                  fit: BoxFit.contain,
+                  color: ColorManger.primaryLight,
+                ),
+              ],
             ),
             //    Icon(Iconsax.user, color: ColorManger.primaryLight),
           ),

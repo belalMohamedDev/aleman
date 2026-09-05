@@ -6,6 +6,7 @@ import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -14,280 +15,635 @@ class ProductDetailsBottomSheet extends StatelessWidget {
 
   const ProductDetailsBottomSheet({super.key, required this.product});
 
+  String _getGrowthStageName(int stage) {
+    switch (stage) {
+      case 1:
+        return 'بادي';
+      case 2:
+        return 'نامي';
+      case 3:
+        return 'ناهي';
+      case 4:
+        return 'بياض';
+      default:
+        return 'غير محدد';
+    }
+  }
+
+  String _getFeedFormName(int form) {
+    switch (form) {
+      case 1:
+        return 'محبب';
+      case 2:
+        return 'ناعم';
+      case 3:
+        return 'مفتت';
+      default:
+        return 'غير محدد';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveUtils(context);
 
-    return Container(
-      width: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Drag handle
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: 12, bottom: 16),
-                height: 4,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
-                  borderRadius: BorderRadius.circular(10),
+    return BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
+      builder: (context, state) {
+        final isTonMode = state.isTonMode;
+        final quantity = state.quantity;
+
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _HeroSection(product: product, isTonMode: isTonMode),
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      if (product.pricePerTon > 0) ...[
+                        _UnitToggle(isTonMode: isTonMode),
+                        const SizedBox(height: 20),
+                      ],
+                      _SpecChipsRow(
+                        product: product,
+                        getGrowthStageName: _getGrowthStageName,
+                        getFeedFormName: _getFeedFormName,
+                      ),
+                      if (product.description.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        Text(
+                          product.description,
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 13.sp,
+                            height: 1.6,
+                          ),
+                        ),
+                      ],
+                      if (product.ingredients.isNotEmpty ||
+                          product.additives.isNotEmpty) ...[
+                        const SizedBox(height: 20),
+                        _NutritionCard(product: product),
+                      ],
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
-            ),
+              _ActionBar(
+                product: product,
+                quantity: quantity,
+                isTonMode: isTonMode,
+                responsive: responsive,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
 
-            // Image
-            Center(
-              child: Container(
-                height: responsive.setHeight(20),
-                width: responsive.setWidth(50),
-                decoration: BoxDecoration(
-                  color: ColorManger.primaryLight.withValues(alpha: 0.05),
-                  borderRadius: BorderRadius.circular(16),
+class _HeroSection extends StatelessWidget {
+  const _HeroSection({required this.product, required this.isTonMode});
+  final ProductEntity product;
+  final bool isTonMode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 220.h,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: ColorManger.primaryLight.withValues(alpha: 0.06),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              margin: const EdgeInsets.only(top: 12),
+              height: 4,
+              width: 36,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 20,
+            left: 5,
+            child: CachedNetworkImage(
+              imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
+              height: 190.h,
+              fit: BoxFit.contain,
+              placeholder: (context, url) => Shimmer.fromColors(
+                baseColor: Colors.grey.shade200,
+                highlightColor: Colors.grey.shade50,
+                child: Container(
+                  height: 140.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                padding: const EdgeInsets.all(16),
-                child: CachedNetworkImage(
-                  imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
-                  fit: BoxFit.contain,
-                  placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: Colors.grey.shade300,
-                    highlightColor: Colors.grey.shade100,
-                    child: Container(
-                      decoration: const BoxDecoration(color: Colors.white),
+              ),
+              errorWidget: (context, url, error) => Icon(
+                Icons.grass_rounded,
+                color: ColorManger.primaryLight.withValues(alpha: 0.4),
+                size: 64,
+              ),
+            ),
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 80),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    ColorManger.primaryLight.withValues(alpha: 0.08),
+                  ],
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    product.name,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16.sp,
+                      color: ColorManger.primary,
+                      height: 1.3,
                     ),
                   ),
-                  errorWidget: (context, url, error) => const Icon(
-                    Icons.broken_image,
-                    color: Colors.grey,
-                    size: 50,
+                  const SizedBox(height: 5),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        isTonMode
+                            ? '${product.pricePerTon} ج.م'
+                            : '${product.price} ج.م',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 18.sp,
+                          color: ColorManger.goldDark,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        isTonMode ? 'للطن' : 'للشكارة',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: Colors.grey.shade500,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
+                ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-            const SizedBox(height: 20),
+class _UnitToggle extends StatelessWidget {
+  const _UnitToggle({required this.isTonMode});
+  final bool isTonMode;
 
-            // Title and Price Row
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.all(3),
+      child: Row(
+        children: [
+          _ToggleOption(
+            label: 'بالشكارة',
+            icon: Iconsax.box,
+            isSelected: !isTonMode,
+            onTap: () => context.read<HomeCuibtCubit>().toggleTonMode(false),
+          ),
+          _ToggleOption(
+            label: 'بالطن',
+            icon: Iconsax.truck,
+            isSelected: isTonMode,
+            onTap: () => context.read<HomeCuibtCubit>().toggleTonMode(true),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ToggleOption extends StatelessWidget {
+  const _ToggleOption({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(7),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.07),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 14,
+                color: isSelected
+                    ? ColorManger.primaryLight
+                    : Colors.grey.shade500,
+              ),
+              const SizedBox(width: 5),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected
+                      ? ColorManger.primaryLight
+                      : Colors.grey.shade500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SpecChipsRow extends StatelessWidget {
+  const _SpecChipsRow({
+    required this.product,
+    required this.getGrowthStageName,
+    required this.getFeedFormName,
+  });
+  final ProductEntity product;
+  final String Function(int) getGrowthStageName;
+  final String Function(int) getFeedFormName;
+
+  @override
+  Widget build(BuildContext context) {
+    final chips = <({String label, IconData icon, Color color})>[
+      if (product.proteinPercentage > 0)
+        (
+          label: '${product.proteinPercentage.toStringAsFixed(0)}% بروتين',
+          icon: Iconsax.health,
+          color: const Color(0xFFE53935),
+        ),
+      if (product.growthStage > 0)
+        (
+          label: getGrowthStageName(product.growthStage),
+          icon: Iconsax.trend_up,
+          color: const Color(0xFF1E88E5),
+        ),
+      if (product.feedForm > 0)
+        (
+          label: getFeedFormName(product.feedForm),
+          icon: Iconsax.element_4,
+          color: const Color(0xFF43A047),
+        ),
+      if (product.weightPerSackKg > 0)
+        (
+          label: '${product.weightPerSackKg.toStringAsFixed(0)} كجم',
+          icon: Iconsax.weight,
+          color: const Color(0xFFF57C00),
+        ),
+    ];
+    if (chips.isEmpty) return const SizedBox.shrink();
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: chips
+          .map(
+            (c) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: c.color.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: c.color.withValues(alpha: 0.2)),
+              ),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: Text(
-                      product.name,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                        fontSize: responsive.setTextSize(4.5),
+                  Icon(c.icon, size: 13, color: c.color),
+                  const SizedBox(width: 5),
+                  Text(
+                    c.label,
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      fontWeight: FontWeight.w600,
+                      color: c.color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+}
+
+class _NutritionCard extends StatelessWidget {
+  const _NutritionCard({required this.product});
+  final ProductEntity product;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8F9FA),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.blueGrey.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: const Icon(
+                  Iconsax.info_circle,
+                  size: 16,
+                  color: Colors.blueGrey,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'المعلومات الغذائية',
+                style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13.sp,
+                  color: Colors.blueGrey,
+                ),
+              ),
+            ],
+          ),
+          if (product.ingredients.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            _nutRow('المكونات', product.ingredients),
+          ],
+          if (product.additives.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            _nutRow('الإضافات', product.additives),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _nutRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(top: 5),
+          width: 5,
+          height: 5,
+          decoration: BoxDecoration(
+            color: Colors.blueGrey.shade300,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 12.sp,
+            color: Colors.grey.shade700,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Colors.grey.shade600,
+              height: 1.5,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ActionBar extends StatelessWidget {
+  const _ActionBar({
+    required this.product,
+    required this.quantity,
+    required this.isTonMode,
+    required this.responsive,
+  });
+  final ProductEntity product;
+  final double quantity;
+  final bool isTonMode;
+  final ResponsiveUtils responsive;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        14,
+        20,
+        20 + MediaQuery.of(context).padding.bottom,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade100)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _CounterBtn(
+                  icon: Iconsax.minus,
+                  onTap: () =>
+                      context.read<HomeCuibtCubit>().decrementQuantity(),
+                  enabled: quantity > (isTonMode ? 0.5 : 1),
+                ),
+                SizedBox(
+                  width: 56,
+                  child: Center(
+                    child: _QuantityInputField(
+                      initialValue: quantity,
+                      isTonMode: isTonMode,
+                    ),
+                  ),
+                ),
+                _CounterBtn(
+                  icon: Iconsax.add,
+                  onTap: () =>
+                      context.read<HomeCuibtCubit>().incrementQuantity(),
+                  enabled: true,
+                  filled: true,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  final unitLabel = isTonMode ? 'طن' : 'شكارة';
+                  final qtyLabel = quantity == quantity.truncateToDouble()
+                      ? quantity.toInt().toString()
+                      : quantity.toStringAsFixed(1);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'تمت إضافة $qtyLabel $unitLabel من ${product.name} للسلة',
+                      ),
+                      backgroundColor: ColorManger.primaryLight,
+                      behavior: SnackBarBehavior.floating,
+                      margin: const EdgeInsets.all(12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorManger.primaryLight,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  const SizedBox(width: 16),
-                  Text(
-                    '${product.price} ج.م',
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: ColorManger.goldDark,
-                      fontSize: responsive.setTextSize(4.5),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Iconsax.bag_happy, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      'أضف للسلة',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14.sp,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 16),
-
-            // Description
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Text(
-                product.description,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey.shade600,
-                  height: 1.5,
-                  fontSize: responsive.setTextSize(3.5),
+                  ],
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-            const SizedBox(height: 24),
-            const Divider(height: 1, color: Color(0xFFEEEEEE)),
-            const SizedBox(height: 16),
+class _CounterBtn extends StatelessWidget {
+  const _CounterBtn({
+    required this.icon,
+    required this.onTap,
+    required this.enabled,
+    this.filled = false,
+  });
+  final IconData icon;
+  final VoidCallback onTap;
+  final bool enabled;
+  final bool filled;
 
-            // Counter & Add to cart button
-            Padding(
-              padding: const EdgeInsets.only(left: 24, right: 24, bottom: 32),
-              child: Row(
-                children: [
-                  // Counter
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
-                      buildWhen: (previous, current) =>
-                          previous.quantity != current.quantity,
-                      builder: (context, state) {
-                        final quantity = state.quantity;
-                        return Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Plus button
-                            GestureDetector(
-                              onTap: () {
-                                context
-                                    .read<HomeCuibtCubit>()
-                                    .incrementQuantity();
-                              },
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: ColorManger.primaryLight,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: ColorManger.primaryLight
-                                          .withValues(alpha: 0.3),
-                                      blurRadius: 6,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: const Icon(
-                                  Iconsax.add,
-                                  size: 20,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-
-                            // Number (Editable)
-                            SizedBox(
-                              width:
-                                  60, // Made wider for large numbers like 1000
-                              child: Center(
-                                child: _QuantityInputField(
-                                  initialValue: quantity,
-                                ),
-                              ),
-                            ),
-
-                            // Minus button
-                            GestureDetector(
-                              onTap: () {
-                                context
-                                    .read<HomeCuibtCubit>()
-                                    .decrementQuantity();
-                              },
-                              child: Container(
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: quantity > 1
-                                      ? Colors.white
-                                      : Colors.transparent,
-                                  boxShadow: quantity > 1
-                                      ? [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(
-                                              alpha: 0.05,
-                                            ),
-                                            blurRadius: 4,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                        ]
-                                      : null,
-                                ),
-                                child: Icon(
-                                  Iconsax.minus,
-                                  size: 20,
-                                  color: quantity > 1
-                                      ? Colors.black87
-                                      : Colors.grey.shade400,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: Container(
+        width: 40,
+        height: 40,
+        margin: const EdgeInsets.all(4),
+        decoration: BoxDecoration(
+          color: filled
+              ? ColorManger.primaryLight
+              : (enabled ? Colors.white : Colors.transparent),
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: (enabled && !filled)
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
                   ),
-
-                  const SizedBox(width: 16),
-
-                  // Button
-                  Expanded(
-                    child: BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
-                      buildWhen: (previous, current) =>
-                          previous.quantity != current.quantity,
-                      builder: (context, state) {
-                        return SizedBox(
-                          height: 52,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'تمت إضافة ${state.quantity} من ${product.name} إلى السلة',
-                                  ),
-                                  backgroundColor: ColorManger.primary,
-                                  behavior: SnackBarBehavior.floating,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorManger.primaryLight,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shadowColor: ColorManger.primary.withValues(
-                                alpha: 0.4,
-                              ),
-                              padding: EdgeInsets.zero,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Iconsax.bag_happy, size: 22),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'أضف للسلة',
-                                  style: TextStyle(
-                                    fontSize: responsive.setTextSize(4.0),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+                ]
+              : null,
+        ),
+        child: Icon(
+          icon,
+          size: 18,
+          color: filled
+              ? Colors.white
+              : (enabled ? Colors.black87 : Colors.grey.shade400),
         ),
       ),
     );
@@ -295,9 +651,12 @@ class ProductDetailsBottomSheet extends StatelessWidget {
 }
 
 class _QuantityInputField extends StatefulWidget {
-  final int initialValue;
-
-  const _QuantityInputField({required this.initialValue});
+  final double initialValue;
+  final bool isTonMode;
+  const _QuantityInputField({
+    required this.initialValue,
+    required this.isTonMode,
+  });
 
   @override
   State<_QuantityInputField> createState() => _QuantityInputFieldState();
@@ -307,12 +666,14 @@ class _QuantityInputFieldState extends State<_QuantityInputField> {
   late TextEditingController _controller;
   final FocusNode _focusNode = FocusNode();
 
+  String _fmt(double val) => val == val.truncateToDouble()
+      ? val.toInt().toString()
+      : val.toStringAsFixed(1);
+
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialValue.toString());
-
-    // Select all text when focused for quick typing
+    _controller = TextEditingController(text: _fmt(widget.initialValue));
     _focusNode.addListener(() {
       if (_focusNode.hasFocus) {
         _controller.selection = TextSelection(
@@ -320,12 +681,11 @@ class _QuantityInputFieldState extends State<_QuantityInputField> {
           extentOffset: _controller.text.length,
         );
       } else {
-        // If user leaves it empty or invalid, reset to current cubit state
-        if (_controller.text.isEmpty ||
-            int.tryParse(_controller.text) == null ||
-            int.parse(_controller.text) <= 0) {
-          final currentQuantity = context.read<HomeCuibtCubit>().state.quantity;
-          _controller.text = currentQuantity.toString();
+        final parsed = double.tryParse(_controller.text);
+        if (parsed == null || parsed <= 0) {
+          _controller.text = _fmt(
+            context.read<HomeCuibtCubit>().state.quantity,
+          );
         }
       }
     });
@@ -335,7 +695,7 @@ class _QuantityInputFieldState extends State<_QuantityInputField> {
   void didUpdateWidget(covariant _QuantityInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.initialValue != oldWidget.initialValue && !_focusNode.hasFocus) {
-      _controller.text = widget.initialValue.toString();
+      _controller.text = _fmt(widget.initialValue);
     }
   }
 
@@ -351,11 +711,13 @@ class _QuantityInputFieldState extends State<_QuantityInputField> {
     return TextField(
       controller: _controller,
       focusNode: _focusNode,
-      keyboardType: TextInputType.number,
+      keyboardType: widget.isTonMode
+          ? const TextInputType.numberWithOptions(decimal: true)
+          : TextInputType.number,
       textAlign: TextAlign.center,
       style: const TextStyle(
-        fontWeight: FontWeight.bold,
-        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        fontSize: 16,
         color: Colors.black87,
       ),
       decoration: const InputDecoration(
@@ -370,9 +732,11 @@ class _QuantityInputFieldState extends State<_QuantityInputField> {
         contentPadding: EdgeInsets.zero,
       ),
       onChanged: (value) {
-        final parsed = int.tryParse(value);
+        final parsed = double.tryParse(value);
         if (parsed != null && parsed > 0) {
-          context.read<HomeCuibtCubit>().setQuantity(parsed);
+          context.read<HomeCuibtCubit>().setQuantity(
+            widget.isTonMode ? parsed : parsed.truncateToDouble(),
+          );
         }
       },
     );

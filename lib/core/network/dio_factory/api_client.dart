@@ -17,7 +17,7 @@ class TokenInterceptor extends Interceptor {
   ) async {
     // Obtain the access token
     final String accessToken = await SharedPrefHelper.getSecuredString(
-      PrefKeys.accessToken,
+      PrefKeys.userAccessToken,
     );
 
     final String language =
@@ -53,7 +53,7 @@ class TokenInterceptor extends Interceptor {
 
         // Save the new access token
         await SharedPrefHelper.setSecuredString(
-          PrefKeys.accessToken,
+          PrefKeys.userAccessToken,
           newAccessToken,
         );
 

@@ -1,7 +1,7 @@
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
-import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
+import 'package:aleman/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,22 +19,7 @@ class OnBoardingView extends StatelessWidget {
     await SharedPrefHelper.setData(PrefKeys.prefsKeyOnBoardingScreenView, true);
 
     if (context.mounted) {
-      Navigator.of(context).pushReplacement(
-        PageRouteBuilder(
-          transitionDuration: const Duration(milliseconds: 550),
-          pageBuilder: (context, animation, secondaryAnimation) =>
-              const HomeScreen(),
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeInOut,
-              ),
-              child: child,
-            );
-          },
-        ),
-      );
+      Navigator.of(context).pushReplacementNamed(Routes.homeRoute);
     }
   }
 

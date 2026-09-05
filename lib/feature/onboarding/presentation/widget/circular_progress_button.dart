@@ -33,16 +33,16 @@ class CircularProgressButton extends StatelessWidget {
         child: SizedBox(
           width: outerSize,
           height: outerSize,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Wheat Spike Orbit Animated Circular Progress Ring
-              TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0.0, end: progress),
-                duration: const Duration(milliseconds: 450),
-                curve: Curves.easeInOutCubic,
-                builder: (context, value, child) {
-                  return CustomPaint(
+          child: TweenAnimationBuilder<double>(
+            tween: Tween<double>(begin: 0.0, end: progress),
+            duration: const Duration(milliseconds: 450),
+            curve: Curves.easeInOutCubic,
+            builder: (context, value, child) {
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Wheat Spike Orbit Animated Circular Progress Ring
+                  CustomPaint(
                     size: const Size(outerSize, outerSize),
                     painter: _OrbitProgressPainter(
                       progress: value,
@@ -52,45 +52,55 @@ class CircularProgressButton extends StatelessWidget {
                       dotColor: ColorManger.agriculturalGreen,
                       strokeWidth: 3.0,
                     ),
-                  );
-                },
-              ),
+                  ),
 
-              // Center Circular Action Button
-              Container(
-                width: innerSize,
-                height: innerSize,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [ColorManger.gold, ColorManger.goldDark],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorManger.gold.withValues(alpha: 0.15),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                      spreadRadius: 1,
+                  // Center Circular Action Button
+                  Container(
+                    width: innerSize,
+                    height: innerSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [ColorManger.gold, ColorManger.goldDark],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ColorManger.gold.withValues(alpha: 0.15),
+                          blurRadius: 16,
+                          offset: const Offset(0, 4),
+                          spreadRadius: 1,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: Center(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 300),
-                    transitionBuilder: (child, animation) =>
-                        ScaleTransition(scale: animation, child: child),
-                    child: Icon(
-                      isLastPage ? Iconsax.bag_happy4 : Iconsax.arrow_left_35,
-                      key: const ValueKey('arrow_icon'),
-                      color: ColorManger.primaryLight,
-                      size: 28,
+                    child: Center(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        transitionBuilder: (child, animation) =>
+                            ScaleTransition(scale: animation, child: child),
+                        child: Transform.rotate(
+                          angle: isLastPage
+                              ? 0
+                              : ((3 * math.pi / 4) +
+                                        (1.5 * math.pi) *
+                                            value.clamp(0.0, 1.0)) -
+                                    math.pi,
+                          child: Icon(
+                            isLastPage
+                                ? Iconsax.bag_happy4
+                                : Iconsax.arrow_left_2,
+                            key: ValueKey('arrow_icon_$isLastPage'),
+                            color: ColorManger.primaryLight,
+                            size: 28,
+                          ),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ),
       ),

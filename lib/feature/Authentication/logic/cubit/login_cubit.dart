@@ -21,8 +21,12 @@ class LoginCubit extends Cubit<LoginState> {
   }
 
   void validateFields() {
-    final bool isEmailValid = AppRegex.isEmailValid(userLoginEmailAddress.text.trim());
-    final bool isPasswordValid = AppRegex.isPasswordValid(userLoginPassword.text);
+    final bool isEmailValid = AppRegex.isEmailValid(
+      userLoginEmailAddress.text.trim(),
+    );
+    final bool isPasswordValid = AppRegex.isPasswordValid(
+      userLoginPassword.text,
+    );
 
     final isButtonValid = isEmailValid && isPasswordValid;
 
@@ -46,6 +50,7 @@ class LoginCubit extends Cubit<LoginState> {
           PrefKeys.userAccessToken,
           authEntity.accessToken,
         );
+
         await SharedPrefHelper.setSecuredString(
           PrefKeys.userRefreshToken,
           authEntity.refreshToken,
