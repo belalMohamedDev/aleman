@@ -26,5 +26,9 @@ abstract class HomeCuibtState with _$HomeCuibtState {
     @Default(1) double quantity,
     @Default(false) bool isTonMode,
     @Default(0) int selectedPackageIndex,
+
+    // Auth & Guest Prompt
+    @Default(false) bool isLoggedIn,
+    @Default(false) bool showLoginPrompt,
   }) = _HomeCuibtState;
 }

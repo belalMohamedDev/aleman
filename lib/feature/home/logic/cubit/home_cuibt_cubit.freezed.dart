@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$HomeCuibtState {
 
- RequestStatus get bannersStatus; List<BannerEntity> get banners; int get bannerIndex; String? get bannersError; RequestStatus get categoriesStatus; List<CategoryEntity> get categories; int get selectedCategoryId; String? get categoriesError; RequestStatus get productsStatus; List<ProductEntity> get products; String? get productsError; double get quantity; bool get isTonMode; int get selectedPackageIndex;
+ RequestStatus get bannersStatus; List<BannerEntity> get banners; int get bannerIndex; String? get bannersError; RequestStatus get categoriesStatus; List<CategoryEntity> get categories; int get selectedCategoryId; String? get categoriesError; RequestStatus get productsStatus; List<ProductEntity> get products; String? get productsError; double get quantity; bool get isTonMode; int get selectedPackageIndex; bool get isLoggedIn; bool get showLoginPrompt;
 /// Create a copy of HomeCuibtState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $HomeCuibtStateCopyWith<HomeCuibtState> get copyWith => _$HomeCuibtStateCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as HomeCuibtState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeCuibtState&&(identical(other.bannersStatus, _this.bannersStatus) || other.bannersStatus == _this.bannersStatus)&&const DeepCollectionEquality().equals(other.banners, _this.banners)&&(identical(other.bannerIndex, _this.bannerIndex) || other.bannerIndex == _this.bannerIndex)&&(identical(other.bannersError, _this.bannersError) || other.bannersError == _this.bannersError)&&(identical(other.categoriesStatus, _this.categoriesStatus) || other.categoriesStatus == _this.categoriesStatus)&&const DeepCollectionEquality().equals(other.categories, _this.categories)&&(identical(other.selectedCategoryId, _this.selectedCategoryId) || other.selectedCategoryId == _this.selectedCategoryId)&&(identical(other.categoriesError, _this.categoriesError) || other.categoriesError == _this.categoriesError)&&(identical(other.productsStatus, _this.productsStatus) || other.productsStatus == _this.productsStatus)&&const DeepCollectionEquality().equals(other.products, _this.products)&&(identical(other.productsError, _this.productsError) || other.productsError == _this.productsError)&&(identical(other.quantity, _this.quantity) || other.quantity == _this.quantity)&&(identical(other.isTonMode, _this.isTonMode) || other.isTonMode == _this.isTonMode)&&(identical(other.selectedPackageIndex, _this.selectedPackageIndex) || other.selectedPackageIndex == _this.selectedPackageIndex));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is HomeCuibtState&&(identical(other.bannersStatus, _this.bannersStatus) || other.bannersStatus == _this.bannersStatus)&&const DeepCollectionEquality().equals(other.banners, _this.banners)&&(identical(other.bannerIndex, _this.bannerIndex) || other.bannerIndex == _this.bannerIndex)&&(identical(other.bannersError, _this.bannersError) || other.bannersError == _this.bannersError)&&(identical(other.categoriesStatus, _this.categoriesStatus) || other.categoriesStatus == _this.categoriesStatus)&&const DeepCollectionEquality().equals(other.categories, _this.categories)&&(identical(other.selectedCategoryId, _this.selectedCategoryId) || other.selectedCategoryId == _this.selectedCategoryId)&&(identical(other.categoriesError, _this.categoriesError) || other.categoriesError == _this.categoriesError)&&(identical(other.productsStatus, _this.productsStatus) || other.productsStatus == _this.productsStatus)&&const DeepCollectionEquality().equals(other.products, _this.products)&&(identical(other.productsError, _this.productsError) || other.productsError == _this.productsError)&&(identical(other.quantity, _this.quantity) || other.quantity == _this.quantity)&&(identical(other.isTonMode, _this.isTonMode) || other.isTonMode == _this.isTonMode)&&(identical(other.selectedPackageIndex, _this.selectedPackageIndex) || other.selectedPackageIndex == _this.selectedPackageIndex)&&(identical(other.isLoggedIn, _this.isLoggedIn) || other.isLoggedIn == _this.isLoggedIn)&&(identical(other.showLoginPrompt, _this.showLoginPrompt) || other.showLoginPrompt == _this.showLoginPrompt));
 }
 
 
 @override
 int get hashCode {
   final _this = this as HomeCuibtState;
-  return Object.hash(runtimeType,_this.bannersStatus,const DeepCollectionEquality().hash(_this.banners),_this.bannerIndex,_this.bannersError,_this.categoriesStatus,const DeepCollectionEquality().hash(_this.categories),_this.selectedCategoryId,_this.categoriesError,_this.productsStatus,const DeepCollectionEquality().hash(_this.products),_this.productsError,_this.quantity,_this.isTonMode,_this.selectedPackageIndex);
+  return Object.hash(runtimeType,_this.bannersStatus,const DeepCollectionEquality().hash(_this.banners),_this.bannerIndex,_this.bannersError,_this.categoriesStatus,const DeepCollectionEquality().hash(_this.categories),_this.selectedCategoryId,_this.categoriesError,_this.productsStatus,const DeepCollectionEquality().hash(_this.products),_this.productsError,_this.quantity,_this.isTonMode,_this.selectedPackageIndex,_this.isLoggedIn,_this.showLoginPrompt);
 }
 
 @override
 String toString() {
   final _this = this as HomeCuibtState;
-  return 'HomeCuibtState(bannersStatus: ${_this.bannersStatus}, banners: ${_this.banners}, bannerIndex: ${_this.bannerIndex}, bannersError: ${_this.bannersError}, categoriesStatus: ${_this.categoriesStatus}, categories: ${_this.categories}, selectedCategoryId: ${_this.selectedCategoryId}, categoriesError: ${_this.categoriesError}, productsStatus: ${_this.productsStatus}, products: ${_this.products}, productsError: ${_this.productsError}, quantity: ${_this.quantity}, isTonMode: ${_this.isTonMode}, selectedPackageIndex: ${_this.selectedPackageIndex})';
+  return 'HomeCuibtState(bannersStatus: ${_this.bannersStatus}, banners: ${_this.banners}, bannerIndex: ${_this.bannerIndex}, bannersError: ${_this.bannersError}, categoriesStatus: ${_this.categoriesStatus}, categories: ${_this.categories}, selectedCategoryId: ${_this.selectedCategoryId}, categoriesError: ${_this.categoriesError}, productsStatus: ${_this.productsStatus}, products: ${_this.products}, productsError: ${_this.productsError}, quantity: ${_this.quantity}, isTonMode: ${_this.isTonMode}, selectedPackageIndex: ${_this.selectedPackageIndex}, isLoggedIn: ${_this.isLoggedIn}, showLoginPrompt: ${_this.showLoginPrompt})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $HomeCuibtStateCopyWith<$Res>  {
   factory $HomeCuibtStateCopyWith(HomeCuibtState value, $Res Function(HomeCuibtState) _then) = _$HomeCuibtStateCopyWithImpl;
 @useResult
 $Res call({
- RequestStatus bannersStatus, List<BannerEntity> banners, int bannerIndex, String? bannersError, RequestStatus categoriesStatus, List<CategoryEntity> categories, int selectedCategoryId, String? categoriesError, RequestStatus productsStatus, List<ProductEntity> products, String? productsError, double quantity, bool isTonMode, int selectedPackageIndex
+ RequestStatus bannersStatus, List<BannerEntity> banners, int bannerIndex, String? bannersError, RequestStatus categoriesStatus, List<CategoryEntity> categories, int selectedCategoryId, String? categoriesError, RequestStatus productsStatus, List<ProductEntity> products, String? productsError, double quantity, bool isTonMode, int selectedPackageIndex, bool isLoggedIn, bool showLoginPrompt
 });
 
 
@@ -68,7 +68,7 @@ class _$HomeCuibtStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeCuibtState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? bannersStatus = null,Object? banners = null,Object? bannerIndex = null,Object? bannersError = freezed,Object? categoriesStatus = null,Object? categories = null,Object? selectedCategoryId = null,Object? categoriesError = freezed,Object? productsStatus = null,Object? products = null,Object? productsError = freezed,Object? quantity = null,Object? isTonMode = null,Object? selectedPackageIndex = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? bannersStatus = null,Object? banners = null,Object? bannerIndex = null,Object? bannersError = freezed,Object? categoriesStatus = null,Object? categories = null,Object? selectedCategoryId = null,Object? categoriesError = freezed,Object? productsStatus = null,Object? products = null,Object? productsError = freezed,Object? quantity = null,Object? isTonMode = null,Object? selectedPackageIndex = null,Object? isLoggedIn = null,Object? showLoginPrompt = null,}) {
   return _then(HomeCuibtState(
 bannersStatus: null == bannersStatus ? _self.bannersStatus : bannersStatus // ignore: cast_nullable_to_non_nullable
 as RequestStatus,banners: null == banners ? _self.banners : banners // ignore: cast_nullable_to_non_nullable
@@ -84,7 +84,9 @@ as List<ProductEntity>,productsError: freezed == productsError ? _self.productsE
 as String?,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
 as double,isTonMode: null == isTonMode ? _self.isTonMode : isTonMode // ignore: cast_nullable_to_non_nullable
 as bool,selectedPackageIndex: null == selectedPackageIndex ? _self.selectedPackageIndex : selectedPackageIndex // ignore: cast_nullable_to_non_nullable
-as int,
+as int,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,showLoginPrompt: null == showLoginPrompt ? _self.showLoginPrompt : showLoginPrompt // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -169,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex, bool isLoggedIn, bool showLoginPrompt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeCuibtState() when $default != null:
-return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex);case _:
+return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex,_that.isLoggedIn,_that.showLoginPrompt);case _:
   return orElse();
 
 }
@@ -190,10 +192,10 @@ return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.banner
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex, bool isLoggedIn, bool showLoginPrompt)  $default,) {final _that = this;
 switch (_that) {
 case _HomeCuibtState():
-return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex);
+return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex,_that.isLoggedIn,_that.showLoginPrompt);
 default:
 throw UnimplementedError();
 }
@@ -210,10 +212,10 @@ throw UnimplementedError();
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex, bool isLoggedIn, bool showLoginPrompt)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeCuibtState() when $default != null:
-return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex);case _:
+return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex,_that.isLoggedIn,_that.showLoginPrompt);case _:
   return null;
 
 }
@@ -224,7 +226,7 @@ return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.banner
 
 
 class _HomeCuibtState implements HomeCuibtState {
-  const _HomeCuibtState({this.bannersStatus = RequestStatus.initial,  List<BannerEntity> banners = const [], this.bannerIndex = 0, this.bannersError, this.categoriesStatus = RequestStatus.initial,  List<CategoryEntity> categories = const [], this.selectedCategoryId = 1, this.categoriesError, this.productsStatus = RequestStatus.initial,  List<ProductEntity> products = const [], this.productsError, this.quantity = 1, this.isTonMode = false, this.selectedPackageIndex = 0}): _banners = banners,_categories = categories,_products = products;
+  const _HomeCuibtState({this.bannersStatus = RequestStatus.initial,  List<BannerEntity> banners = const [], this.bannerIndex = 0, this.bannersError, this.categoriesStatus = RequestStatus.initial,  List<CategoryEntity> categories = const [], this.selectedCategoryId = 1, this.categoriesError, this.productsStatus = RequestStatus.initial,  List<ProductEntity> products = const [], this.productsError, this.quantity = 1, this.isTonMode = false, this.selectedPackageIndex = 0, this.isLoggedIn = false, this.showLoginPrompt = false}): _banners = banners,_categories = categories,_products = products;
   
 
 @override@JsonKey() final  RequestStatus bannersStatus;
@@ -259,6 +261,8 @@ class _HomeCuibtState implements HomeCuibtState {
 @override@JsonKey() final  double quantity;
 @override@JsonKey() final  bool isTonMode;
 @override@JsonKey() final  int selectedPackageIndex;
+@override@JsonKey() final  bool isLoggedIn;
+@override@JsonKey() final  bool showLoginPrompt;
 
 /// Create a copy of HomeCuibtState
 /// with the given fields replaced by the non-null parameter values.
@@ -270,18 +274,18 @@ _$HomeCuibtStateCopyWith<_HomeCuibtState> get copyWith => __$HomeCuibtStateCopyW
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeCuibtState&&(identical(other.bannersStatus, bannersStatus) || other.bannersStatus == bannersStatus)&&const DeepCollectionEquality().equals(other.banners, _banners)&&(identical(other.bannerIndex, bannerIndex) || other.bannerIndex == bannerIndex)&&(identical(other.bannersError, bannersError) || other.bannersError == bannersError)&&(identical(other.categoriesStatus, categoriesStatus) || other.categoriesStatus == categoriesStatus)&&const DeepCollectionEquality().equals(other.categories, _categories)&&(identical(other.selectedCategoryId, selectedCategoryId) || other.selectedCategoryId == selectedCategoryId)&&(identical(other.categoriesError, categoriesError) || other.categoriesError == categoriesError)&&(identical(other.productsStatus, productsStatus) || other.productsStatus == productsStatus)&&const DeepCollectionEquality().equals(other.products, _products)&&(identical(other.productsError, productsError) || other.productsError == productsError)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.isTonMode, isTonMode) || other.isTonMode == isTonMode)&&(identical(other.selectedPackageIndex, selectedPackageIndex) || other.selectedPackageIndex == selectedPackageIndex));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _HomeCuibtState&&(identical(other.bannersStatus, bannersStatus) || other.bannersStatus == bannersStatus)&&const DeepCollectionEquality().equals(other.banners, _banners)&&(identical(other.bannerIndex, bannerIndex) || other.bannerIndex == bannerIndex)&&(identical(other.bannersError, bannersError) || other.bannersError == bannersError)&&(identical(other.categoriesStatus, categoriesStatus) || other.categoriesStatus == categoriesStatus)&&const DeepCollectionEquality().equals(other.categories, _categories)&&(identical(other.selectedCategoryId, selectedCategoryId) || other.selectedCategoryId == selectedCategoryId)&&(identical(other.categoriesError, categoriesError) || other.categoriesError == categoriesError)&&(identical(other.productsStatus, productsStatus) || other.productsStatus == productsStatus)&&const DeepCollectionEquality().equals(other.products, _products)&&(identical(other.productsError, productsError) || other.productsError == productsError)&&(identical(other.quantity, quantity) || other.quantity == quantity)&&(identical(other.isTonMode, isTonMode) || other.isTonMode == isTonMode)&&(identical(other.selectedPackageIndex, selectedPackageIndex) || other.selectedPackageIndex == selectedPackageIndex)&&(identical(other.isLoggedIn, isLoggedIn) || other.isLoggedIn == isLoggedIn)&&(identical(other.showLoginPrompt, showLoginPrompt) || other.showLoginPrompt == showLoginPrompt));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,bannersStatus,const DeepCollectionEquality().hash(_banners),bannerIndex,bannersError,categoriesStatus,const DeepCollectionEquality().hash(_categories),selectedCategoryId,categoriesError,productsStatus,const DeepCollectionEquality().hash(_products),productsError,quantity,isTonMode,selectedPackageIndex);
+    return Object.hash(runtimeType,bannersStatus,const DeepCollectionEquality().hash(_banners),bannerIndex,bannersError,categoriesStatus,const DeepCollectionEquality().hash(_categories),selectedCategoryId,categoriesError,productsStatus,const DeepCollectionEquality().hash(_products),productsError,quantity,isTonMode,selectedPackageIndex,isLoggedIn,showLoginPrompt);
 }
 
 @override
 String toString() {
-    return 'HomeCuibtState(bannersStatus: $bannersStatus, banners: $banners, bannerIndex: $bannerIndex, bannersError: $bannersError, categoriesStatus: $categoriesStatus, categories: $categories, selectedCategoryId: $selectedCategoryId, categoriesError: $categoriesError, productsStatus: $productsStatus, products: $products, productsError: $productsError, quantity: $quantity, isTonMode: $isTonMode, selectedPackageIndex: $selectedPackageIndex)';
+    return 'HomeCuibtState(bannersStatus: $bannersStatus, banners: $banners, bannerIndex: $bannerIndex, bannersError: $bannersError, categoriesStatus: $categoriesStatus, categories: $categories, selectedCategoryId: $selectedCategoryId, categoriesError: $categoriesError, productsStatus: $productsStatus, products: $products, productsError: $productsError, quantity: $quantity, isTonMode: $isTonMode, selectedPackageIndex: $selectedPackageIndex, isLoggedIn: $isLoggedIn, showLoginPrompt: $showLoginPrompt)';
 }
 
 
@@ -292,7 +296,7 @@ abstract mixin class _$HomeCuibtStateCopyWith<$Res> implements $HomeCuibtStateCo
   factory _$HomeCuibtStateCopyWith(_HomeCuibtState value, $Res Function(_HomeCuibtState) _then) = __$HomeCuibtStateCopyWithImpl;
 @override @useResult
 $Res call({
- RequestStatus bannersStatus, List<BannerEntity> banners, int bannerIndex, String? bannersError, RequestStatus categoriesStatus, List<CategoryEntity> categories, int selectedCategoryId, String? categoriesError, RequestStatus productsStatus, List<ProductEntity> products, String? productsError, double quantity, bool isTonMode, int selectedPackageIndex
+ RequestStatus bannersStatus, List<BannerEntity> banners, int bannerIndex, String? bannersError, RequestStatus categoriesStatus, List<CategoryEntity> categories, int selectedCategoryId, String? categoriesError, RequestStatus productsStatus, List<ProductEntity> products, String? productsError, double quantity, bool isTonMode, int selectedPackageIndex, bool isLoggedIn, bool showLoginPrompt
 });
 
 
@@ -309,7 +313,7 @@ class __$HomeCuibtStateCopyWithImpl<$Res>
 
 /// Create a copy of HomeCuibtState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? bannersStatus = null,Object? banners = null,Object? bannerIndex = null,Object? bannersError = freezed,Object? categoriesStatus = null,Object? categories = null,Object? selectedCategoryId = null,Object? categoriesError = freezed,Object? productsStatus = null,Object? products = null,Object? productsError = freezed,Object? quantity = null,Object? isTonMode = null,Object? selectedPackageIndex = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? bannersStatus = null,Object? banners = null,Object? bannerIndex = null,Object? bannersError = freezed,Object? categoriesStatus = null,Object? categories = null,Object? selectedCategoryId = null,Object? categoriesError = freezed,Object? productsStatus = null,Object? products = null,Object? productsError = freezed,Object? quantity = null,Object? isTonMode = null,Object? selectedPackageIndex = null,Object? isLoggedIn = null,Object? showLoginPrompt = null,}) {
   return _then(_HomeCuibtState(
 bannersStatus: null == bannersStatus ? _self.bannersStatus : bannersStatus // ignore: cast_nullable_to_non_nullable
 as RequestStatus,banners: null == banners ? _self._banners : banners // ignore: cast_nullable_to_non_nullable
@@ -325,7 +329,9 @@ as List<ProductEntity>,productsError: freezed == productsError ? _self.productsE
 as String?,quantity: null == quantity ? _self.quantity : quantity // ignore: cast_nullable_to_non_nullable
 as double,isTonMode: null == isTonMode ? _self.isTonMode : isTonMode // ignore: cast_nullable_to_non_nullable
 as bool,selectedPackageIndex: null == selectedPackageIndex ? _self.selectedPackageIndex : selectedPackageIndex // ignore: cast_nullable_to_non_nullable
-as int,
+as int,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,showLoginPrompt: null == showLoginPrompt ? _self.showLoginPrompt : showLoginPrompt // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

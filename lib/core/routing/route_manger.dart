@@ -27,7 +27,7 @@ class RouteGenerator {
       case Routes.homeRoute:
         return _buildFadeRoute(
           BlocProvider(
-            create: (context) => instance<HomeCuibtCubit>(),
+            create: (context) => instance<HomeCuibtCubit>()..fetchHomeData(),
             child: const HomeScreen(),
           ),
         );

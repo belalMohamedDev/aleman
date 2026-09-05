@@ -21,4 +21,5 @@ class PrefKeys {
   static const String storeAddressId = 'storeAddressId';
   static const String storeRegion = 'storeRegion';
   static const String prefsKeyFirstRun = 'prefsKeyFirstRun';
+  static const String hasDismissedLoginPrompt = 'hasDismissedLoginPrompt';
 }

@@ -346,7 +346,7 @@ class _PackageSelector extends StatelessWidget {
                       border: Border.all(
                         color: isSelected
                             ? ColorManger.primaryLight.withValues(alpha: 0.1)
-                            : Colors.grey.shade300,
+                            : Colors.grey.shade200,
                         width: isSelected ? 1.6 : 1,
                       ),
                     ),

@@ -1,4 +1,6 @@
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
+import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/feature/home/data/mapper/banner_mapper.dart';
 import 'package:aleman/feature/home/data/mapper/category_mapper.dart';
 import 'package:aleman/feature/home/data/mapper/product_mapper.dart';
@@ -15,7 +17,32 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
   final HomeRepository _homeRepository;
 
   Future<void> fetchHomeData() async {
-    await Future.wait([fetchBanners(), fetchCategories(), fetchProducts()]);
+    await Future.wait([
+      fetchBanners(),
+      fetchCategories(),
+      fetchProducts(),
+      checkLoginStatus(),
+    ]);
+  }
+
+  Future<void> checkLoginStatus() async {
+    final token = await SharedPrefHelper.getSecuredString(
+      PrefKeys.userAccessToken,
+    );
+    final isDismissed = SharedPrefHelper.getBool(
+      PrefKeys.hasDismissedLoginPrompt,
+    );
+    emit(
+      state.copyWith(
+        isLoggedIn: token.isNotEmpty,
+        showLoginPrompt: token.isEmpty && !isDismissed,
+      ),
+    );
+  }
+
+  Future<void> dismissLoginPrompt() async {
+    emit(state.copyWith(showLoginPrompt: false));
+    await SharedPrefHelper.setData(PrefKeys.hasDismissedLoginPrompt, true);
   }
 
   Future<void> fetchBanners() async {
