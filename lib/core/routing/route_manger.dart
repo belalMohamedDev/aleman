@@ -4,7 +4,7 @@ import 'package:aleman/core/language/localization_extensions.dart'
 import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/routing/route_state.dart';
 import 'package:aleman/core/routing/routes.dart';
-import 'package:aleman/feature/Authentication/logic/loginBloc/login_bloc.dart';
+import 'package:aleman/feature/Authentication/logic/cubit/login_cubit.dart';
 import 'package:aleman/feature/Authentication/presentation/screens/sign_in_view.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
@@ -18,7 +18,7 @@ class RouteGenerator {
       case Routes.loginRoute:
         return _buildFadeRoute(
           BlocProvider(
-            create: (context) => instance<LoginBloc>(),
+            create: (context) => instance<LoginCubit>(),
             child: const LoginView(),
           ),
         );

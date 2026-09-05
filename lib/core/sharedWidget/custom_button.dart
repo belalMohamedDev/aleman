@@ -28,7 +28,9 @@ class CustomButton extends StatelessWidget {
     final responsive = ResponsiveUtils(context);
     final buttonColor =
         color ??
-        (onPressed == null ? ColorManger.primaryLight : ColorManger.primary);
+        (onPressed == null
+            ? ColorManger.primaryLight
+            : ColorManger.primary.withValues(alpha: 0.9));
     return Container(
       height: responsive.setHeight(height),
       width: responsive.setWidth(width),

@@ -1,3 +1,5 @@
+import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
@@ -14,12 +16,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // int _currentIndex = 0;
+  bool _isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
     context.read<HomeCuibtCubit>().fetchHomeData();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final token = await SharedPrefHelper.getSecuredString(
+        PrefKeys.userAccessToken);
+    if (mounted) {
+      setState(() {
+        _isLoggedIn = token.isNotEmpty;
+      });
+    }
   }
 
   @override
@@ -52,12 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButtonLocation:
             FloatingActionButtonLocation.miniStartFloat,
 
-        floatingActionButton: FloatingActionButton(
-          // shape: const CircleBorder(),
-          onPressed: () {},
-          backgroundColor: ColorManger.primaryLight.withValues(alpha: 0.9),
-          child: const Icon(Iconsax.bag_happy4, color: Colors.white),
-        ),
+        floatingActionButton: _isLoggedIn
+            ? FloatingActionButton(
+                // shape: const CircleBorder(),
+                onPressed: () {},
+                backgroundColor:
+                    ColorManger.primaryLight.withValues(alpha: 0.9),
+                child: const Icon(Iconsax.bag_happy4, color: Colors.white),
+              )
+            : null,
       ),
     );
   }

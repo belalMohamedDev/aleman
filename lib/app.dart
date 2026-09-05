@@ -43,24 +43,5 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
-
-    // MaterialApp(
-    //   debugShowCheckedModeBanner: false,
-    //   title: 'الإيمان للأعلاف',
-    //   theme:App
-
-    //   //  ThemeData(
-    //   //   fontFamily: 'Cairo',
-    //   //   useMaterial3: true,
-    //   //   appBarTheme: const AppBarTheme(
-    //   //     systemOverlayStyle: SystemUiOverlayStyle(
-    //   //       statusBarColor: Colors.transparent,
-    //   //       statusBarIconBrightness: Brightness.light,
-    //   //       statusBarBrightness: Brightness.dark,
-    //   //     ),
-    //   //   ),
-    //   // ),
-    //   home: const SplashScreen(),
-    // );
   }
 }

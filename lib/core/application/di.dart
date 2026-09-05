@@ -2,7 +2,9 @@ import 'package:aleman/core/application/applogicCubit/app_logic_cubit.dart';
 import 'package:aleman/core/application/bloc_observer.dart';
 import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/dio_factory/dio_factory.dart';
-import 'package:aleman/feature/Authentication/logic/loginBloc/login_bloc.dart';
+import 'package:aleman/feature/Authentication/data/repository/authentication_repo_imp.dart';
+import 'package:aleman/feature/Authentication/data/repository/authentication_repository.dart';
+import 'package:aleman/feature/Authentication/logic/cubit/login_cubit.dart';
 import 'package:aleman/feature/home/data/repository/home_repo.dart';
 import 'package:aleman/feature/home/data/repository/home_repo_imp.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
@@ -42,7 +44,12 @@ Future<void> _initAppModule() async {
 }
 
 Future<void> _initLogin() async {
-  instance.registerFactory<LoginBloc>(() => LoginBloc());
+  instance.registerFactory<AuthenticationRepository>(
+    () => AuthenticationRepositoryImplement(instance<AppServiceClient>()),
+  );
+  instance.registerFactory<LoginCubit>(
+    () => LoginCubit(instance<AuthenticationRepository>()),
+  );
 }
 
 Future<void> _initHome() async {

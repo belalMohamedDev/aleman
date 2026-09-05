@@ -38,30 +38,30 @@ class ApiErrorHandler {
 
   /// Parse server error body (400–500)
   static ApiErrorModel _parseServerError(int? statusCode, dynamic data) {
-    String message = 'Unknown server error';
-
-    if (data != null) {
+    if (data != null && data is Map<String, dynamic>) {
       try {
-        if (data is String) {
-          message = data; // API returns raw text
+        // Try parsing as the GlobalExceptionHandler format first
+        if (data.containsKey('status') || data.containsKey('detail')) {
+          return ApiErrorModel.fromJson(data);
         }
-
-        if (data is Map) {
-          // Common message keys
-          if (data.containsKey('message')) {
-            message = data['message'];
-          } else if (data.containsKey('error')) {
-            message = data['error'];
-          } else if (data.containsKey('errors')) {
-            // validation errors array
-            if (data['errors'] is List && data['errors'].isNotEmpty) {
-              message = data['errors'][0].toString();
-            }
+        
+        // Fallback for generic formats
+        String message = 'Unknown server error';
+        if (data.containsKey('message')) {
+          message = data['message'];
+        } else if (data.containsKey('error')) {
+          message = data['error'];
+        } else if (data.containsKey('errors')) {
+          if (data['errors'] is List && data['errors'].isNotEmpty) {
+            message = data['errors'][0].toString();
           }
         }
+        return ApiErrorModel(message: message, status: statusCode);
       } catch (_) {}
+    } else if (data is String) {
+      return ApiErrorModel(message: data, status: statusCode);
     }
 
-    return ApiErrorModel(message: message, statusCode: statusCode);
+    return ApiErrorModel(message: 'Unknown server error', status: statusCode);
   }
 }

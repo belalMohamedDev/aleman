@@ -95,7 +95,7 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                     '${product.price} ج.م',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: ColorManger.gold,
+                      color: ColorManger.goldDark,
                       fontSize: responsive.setTextSize(4.5),
                     ),
                   ),
@@ -157,12 +157,11 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                                 height: 44,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: ColorManger.primary,
+                                  color: ColorManger.primaryLight,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: ColorManger.primary.withValues(
-                                        alpha: 0.3,
-                                      ),
+                                      color: ColorManger.primaryLight
+                                          .withValues(alpha: 0.3),
                                       blurRadius: 6,
                                       offset: const Offset(0, 3),
                                     ),
@@ -256,15 +255,15 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: ColorManger.primary,
+                              backgroundColor: ColorManger.primaryLight,
                               foregroundColor: Colors.white,
-                              elevation: 8,
+                              elevation: 0,
                               shadowColor: ColorManger.primary.withValues(
                                 alpha: 0.4,
                               ),
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                             ),
                             child: Row(

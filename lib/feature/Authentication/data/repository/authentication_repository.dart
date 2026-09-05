@@ -1,8 +1,7 @@
-import 'package:aleman/core/network/api/app_api.dart';
+import 'package:aleman/core/network/apiResult/api_reuslt.dart';
+import 'package:aleman/feature/Authentication/data/mapper/auth_mapper.dart';
+import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
 
-abstract class AuthenticationRepository {}
-
-class AuthenticationRepositoryImplement implements AuthenticationRepository {
-  AuthenticationRepositoryImplement(this._apiService);
-  final AppServiceClient _apiService;
+abstract class AuthenticationRepository {
+  Future<ApiResult<AuthEntity>> login(LoginRequestBody loginRequestBody);
 }

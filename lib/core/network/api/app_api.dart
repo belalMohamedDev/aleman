@@ -1,4 +1,6 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/feature/Authentication/data/model/authResponse/auth_response.dart';
+import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
 import 'package:aleman/feature/home/data/model/banner_model.dart';
 import 'package:aleman/feature/home/data/model/category_model.dart';
 import 'package:aleman/feature/home/data/model/product_model.dart';
@@ -19,4 +21,7 @@ abstract class AppServiceClient {
 
   @GET(ApiConstants.product)
   Future<List<ProductModel>> getProductsService();
+
+  @POST(ApiConstants.login)
+  Future<AuthResponse> loginService(@Body() LoginRequestBody body);
 }

@@ -1,6 +1,8 @@
 import 'package:aleman/core/language/strings_manger.dart';
+import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/sharedWidget/custom_button.dart';
-import 'package:aleman/feature/Authentication/logic/loginBloc/login_bloc.dart';
+import 'package:aleman/feature/Authentication/logic/cubit/login_cubit.dart';
+import 'package:aleman/feature/Authentication/logic/cubit/login_state.dart';
 import 'package:aleman/feature/Authentication/presentation/sharedWidgetBetweenScreen/loading_button_content.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,44 +12,29 @@ class SignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<LoginBloc, LoginState>(
+    return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
-        state.whenOrNull(
-          error: (apiErrorModel) {
-            // ShowToast.showToastErrorTop(
-            //     errorMessage: apiErrorModel.message!, context: context);
-          },
-          // suceess: (authResponse) async {
-          //   //   ShowToast.showToastSuccessTop(
-          //   //       message: authResponse.message!, context: context);
-
-          //   //  await AppLogin().storeAuthData(authResponse);
-
-          //   //   if (authResponse.data!.role == 'user') {
-
-          //   //     if (context.mounted) {
-          //   //       context.pushReplacementNamed(Routes.bottomNavBarRoute);
-          //   //     }
-          //   //   } else if (authResponse.data!.role == 'admin') {
-
-          //   //     if (context.mounted) {
-          //   //       context.pushReplacementNamed(Routes.adminMenue);
-          //   //     }
-          //   //   } else {
-          //   //     ShowToast.showToastErrorTop(
-          //   //         errorMessage: context
-          //   //             .translate(AppStrings.thisAccountNotAccessInThisApp),
-          //   //         context: context);
-          //   //   }
-          // },
-        );
+        if (state.status == LoginRequestStatus.error) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.error ?? 'Unknown error'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state.status == LoginRequestStatus.success) {
+          // Navigate to Home or BottomNavBar
+          Navigator.of(
+            context,
+            rootNavigator: true,
+          ).pushNamedAndRemoveUntil(Routes.homeRoute, (route) => false);
+        }
       },
 
       builder: (context, state) {
         return CustomButton(
-          onPressed: context.read<LoginBloc>().isButtonInVaildator
+          onPressed: state.isButtonValid
               ? () {
-                  //  context.read<LoginBloc>().add(const UserLoginButton());
+                  context.read<LoginCubit>().login();
                 }
               : null,
           widget: LoadingButtonContent(

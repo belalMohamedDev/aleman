@@ -1,4 +1,6 @@
 import 'package:aleman/core/routing/routes.dart';
+import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
@@ -7,9 +9,7 @@ import 'package:aleman/feature/home/presentation/widget/category_list_view_build
 import 'package:aleman/feature/home/presentation/widget/product_gride_view.dart';
 import 'package:aleman/feature/home/presentation/widget/search_row.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 
 class HomeBody extends StatelessWidget {
   const HomeBody({super.key});
@@ -89,11 +89,18 @@ class HomeBody extends StatelessWidget {
         ),
         responsive.setSizeBox(width: 3),
         GestureDetector(
-          onTap: () {
-            Navigator.of(
-              context,
-              rootNavigator: true,
-            ).pushNamed(Routes.loginRoute);
+          onTap: () async {
+            final token = await SharedPrefHelper.getSecuredString(
+                PrefKeys.userAccessToken);
+            if (context.mounted) {
+              if (token.isNotEmpty) {
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamed(Routes.profileRoute);
+              } else {
+                Navigator.of(context, rootNavigator: true)
+                    .pushNamed(Routes.loginRoute);
+              }
+            }
           },
           child: Container(
             height: responsive.setHeight(4.5),

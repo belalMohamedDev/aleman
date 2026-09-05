@@ -2,7 +2,7 @@ import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
-import 'package:aleman/feature/Authentication/logic/loginBloc/login_bloc.dart';
+import 'package:aleman/feature/Authentication/logic/cubit/login_state.dart';
 import 'package:flutter/material.dart';
 
 class LoadingButtonContent extends StatelessWidget {
@@ -50,7 +50,7 @@ class LoadingButtonContent extends StatelessWidget {
       );
     }
 
-    if (state is LoginButtonLoadingData) {
+    if (state is LoginState && state.status == LoginRequestStatus.loading) {
       return loadingWidget();
     } else {
       return defultWidget ??
