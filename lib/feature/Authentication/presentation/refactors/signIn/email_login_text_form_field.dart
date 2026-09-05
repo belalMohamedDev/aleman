@@ -2,8 +2,8 @@ import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/utils/app_regex.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
-import 'package:aleman/feature/Authentication/logic/cubit/login_cubit.dart';
-import 'package:aleman/feature/Authentication/logic/cubit/login_state.dart';
+import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart';
+import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -24,7 +24,9 @@ class EmailLoginTextFormField extends StatelessWidget {
           onChanged: (value) => context.read<LoginCubit>().validateFields(),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
-            if (value == null || value.isEmpty || !AppRegex.isEmailValid(value)) {
+            if (value == null ||
+                value.isEmpty ||
+                !AppRegex.isEmailValid(value)) {
               return context.translate(AppStrings.pleaseEnterValidEmail);
             }
             return null;

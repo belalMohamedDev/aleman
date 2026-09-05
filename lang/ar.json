@@ -126,7 +126,7 @@
   "pleaseEnterAValidApt": "يرجى إدخال رقم شقة صحيح.",
   "company": "شركة",
   "aptNo": "رقم الشقة.",
-  "pleaseEnterTheCode": "يرجى إدخال الرمز الذي أرسلناه للتو إلى البريد الإلكتروني",
+  "pleaseEnterTheCode": "يرجى إدخال الرمز الذي أرسلناه للتو إلى",
   "didntRecieveotp": "لم تستلم رمز التحقق؟",
   "resendCode": "إعادة إرسال الرمز",
   "verify": "تحقق",

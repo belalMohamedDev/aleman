@@ -2,7 +2,8 @@ import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
-import 'package:aleman/feature/Authentication/logic/cubit/login_state.dart';
+import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_state.dart';
+import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
 import 'package:flutter/material.dart';
 
 class LoadingButtonContent extends StatelessWidget {
@@ -50,7 +51,12 @@ class LoadingButtonContent extends StatelessWidget {
       );
     }
 
-    if (state is LoginState && state.status == LoginRequestStatus.loading) {
+    final bool isLoading =
+        (state is LoginState && state.status == LoginRequestStatus.loading) ||
+        (state is ForgotPasswordState &&
+            state.status == ForgotPasswordStatus.loading);
+
+    if (isLoading) {
       return loadingWidget();
     } else {
       return defultWidget ??

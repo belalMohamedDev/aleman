@@ -1,5 +1,7 @@
 import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
+import 'package:aleman/core/routing/routes.dart';
+import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
@@ -84,13 +86,15 @@ class LoginView extends StatelessWidget {
                 title: const Text("نسخ الرقم"),
                 onTap: () {
                   Navigator.pop(context);
-                  Clipboard.setData(
-                    const ClipboardData(text: phoneNumber),
-                  ).then((_) {
-                    // ScaffoldMessenger.of(context).showSnackBar(
-                    //   const SnackBar(content: Text("تم نسخ الرقم بنجاح!")),
-                    // );
-                  });
+                  Clipboard.setData(const ClipboardData(text: phoneNumber))
+                      .then((_) {
+                        if (context.mounted) {
+                          AppToast.showSuccess(
+                            context,
+                            message: "تم نسخ رقم التواصل بنجاح 🌾",
+                          );
+                        }
+                      });
                 },
               ),
             ],
@@ -139,8 +143,7 @@ class LoginView extends StatelessWidget {
                 alignment: Alignment.topRight,
                 child: InkWell(
                   onTap: () {
-                    // context.pushReplacementNamed(Routes
-                    //     .forgetPasswordRoute);
+                    Navigator.pushNamed(context, Routes.forgetPasswordRoute);
                   },
                   child: Text(
                     context.translate(AppStrings.forgetPassword),

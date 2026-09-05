@@ -4,7 +4,8 @@ import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/dio_factory/dio_factory.dart';
 import 'package:aleman/feature/Authentication/data/repository/authentication_repo_imp.dart';
 import 'package:aleman/feature/Authentication/data/repository/authentication_repository.dart';
-import 'package:aleman/feature/Authentication/logic/cubit/login_cubit.dart';
+import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_cubit.dart';
+import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart';
 import 'package:aleman/feature/home/data/repository/home_repo.dart';
 import 'package:aleman/feature/home/data/repository/home_repo_imp.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
@@ -49,6 +50,9 @@ Future<void> _initLogin() async {
   );
   instance.registerFactory<LoginCubit>(
     () => LoginCubit(instance<AuthenticationRepository>()),
+  );
+  instance.registerFactory<ForgotPasswordCubit>(
+    () => ForgotPasswordCubit(instance<AuthenticationRepository>()),
   );
 }
 

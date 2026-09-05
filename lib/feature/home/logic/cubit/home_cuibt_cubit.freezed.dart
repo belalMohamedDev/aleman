@@ -124,8 +124,8 @@ return $default(_that);case _:
 /// switch (sealedClass) {
 ///   case final Subclass value:
 ///     return ...;
-///   case _:
-///     return orElse();
+///   case final Subclass2 value:
+///     return ...;
 /// }
 /// ```
 
@@ -133,12 +133,12 @@ return $default(_that);case _:
 final _that = this;
 switch (_that) {
 case _HomeCuibtState():
-return $default(_that);
-default:
-throw UnimplementedError();
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
 }
 }
-/// A variant of `map` that returns `null` on fallback.
+/// A variant of `map` that fallback to returning `null`.
 ///
 /// It is equivalent to doing:
 /// ```dart
@@ -159,19 +159,19 @@ return $default(_that);case _:
 
 }
 }
-/// A variant of `when` that fallback to returning `orElse`.
+/// A variant of `when` that fallback to an `orElse` callback.
 ///
 /// It is equivalent to doing:
 /// ```dart
 /// switch (sealedClass) {
-///   case final Subclass value:
+///   case Subclass(:final field):
 ///     return ...;
 ///   case _:
 ///     return orElse();
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex, bool isLoggedIn, bool showLoginPrompt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode,  int selectedPackageIndex,  bool isLoggedIn,  bool showLoginPrompt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HomeCuibtState() when $default != null:
 return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex,_that.isLoggedIn,_that.showLoginPrompt);case _:
@@ -181,38 +181,38 @@ return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.banner
 }
 /// A `switch`-like method, using callbacks.
 ///
-/// Callbacks receives the raw object, upcasted.
+/// As opposed to `map`, this offers destructuring.
 /// It is equivalent to doing:
 /// ```dart
 /// switch (sealedClass) {
-///   case final Subclass value:
+///   case Subclass(:final field):
 ///     return ...;
-///   case _:
-///     return orElse();
+///   case Subclass2(:final field2):
+///     return ...;
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex, bool isLoggedIn, bool showLoginPrompt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode,  int selectedPackageIndex,  bool isLoggedIn,  bool showLoginPrompt)  $default,) {final _that = this;
 switch (_that) {
 case _HomeCuibtState():
-return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex,_that.isLoggedIn,_that.showLoginPrompt);
-default:
-throw UnimplementedError();
+return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex,_that.isLoggedIn,_that.showLoginPrompt);case _:
+  throw StateError('Unexpected subclass');
+
 }
 }
-/// A variant of `when` that returns `null` on fallback.
+/// A variant of `when` that fallback to returning `null`
 ///
 /// It is equivalent to doing:
 /// ```dart
 /// switch (sealedClass) {
-///   case final Subclass value:
+///   case Subclass(:final field):
 ///     return ...;
 ///   case _:
 ///     return null;
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode, int selectedPackageIndex, bool isLoggedIn, bool showLoginPrompt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( RequestStatus bannersStatus,  List<BannerEntity> banners,  int bannerIndex,  String? bannersError,  RequestStatus categoriesStatus,  List<CategoryEntity> categories,  int selectedCategoryId,  String? categoriesError,  RequestStatus productsStatus,  List<ProductEntity> products,  String? productsError,  double quantity,  bool isTonMode,  int selectedPackageIndex,  bool isLoggedIn,  bool showLoginPrompt)?  $default,) {final _that = this;
 switch (_that) {
 case _HomeCuibtState() when $default != null:
 return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.bannersError,_that.categoriesStatus,_that.categories,_that.selectedCategoryId,_that.categoriesError,_that.productsStatus,_that.products,_that.productsError,_that.quantity,_that.isTonMode,_that.selectedPackageIndex,_that.isLoggedIn,_that.showLoginPrompt);case _:
@@ -220,6 +220,7 @@ return $default(_that.bannersStatus,_that.banners,_that.bannerIndex,_that.banner
 
 }
 }
+
 }
 
 /// @nodoc

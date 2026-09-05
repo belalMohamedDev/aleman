@@ -4,7 +4,7 @@ import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
 import 'package:aleman/feature/Authentication/data/repository/authentication_repository.dart';
-import 'package:aleman/feature/Authentication/logic/cubit/login_state.dart';
+import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

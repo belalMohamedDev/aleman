@@ -2,8 +2,8 @@ import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/utils/app_regex.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
-import 'package:aleman/feature/Authentication/logic/cubit/login_cubit.dart';
-import 'package:aleman/feature/Authentication/logic/cubit/login_state.dart';
+import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart';
+import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:iconsax/iconsax.dart';
@@ -23,7 +23,9 @@ class PasswordLoginTextFormField extends StatelessWidget {
           onChanged: (value) => context.read<LoginCubit>().validateFields(),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
-            if (value == null || value.isEmpty || !AppRegex.isPasswordValid(value)) {
+            if (value == null ||
+                value.isEmpty ||
+                !AppRegex.isPasswordValid(value)) {
               return context.translate(AppStrings.pleaseEnterValidPassword);
             }
             return null;
@@ -35,7 +37,8 @@ class PasswordLoginTextFormField extends StatelessWidget {
           controller: context
               .read<LoginCubit>()
               .userLoginPassword, // The controller for managing input
-          obscureText: state.showPass, // Toggles between showing/hiding password
+          obscureText:
+              state.showPass, // Toggles between showing/hiding password
           autofillHints: const [
             AutofillHints.password, // Autofill hint for password
           ],

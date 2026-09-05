@@ -1,4 +1,5 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:aleman/feature/home/data/mapper/product_mapper.dart';
@@ -771,18 +772,11 @@ class _ActionBar extends StatelessWidget {
                   final qtyLabel = quantity == quantity.truncateToDouble()
                       ? quantity.toInt().toString()
                       : quantity.toStringAsFixed(1);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
+                  AppToast.showSuccess(
+                    context,
+                    title: 'أضيف للسلة 🌾',
+                    message:
                         'تمت إضافة $qtyLabel $unitLabel من ${product.name} للسلة',
-                      ),
-                      backgroundColor: ColorManger.primaryLight,
-                      behavior: SnackBarBehavior.floating,
-                      margin: const EdgeInsets.all(12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
                   );
                 },
                 style: ElevatedButton.styleFrom(

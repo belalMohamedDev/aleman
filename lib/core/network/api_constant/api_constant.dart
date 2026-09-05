@@ -4,6 +4,9 @@ class ApiConstants {
   static const String category = '/api/Categories';
   static const String product = '/api/Products';
   static const String login = '/api/Auth/login';
+  static const String forgotPassword = '/api/Auth/forgot-password';
+  static const String verifyResetCode = '/api/Auth/verify-reset-code';
+  static const String resetPassword = '/api/Auth/reset-password';
   static const String refreshToken = '$baseUrl/api/token';
 
   static const int apiTimeOut = 120 * 1000;
