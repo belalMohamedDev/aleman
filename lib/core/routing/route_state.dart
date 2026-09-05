@@ -1,5 +1,6 @@
 import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
+import 'package:aleman/core/services/app_logout.dart';
 import 'package:aleman/core/statsScreen/error_info.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:flutter/material.dart';
@@ -37,8 +38,7 @@ class RouteStatesScreen extends StatelessWidget {
               ),
               btnText: context.translate(AppStrings.logIn),
               press: () async {
-                //TODO: implement logout
-                // await AppLogout().logOutThenNavigateToLogin();
+                await const AppLogout().logOutThenNavigateToLogin(context);
               },
             ),
             SizedBox(height: 50.h),

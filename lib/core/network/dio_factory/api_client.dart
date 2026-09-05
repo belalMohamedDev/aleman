@@ -1,14 +1,22 @@
+import 'dart:async';
+
+import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/core/routing/routes.dart';
+import 'package:aleman/core/services/app_logout.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
+import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class TokenInterceptor extends Interceptor {
   final Dio dio;
-  final navigatorKey = GlobalKey<NavigatorState>();
 
   TokenInterceptor(this.dio);
+
+  static Completer<String?>? _refreshCompleter;
+  static bool _isSessionExpiredHandling = false;
 
   @override
   void onRequest(
@@ -27,102 +35,165 @@ class TokenInterceptor extends Interceptor {
 
     // Add headers
     options.headers['Accept'] = 'application/json';
-    options.headers['Authorization'] = 'Bearer $accessToken';
+    if (accessToken.isNotEmpty) {
+      options.headers['Authorization'] = 'Bearer $accessToken';
+    }
     options.headers['lang'] = language;
 
-    return handler.next(options); // continue
+    return handler.next(options);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) async {
-    if (err.response?.statusCode == 401) {
-      // Obtain the refresh token
-      final String refreshToken = await SharedPrefHelper.getSecuredString(
-        PrefKeys.refreshToken,
+    final String requestPath = err.requestOptions.path;
+    final bool isAuthRequest =
+        requestPath.contains(ApiConstants.login) ||
+        requestPath.contains(ApiConstants.refreshToken) ||
+        requestPath.contains(ApiConstants.forgotPassword) ||
+        requestPath.contains(ApiConstants.verifyResetCode) ||
+        requestPath.contains(ApiConstants.resetPassword);
+
+    if (err.response?.statusCode == 401 && !isAuthRequest) {
+      // If another request is currently refreshing the token, wait for it
+      if (_refreshCompleter != null && !_refreshCompleter!.isCompleted) {
+        try {
+          final String? newToken = await _refreshCompleter!.future;
+          if (newToken != null && newToken.isNotEmpty) {
+            err.requestOptions.headers['Authorization'] = 'Bearer $newToken';
+            if (err.requestOptions.data is FormData) {
+              err.requestOptions.data = (err.requestOptions.data as FormData)
+                  .clone();
+            }
+            final cloneReq = await dio.fetch(err.requestOptions);
+            return handler.resolve(cloneReq);
+          }
+        } catch (_) {
+          return handler.reject(err);
+        }
+      }
+
+      // Start the refresh token process
+      _refreshCompleter = Completer<String?>();
+
+      final String oldAccessToken = await SharedPrefHelper.getSecuredString(
+        PrefKeys.userAccessToken,
+      );
+      final String oldRefreshToken = await SharedPrefHelper.getSecuredString(
+        PrefKeys.userRefreshToken,
       );
 
+      if (oldRefreshToken.isEmpty) {
+        _refreshCompleter?.complete(null);
+        _refreshCompleter = null;
+        _showSessionExpiredMessage();
+        return handler.reject(err);
+      }
+
       try {
-        // Request a new access token
-        final response = await dio.post(
-          ApiConstants.refreshToken,
-          data: {'refreshToken': refreshToken},
-          options: Options(headers: {'Content-Type': 'application/json'}),
+        final refreshDio = Dio(
+          BaseOptions(
+            connectTimeout: const Duration(
+              milliseconds: ApiConstants.apiTimeOut,
+            ),
+            receiveTimeout: const Duration(
+              milliseconds: ApiConstants.apiTimeOut,
+            ),
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+            },
+          ),
         );
 
-        final newAccessToken = response.data['accessToken'];
-
-        // Save the new access token
-        await SharedPrefHelper.setSecuredString(
-          PrefKeys.userAccessToken,
-          newAccessToken,
+        final response = await refreshDio.post(
+          '${ApiConstants.baseUrl}${ApiConstants.refreshToken}',
+          data: {
+            'accessToken': oldAccessToken,
+            'refreshToken': oldRefreshToken,
+          },
         );
 
-        final String fullPath = ApiConstants.baseUrl + err.requestOptions.path;
+        if (response.statusCode == 200 && response.data != null) {
+          final newAccessToken = response.data['accessToken'] as String?;
+          final newRefreshToken = response.data['refreshToken'] as String?;
 
-        // Retry the original request with the new access token
-        err.requestOptions.headers['Authorization'] = 'Bearer $newAccessToken';
-        final opts = Options(
-          method: err.requestOptions.method,
-          headers: err.requestOptions.headers,
-        );
-        final cloneReq = await dio.request(
-          fullPath,
-          options: opts,
-          data: err.requestOptions.data is FormData
-              ? err.requestOptions.data.clone()
-              : err.requestOptions.data,
+          if (newAccessToken != null &&
+              newAccessToken.isNotEmpty &&
+              newRefreshToken != null &&
+              newRefreshToken.isNotEmpty) {
+            // Save the updated tokens in secure storage
+            await SharedPrefHelper.setSecuredString(
+              PrefKeys.userAccessToken,
+              newAccessToken,
+            );
+            await SharedPrefHelper.setSecuredString(
+              PrefKeys.userRefreshToken,
+              newRefreshToken,
+            );
 
-          // err.requestOptions.data,
-          queryParameters: err.requestOptions.queryParameters,
-        );
+            _refreshCompleter?.complete(newAccessToken);
+            _refreshCompleter = null;
 
-        return handler.resolve(cloneReq);
+            // Retry the original request with the new access token
+            err.requestOptions.headers['Authorization'] =
+                'Bearer $newAccessToken';
+            if (err.requestOptions.data is FormData) {
+              err.requestOptions.data = (err.requestOptions.data as FormData)
+                  .clone();
+            }
+
+            final cloneReq = await dio.fetch(err.requestOptions);
+            return handler.resolve(cloneReq);
+          }
+        }
+
+        _refreshCompleter?.complete(null);
+        _refreshCompleter = null;
+        _showSessionExpiredMessage();
+        return handler.reject(err);
       } catch (e) {
-        // Refresh token is also expired or invalid, force re-login
+        _refreshCompleter?.complete(null);
+        _refreshCompleter = null;
         _showSessionExpiredMessage();
         return handler.reject(err);
       }
     } else if (err.response?.statusCode == 500) {
-      // Retry the request in case of a 500 error
       try {
-        final cloneReq = await dio.request(
-          err.requestOptions.path,
-          options: Options(
-            method: err.requestOptions.method,
-            headers: err.requestOptions.headers,
-          ),
-          data: err.requestOptions.data,
-          queryParameters: err.requestOptions.queryParameters,
-        );
-
+        if (err.requestOptions.data is FormData) {
+          err.requestOptions.data = (err.requestOptions.data as FormData)
+              .clone();
+        }
+        final cloneReq = await dio.fetch(err.requestOptions);
         return handler.resolve(cloneReq);
       } catch (e) {
-        // If retry fails, forward the error
         return handler.reject(err);
       }
     }
 
-    // If the error is not related to token expiration, forward it
     return handler.next(err);
   }
 
-  void _showSessionExpiredMessage() {
-    // final context = navigatorKey.currentState?.context;
+  void _showSessionExpiredMessage() async {
+    if (_isSessionExpiredHandling) return;
+    _isSessionExpiredHandling = true;
 
-    //TODO: make dialog instead of toast
+    try {
+      await AppLogout.logout();
 
-    // if (context != null) {
-    //   ShowToast.showToastErrorTop(
-    //     errorMessage: context.translate(AppStrings.sessionExpired),
-    //     context: context,
-    //   );
+      AppToast.showError(
+        null,
+        message: 'انتهت صلاحية الجلسة، يرجى إعادة تسجيل الدخول',
+      );
 
-    //   // Show session expired message
-    //   navigatorKey.currentState?.pushNamedAndRemoveUntil(
-    //     Routes.loginRoute,
-    //     (Route<dynamic> route) => false,
-    //     arguments: context.translate(AppStrings.sessionExpired),
-    //   );
-    // }
+      instance<GlobalKey<NavigatorState>>().currentState
+          ?.pushNamedAndRemoveUntil(
+            Routes.loginRoute,
+            (Route<dynamic> route) => false,
+          );
+    } finally {
+      Future.delayed(const Duration(seconds: 3), () {
+        _isSessionExpiredHandling = false;
+      });
+    }
   }
 }
