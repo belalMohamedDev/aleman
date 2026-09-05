@@ -25,5 +25,6 @@ abstract class HomeCuibtState with _$HomeCuibtState {
     // Product Details Bottom Sheet
     @Default(1) double quantity,
     @Default(false) bool isTonMode,
+    @Default(0) int selectedPackageIndex,
   }) = _HomeCuibtState;
 }

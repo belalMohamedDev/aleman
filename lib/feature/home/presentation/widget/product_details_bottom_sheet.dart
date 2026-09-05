@@ -51,6 +51,25 @@ class ProductDetailsBottomSheet extends StatelessWidget {
       builder: (context, state) {
         final isTonMode = state.isTonMode;
         final quantity = state.quantity;
+        final selectedPackageIndex = state.selectedPackageIndex;
+
+        final hasPackages = product.packages.isNotEmpty;
+        final currentPackage =
+            (hasPackages && selectedPackageIndex < product.packages.length)
+            ? product.packages[selectedPackageIndex]
+            : (hasPackages ? product.packages.first : null);
+
+        final displayPrice = currentPackage != null
+            ? (isTonMode ? currentPackage.pricePerTon : currentPackage.price)
+            : (isTonMode ? product.pricePerTon : product.price);
+
+        final canToggleTon = currentPackage != null
+            ? currentPackage.pricePerTon > 0
+            : product.pricePerTon > 0;
+
+        final currentWeight = currentPackage != null
+            ? currentPackage.weightKg
+            : product.weightPerSackKg;
 
         return Container(
           decoration: const BoxDecoration(
@@ -60,24 +79,34 @@ class ProductDetailsBottomSheet extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _HeroSection(product: product, isTonMode: isTonMode),
+              _HeroSection(
+                product: product,
+                displayPrice: displayPrice,
+                isTonMode: isTonMode,
+                getGrowthStageName: _getGrowthStageName,
+                getFeedFormName: _getFeedFormName,
+              ),
               Flexible(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      if (product.pricePerTon > 0) ...[
-                        _UnitToggle(isTonMode: isTonMode),
-                        const SizedBox(height: 20),
+                      if (hasPackages && product.packages.length > 1) ...[
+                        _PackageSelector(
+                          packages: product.packages,
+                          selectedIndex: selectedPackageIndex,
+                          isTonMode: isTonMode,
+                        ),
+                        const SizedBox(height: 16),
                       ],
-                      _SpecChipsRow(
-                        product: product,
-                        getGrowthStageName: _getGrowthStageName,
-                        getFeedFormName: _getFeedFormName,
-                      ),
+                      if (canToggleTon) ...[
+                        _UnitToggle(isTonMode: isTonMode),
+                        const SizedBox(height: 16),
+                      ],
+
                       if (product.description.isNotEmpty) ...[
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         Text(
                           product.description,
                           style: TextStyle(
@@ -89,16 +118,18 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                       ],
                       if (product.ingredients.isNotEmpty ||
                           product.additives.isNotEmpty) ...[
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 18),
                         _NutritionCard(product: product),
                       ],
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 20),
                     ],
                   ),
                 ),
               ),
               _ActionBar(
                 product: product,
+                currentPackage: currentPackage,
+                currentWeight: currentWeight,
                 quantity: quantity,
                 isTonMode: isTonMode,
                 responsive: responsive,
@@ -112,118 +143,262 @@ class ProductDetailsBottomSheet extends StatelessWidget {
 }
 
 class _HeroSection extends StatelessWidget {
-  const _HeroSection({required this.product, required this.isTonMode});
+  const _HeroSection({
+    required this.product,
+    required this.displayPrice,
+    required this.isTonMode,
+    required this.getGrowthStageName,
+    required this.getFeedFormName,
+  });
+
   final ProductEntity product;
+  final double displayPrice;
   final bool isTonMode;
+  final String Function(int) getGrowthStageName;
+  final String Function(int) getFeedFormName;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220.h,
       width: double.infinity,
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
       decoration: BoxDecoration(
         color: ColorManger.primaryLight.withValues(alpha: 0.06),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
-      child: Stack(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Align(
             alignment: Alignment.topCenter,
             child: Container(
-              margin: const EdgeInsets.only(top: 12),
               height: 4,
-              width: 36,
+              width: 38,
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
           ),
-          Positioned(
-            top: 20,
-            left: 5,
-            child: CachedNetworkImage(
-              imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
-              height: 190.h,
-              fit: BoxFit.contain,
-              placeholder: (context, url) => Shimmer.fromColors(
-                baseColor: Colors.grey.shade200,
-                highlightColor: Colors.grey.shade50,
-                child: Container(
-                  height: 140.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: 14),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 95.w,
+                height: 95.w,
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.grey.shade100),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
+                  fit: BoxFit.contain,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey.shade200,
+                    highlightColor: Colors.grey.shade50,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.grass_rounded,
+                    color: ColorManger.primaryLight.withValues(alpha: 0.4),
+                    size: 40,
                   ),
                 ),
               ),
-              errorWidget: (context, url, error) => Icon(
-                Icons.grass_rounded,
-                color: ColorManger.primaryLight.withValues(alpha: 0.4),
-                size: 64,
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 80),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    ColorManger.primaryLight.withValues(alpha: 0.08),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      product.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15.5.sp,
+                        color: ColorManger.primary,
+                        height: 1.25,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          '${displayPrice.toStringAsFixed(0)} ج.م',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 18.sp,
+                            color: ColorManger.goldDark,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2.5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorManger.primaryLight.withValues(
+                              alpha: 0.1,
+                            ),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            isTonMode ? 'للطن' : 'للشكارة',
+                            style: TextStyle(
+                              fontSize: 10.5.sp,
+                              color: ColorManger.primaryLight,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    _SpecChipsRow(
+                      product: product,
+                      getGrowthStageName: getGrowthStageName,
+                      getFeedFormName: getFeedFormName,
+                    ),
                   ],
                 ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    product.name,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16.sp,
-                      color: ColorManger.primary,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        isTonMode
-                            ? '${product.pricePerTon} ج.م'
-                            : '${product.price} ج.م',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 18.sp,
-                          color: ColorManger.goldDark,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        isTonMode ? 'للطن' : 'للشكارة',
-                        style: TextStyle(
-                          fontSize: 10.sp,
-                          color: Colors.grey.shade500,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            ],
           ),
         ],
       ),
+    );
+  }
+}
+
+class _PackageSelector extends StatelessWidget {
+  const _PackageSelector({
+    required this.packages,
+    required this.selectedIndex,
+    required this.isTonMode,
+  });
+
+  final List<PackageEntity> packages;
+  final int selectedIndex;
+  final bool isTonMode;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Icon(Iconsax.box_1, size: 15, color: ColorManger.primary),
+            const SizedBox(width: 6),
+            Text(
+              'حجم العبوة (الشكارة):',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 12.5.sp,
+                color: ColorManger.primary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: List.generate(packages.length, (index) {
+            final pkg = packages[index];
+            final isSelected = selectedIndex == index;
+            final isLast = index == packages.length - 1;
+
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(left: isLast ? 0 : 8.0),
+                child: GestureDetector(
+                  onTap: () =>
+                      context.read<HomeCuibtCubit>().selectPackage(index),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 9,
+                      horizontal: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? ColorManger.primaryLight.withValues(alpha: 0.2)
+                          : Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected
+                            ? ColorManger.primaryLight.withValues(alpha: 0.1)
+                            : Colors.grey.shade300,
+                        width: isSelected ? 1.6 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Iconsax.weight,
+                              size: 13,
+                              color: isSelected
+                                  ? ColorManger.primaryLight
+                                  : Colors.grey.shade600,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              '${pkg.weightKg.toStringAsFixed(0)} كجم',
+                              style: TextStyle(
+                                fontWeight: isSelected
+                                    ? FontWeight.w700
+                                    : FontWeight.w600,
+                                fontSize: 12.sp,
+                                color: isSelected
+                                    ? ColorManger.primary
+                                    : Colors.grey.shade700,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          isTonMode
+                              ? '${pkg.pricePerTon.toStringAsFixed(0)} ج.م/طن'
+                              : '${pkg.price.toStringAsFixed(0)} ج.م',
+                          style: TextStyle(
+                            fontSize: 10.5.sp,
+                            fontWeight: FontWeight.w700,
+                            color: isSelected
+                                ? ColorManger.primary
+                                : Colors.grey.shade500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
     );
   }
 }
@@ -235,27 +410,64 @@ class _UnitToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 40,
+      height: 42.h,
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
         borderRadius: BorderRadius.circular(10),
       ),
-      padding: const EdgeInsets.all(3),
-      child: Row(
-        children: [
-          _ToggleOption(
-            label: 'بالشكارة',
-            icon: Iconsax.box,
-            isSelected: !isTonMode,
-            onTap: () => context.read<HomeCuibtCubit>().toggleTonMode(false),
-          ),
-          _ToggleOption(
-            label: 'بالطن',
-            icon: Iconsax.truck,
-            isSelected: isTonMode,
-            onTap: () => context.read<HomeCuibtCubit>().toggleTonMode(true),
-          ),
-        ],
+      padding: const EdgeInsets.all(3.5),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final itemWidth = constraints.maxWidth / 2;
+          return Stack(
+            children: [
+              AnimatedAlign(
+                duration: const Duration(milliseconds: 240),
+                curve: Curves.fastOutSlowIn,
+                alignment: isTonMode
+                    ? AlignmentDirectional.centerEnd
+                    : AlignmentDirectional.centerStart,
+                child: Container(
+                  width: itemWidth,
+                  height: constraints.maxHeight,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: _ToggleOption(
+                      label: 'بالشكارة',
+                      icon: Iconsax.box,
+                      isSelected: !isTonMode,
+                      onTap: () =>
+                          context.read<HomeCuibtCubit>().toggleTonMode(false),
+                    ),
+                  ),
+                  Expanded(
+                    child: _ToggleOption(
+                      label: 'بالطن',
+                      icon: Iconsax.truck,
+                      isSelected: isTonMode,
+                      onTap: () =>
+                          context.read<HomeCuibtCubit>().toggleTonMode(true),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -268,6 +480,7 @@ class _ToggleOption extends StatelessWidget {
     required this.isSelected,
     required this.onTap,
   });
+
   final String label;
   final IconData icon;
   final bool isSelected;
@@ -275,48 +488,38 @@ class _ToggleOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          decoration: BoxDecoration(
-            color: isSelected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(7),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.07),
-                      blurRadius: 6,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: onTap,
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedScale(
+              scale: isSelected ? 1.05 : 1.0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
                 icon,
-                size: 14,
+                size: 15,
                 color: isSelected
                     ? ColorManger.primaryLight
                     : Colors.grey.shade500,
               ),
-              const SizedBox(width: 5),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                  color: isSelected
-                      ? ColorManger.primaryLight
-                      : Colors.grey.shade500,
-                ),
+            ),
+            const SizedBox(width: 6),
+            AnimatedDefaultTextStyle(
+              duration: const Duration(milliseconds: 200),
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontFamily: Theme.of(context).textTheme.bodyMedium?.fontFamily,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected
+                    ? ColorManger.primaryLight
+                    : Colors.grey.shade500,
               ),
-            ],
-          ),
+              child: Text(label),
+            ),
+          ],
         ),
       ),
     );
@@ -329,60 +532,63 @@ class _SpecChipsRow extends StatelessWidget {
     required this.getGrowthStageName,
     required this.getFeedFormName,
   });
+
   final ProductEntity product;
   final String Function(int) getGrowthStageName;
   final String Function(int) getFeedFormName;
 
   @override
   Widget build(BuildContext context) {
-    final chips = <({String label, IconData icon, Color color})>[
-      if (product.proteinPercentage > 0)
-        (
-          label: '${product.proteinPercentage.toStringAsFixed(0)}% بروتين',
-          icon: Iconsax.health,
-          color: const Color(0xFFE53935),
-        ),
-      if (product.growthStage > 0)
-        (
-          label: getGrowthStageName(product.growthStage),
-          icon: Iconsax.trend_up,
-          color: const Color(0xFF1E88E5),
-        ),
-      if (product.feedForm > 0)
-        (
-          label: getFeedFormName(product.feedForm),
-          icon: Iconsax.element_4,
-          color: const Color(0xFF43A047),
-        ),
-      if (product.weightPerSackKg > 0)
-        (
-          label: '${product.weightPerSackKg.toStringAsFixed(0)} كجم',
-          icon: Iconsax.weight,
-          color: const Color(0xFFF57C00),
-        ),
-    ];
+    final chips =
+        <({String label, IconData icon, Color color, Color bg, Color border})>[
+          if (product.proteinPercentage > 0)
+            (
+              label: '${product.proteinPercentage.toStringAsFixed(0)}% بروتين',
+              icon: Iconsax.health,
+              color: ColorManger.chipProtein,
+              bg: ColorManger.chipProteinBg.withValues(alpha: .3),
+              border: ColorManger.chipProteinBorder.withValues(alpha: .3),
+            ),
+          if (product.growthStage > 0)
+            (
+              label: getGrowthStageName(product.growthStage),
+              icon: Iconsax.trend_up,
+              color: ColorManger.chipStage,
+              bg: ColorManger.chipStageBg.withValues(alpha: .3),
+              border: ColorManger.chipStageBorder.withValues(alpha: .3),
+            ),
+          if (product.feedForm > 0)
+            (
+              label: getFeedFormName(product.feedForm),
+              icon: Iconsax.element_4,
+              color: ColorManger.primaryLight,
+              bg: ColorManger.chipFormBg.withValues(alpha: .3),
+              border: ColorManger.chipFormBorder.withValues(alpha: .3),
+            ),
+        ];
     if (chips.isEmpty) return const SizedBox.shrink();
+
     return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+      spacing: 6,
+      runSpacing: 5,
       children: chips
           .map(
             (c) => Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3.5),
               decoration: BoxDecoration(
-                color: c.color.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: c.color.withValues(alpha: 0.2)),
+                color: c.bg,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: c.border, width: 0.9),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(c.icon, size: 13, color: c.color),
-                  const SizedBox(width: 5),
+                  Icon(c.icon, size: 12, color: c.color),
+                  const SizedBox(width: 4),
                   Text(
                     c.label,
                     style: TextStyle(
-                      fontSize: 11.sp,
+                      fontSize: 10.5.sp,
                       fontWeight: FontWeight.w600,
                       color: c.color,
                     ),
@@ -490,11 +696,16 @@ class _NutritionCard extends StatelessWidget {
 class _ActionBar extends StatelessWidget {
   const _ActionBar({
     required this.product,
+    required this.currentPackage,
+    required this.currentWeight,
     required this.quantity,
     required this.isTonMode,
     required this.responsive,
   });
+
   final ProductEntity product;
+  final PackageEntity? currentPackage;
+  final double currentWeight;
   final double quantity;
   final bool isTonMode;
   final ResponsiveUtils responsive;
@@ -554,7 +765,9 @@ class _ActionBar extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  final unitLabel = isTonMode ? 'طن' : 'شكارة';
+                  final unitLabel = isTonMode
+                      ? 'طن'
+                      : 'شكارة (${currentWeight > 0 ? currentWeight.toStringAsFixed(0) : ''} كجم)';
                   final qtyLabel = quantity == quantity.truncateToDouble()
                       ? quantity.toInt().toString()
                       : quantity.toStringAsFixed(1);
@@ -610,6 +823,7 @@ class _CounterBtn extends StatelessWidget {
     required this.enabled,
     this.filled = false,
   });
+
   final IconData icon;
   final VoidCallback onTap;
   final bool enabled;
@@ -624,26 +838,22 @@ class _CounterBtn extends StatelessWidget {
         height: 40,
         margin: const EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: filled
-              ? ColorManger.primaryLight
-              : (enabled ? Colors.white : Colors.transparent),
+          color: filled ? ColorManger.primaryLight : Colors.white,
           borderRadius: BorderRadius.circular(10),
-          boxShadow: (enabled && !filled)
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.06),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 1),
+            ),
+          ],
         ),
         child: Icon(
           icon,
-          size: 18,
+          size: 16,
           color: filled
               ? Colors.white
-              : (enabled ? Colors.black87 : Colors.grey.shade400),
+              : (enabled ? ColorManger.primaryLight : Colors.grey.shade400),
         ),
       ),
     );
@@ -653,6 +863,7 @@ class _CounterBtn extends StatelessWidget {
 class _QuantityInputField extends StatefulWidget {
   final double initialValue;
   final bool isTonMode;
+
   const _QuantityInputField({
     required this.initialValue,
     required this.isTonMode,
@@ -664,23 +875,18 @@ class _QuantityInputField extends StatefulWidget {
 
 class _QuantityInputFieldState extends State<_QuantityInputField> {
   late TextEditingController _controller;
-  final FocusNode _focusNode = FocusNode();
+  late FocusNode _focusNode;
 
-  String _fmt(double val) => val == val.truncateToDouble()
-      ? val.toInt().toString()
-      : val.toStringAsFixed(1);
+  String _fmt(double val) =>
+      val == val.truncateToDouble() ? '${val.toInt()}' : val.toStringAsFixed(1);
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: _fmt(widget.initialValue));
+    _focusNode = FocusNode();
     _focusNode.addListener(() {
-      if (_focusNode.hasFocus) {
-        _controller.selection = TextSelection(
-          baseOffset: 0,
-          extentOffset: _controller.text.length,
-        );
-      } else {
+      if (!_focusNode.hasFocus) {
         final parsed = double.tryParse(_controller.text);
         if (parsed == null || parsed <= 0) {
           _controller.text = _fmt(
@@ -692,10 +898,13 @@ class _QuantityInputFieldState extends State<_QuantityInputField> {
   }
 
   @override
-  void didUpdateWidget(covariant _QuantityInputField oldWidget) {
+  void didUpdateWidget(_QuantityInputField oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.initialValue != oldWidget.initialValue && !_focusNode.hasFocus) {
-      _controller.text = _fmt(widget.initialValue);
+    if (oldWidget.initialValue != widget.initialValue) {
+      final parsed = double.tryParse(_controller.text);
+      if (parsed != widget.initialValue) {
+        _controller.text = _fmt(widget.initialValue);
+      }
     }
   }
 
@@ -711,28 +920,27 @@ class _QuantityInputFieldState extends State<_QuantityInputField> {
     return TextField(
       controller: _controller,
       focusNode: _focusNode,
-      keyboardType: widget.isTonMode
-          ? const TextInputType.numberWithOptions(decimal: true)
-          : TextInputType.number,
       textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontWeight: FontWeight.w700,
-        fontSize: 16,
-        color: Colors.black87,
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      style: TextStyle(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w800,
+        color: ColorManger.primary,
       ),
       decoration: const InputDecoration(
-        filled: true,
-        fillColor: Colors.transparent,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
-        errorBorder: InputBorder.none,
         disabledBorder: InputBorder.none,
+        errorBorder: InputBorder.none,
+        focusedErrorBorder: InputBorder.none,
+        filled: false,
+        fillColor: Colors.transparent,
         isDense: true,
         contentPadding: EdgeInsets.zero,
       ),
-      onChanged: (value) {
-        final parsed = double.tryParse(value);
+      onSubmitted: (val) {
+        final parsed = double.tryParse(val);
         if (parsed != null && parsed > 0) {
           context.read<HomeCuibtCubit>().setQuantity(
             widget.isTonMode ? parsed : parsed.truncateToDouble(),

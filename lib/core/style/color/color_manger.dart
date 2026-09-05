@@ -29,4 +29,21 @@ class ColorManger {
   static Color redError = const Color(0xffdc707d);
   static Color lightWhite = const Color(0xfff2f3f7);
   static Color backgroundItem = const Color.fromARGB(255, 247, 247, 247);
+
+  // Specification Chips Colors
+  static const Color chipProtein = Color(0xFFC62828);
+  static const Color chipProteinBg = Color(0xFFFFEBEE);
+  static const Color chipProteinBorder = Color(0xFFFFCDD2);
+
+  static const Color chipStage = Color(0xFF1565C0);
+  static const Color chipStageBg = Color(0xFFE3F2FD);
+  static const Color chipStageBorder = Color(0xFFBBDEFB);
+
+  static const Color chipForm = Color(0xFF2E7D32);
+  static const Color chipFormBg = Color(0xFFE8F5E9);
+  static const Color chipFormBorder = Color(0xFFC8E6C9);
+
+  static const Color chipWeight = Color(0xFFE65100);
+  static const Color chipWeightBg = Color(0xFFFFF3E0);
+  static const Color chipWeightBorder = Color(0xFFFFE0B2);
 }

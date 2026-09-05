@@ -122,7 +122,7 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
   }
 
   void resetQuantity() {
-    emit(state.copyWith(quantity: 1, isTonMode: false));
+    emit(state.copyWith(quantity: 1, isTonMode: false, selectedPackageIndex: 0));
   }
 
   void setQuantity(double val) {
@@ -134,5 +134,9 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
   void toggleTonMode(bool isTon) {
     // Reset quantity to sensible default when switching modes
     emit(state.copyWith(isTonMode: isTon, quantity: isTon ? 1.0 : 1.0));
+  }
+
+  void selectPackage(int index) {
+    emit(state.copyWith(selectedPackageIndex: index));
   }
 }

@@ -1,3 +1,5 @@
+import 'package:aleman/feature/home/data/model/package_model.dart';
+
 class ProductModel {
   int? id;
   int? categoryId;
@@ -8,7 +10,7 @@ class ProductModel {
   String? imageUrl;
   bool? isActive;
   String? createdAt;
-  
+
   // New properties
   double? weightPerSackKg;
   double? pricePerTon;
@@ -17,6 +19,7 @@ class ProductModel {
   int? feedForm;
   String? ingredients;
   String? additives;
+  List<PackageModel>? packages;
 
   ProductModel({
     this.id,
@@ -35,6 +38,7 @@ class ProductModel {
     this.feedForm,
     this.ingredients,
     this.additives,
+    this.packages,
   });
 
   ProductModel.fromJson(Map<String, dynamic> json) {
@@ -43,19 +47,28 @@ class ProductModel {
     sapProductId = json['sapProductId'];
     name = json['name'];
     description = json['description'];
-    price = json['price']?.toDouble();
     imageUrl = json['imageUrl'];
     isActive = json['isActive'];
     createdAt = json['createdAt'];
-    
-    // Parse new properties
-    weightPerSackKg = json['weightPerSackKg']?.toDouble();
-    pricePerTon = json['pricePerTon']?.toDouble();
+
     proteinPercentage = json['proteinPercentage']?.toDouble();
     growthStage = json['growthStage'];
     feedForm = json['feedForm'];
     ingredients = json['ingredients'];
     additives = json['additives'];
+
+    if (json['packages'] != null) {
+      packages = (json['packages'] as List)
+          .map((e) => PackageModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } else {
+      packages = [];
+    }
+
+    // Default fallback from packages if top-level fields are absent
+    final firstPkg = (packages != null && packages!.isNotEmpty) ? packages!.first : null;
+    price = json['price']?.toDouble() ?? firstPkg?.price;
+    pricePerTon = json['pricePerTon']?.toDouble() ?? firstPkg?.pricePerTon;
+    weightPerSackKg = json['weightPerSackKg']?.toDouble() ?? firstPkg?.weightKg;
   }
 }
-
