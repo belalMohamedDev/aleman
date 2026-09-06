@@ -12,6 +12,7 @@ class ApiConstants {
   static const String cartItems = '/api/Cart/items';
   static const String cartCount = '/api/Cart/count';
   static const String getCart = '/api/Cart';
+  static const String userProfile = '/api/Users/me';
 
   static const int apiTimeOut = 120 * 1000;
 }

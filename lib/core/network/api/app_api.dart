@@ -13,6 +13,7 @@ import 'package:aleman/feature/cart/data/model/add_to_cart_request_body.dart';
 import 'package:aleman/feature/cart/data/model/cart_count_response.dart';
 import 'package:aleman/feature/cart/data/model/cart_response_model.dart';
 import 'package:aleman/feature/cart/data/model/update_cart_item_request_body.dart';
+import 'package:aleman/feature/profile/data/model/user_profile_model.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -58,6 +59,9 @@ abstract class AppServiceClient {
   Future<CartResponseModel> addToCartService(
     @Body() AddToCartRequestBody body,
   );
+
+  @GET(ApiConstants.userProfile)
+  Future<UserProfileModel> getUserProfileService();
 
   @GET(ApiConstants.cartCount)
   Future<CartCountResponse> getCartCountService();

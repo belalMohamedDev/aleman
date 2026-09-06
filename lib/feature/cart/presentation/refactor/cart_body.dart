@@ -7,6 +7,7 @@ import 'package:aleman/feature/cart/presentation/widget/cart_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer/shimmer.dart';
 
 class CartBody extends StatefulWidget {
   const CartBody({super.key});
@@ -28,9 +29,7 @@ class _CartBodyState extends State<CartBody> {
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, state) {
         if (state.status == CartStatus.loading) {
-          return Center(
-            child: CircularProgressIndicator(color: ColorManger.primary),
-          );
+          return const _CartShimmer();
         }
 
         if (state.status == CartStatus.error) {
@@ -245,6 +244,101 @@ class _CartSummaryBottomBar extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CartShimmer extends StatelessWidget {
+  const _CartShimmer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        itemCount: 4,
+        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        itemBuilder: (_, _) {
+          return Container(
+            height: 110.h,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                children: [
+                  Container(
+                    width: 85.w,
+                    height: 85.w,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: double.infinity,
+                          height: 14.h,
+                          color: Colors.white,
+                        ),
+                        SizedBox(height: 8.h),
+                        Container(
+                          width: 120.w,
+                          height: 12.h,
+                          color: Colors.white,
+                        ),
+                        SizedBox(height: 8.h),
+                        Container(
+                          width: 80.w,
+                          height: 12.h,
+                          color: Colors.white,
+                        ),
+                        SizedBox(height: 10.h),
+                        Row(
+                          children: [
+                            Container(
+                              width: 24.w,
+                              height: 24.w,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Container(
+                              width: 30.w,
+                              height: 14.h,
+                              color: Colors.white,
+                            ),
+                            SizedBox(width: 8.w),
+                            Container(
+                              width: 24.w,
+                              height: 24.w,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

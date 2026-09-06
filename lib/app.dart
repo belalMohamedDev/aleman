@@ -22,9 +22,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => instance<AppLogicCubit>()..getSavedLanguage(),
         ),
-        BlocProvider(
-          create: (context) => instance<NetworkCubit>(),
-        ),
+        BlocProvider(create: (context) => instance<NetworkCubit>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
@@ -51,14 +49,12 @@ class MyApp extends StatelessWidget {
                     builder: (context, networkState) {
                       return Stack(
                         children: [
-                          if (child != null) child,
+                          ?child,
                           if (networkState.maybeWhen(
                             disconnected: () => true,
                             orElse: () => false,
                           ))
-                            const Positioned.fill(
-                              child: NoInternetScreen(),
-                            ),
+                            const Positioned.fill(child: NoInternetScreen()),
                         ],
                       );
                     },
