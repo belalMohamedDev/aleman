@@ -66,9 +66,7 @@ class RouteGenerator {
                 create: (context) =>
                     instance<HomeCuibtCubit>()..fetchHomeData(),
               ),
-              BlocProvider(
-                create: (context) => instance<CartCubit>()..getCartCount(),
-              ),
+              BlocProvider.value(value: instance<CartCubit>()..getCartCount()),
             ],
             child: const HomeScreen(),
           ),

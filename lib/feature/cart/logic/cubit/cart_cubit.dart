@@ -110,12 +110,7 @@ class CartCubit extends Cubit<CartState> {
 
     result.when(
       success: (cartResponse) {
-        emit(
-          state.copyWith(
-            status: CartStatus.success,
-            cart: cartResponse,
-          ),
-        );
+        emit(state.copyWith(status: CartStatus.success, cart: cartResponse));
         // Fetch count to stay in sync
         getCartCount();
       },

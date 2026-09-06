@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 class CartAnimationHelper {
   /// GlobalKey attached to the Cart icon/FAB to accurately target its position.
   static final GlobalKey cartKey = GlobalKey();
+  
+  /// GlobalKey attached to the Cart icon in the Search AppBar.
+  static final GlobalKey cartSearchKey = GlobalKey();
 
   /// Executes the flying image to cart animation using an OverlayEntry without any setState.
   static void runFlyToCartAnimation({
@@ -28,8 +31,14 @@ class CartAnimationHelper {
     Offset endOffset;
     Size endSize = const Size(48, 48);
 
-    final targetRenderBox =
-        cartKey.currentContext?.findRenderObject() as RenderBox?;
+    // Prioritize search cart key if the search screen is active
+    RenderBox? targetRenderBox =
+        cartSearchKey.currentContext?.findRenderObject() as RenderBox?;
+        
+    if (targetRenderBox == null || !targetRenderBox.hasSize) {
+      targetRenderBox = cartKey.currentContext?.findRenderObject() as RenderBox?;
+    }
+
     if (targetRenderBox != null && targetRenderBox.hasSize) {
       endOffset = targetRenderBox.localToGlobal(Offset.zero);
       endSize = targetRenderBox.size;
