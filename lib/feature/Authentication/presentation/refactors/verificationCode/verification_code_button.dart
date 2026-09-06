@@ -14,13 +14,20 @@ class VerificationCodeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
+      listenWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) =>
+          previous.isCodeValid != current.isCodeValid ||
+          previous.status != current.status,
       listener: (context, state) {
+        final cubit = context.read<ForgotPasswordCubit>();
         if (state.status == ForgotPasswordStatus.error) {
           AppToast.showError(
             context,
             message: state.error ?? 'كود التحقق غير صحيح أو انتهت صلاحيته',
           );
+          cubit.resetStatus();
         } else if (state.status == ForgotPasswordStatus.verifyCodeSuccess) {
+          cubit.cancelResendTimer();
           AppToast.showSuccess(
             context,
             message: state.message ?? 'تم التحقق من الرمز بنجاح 🌾',
@@ -28,7 +35,7 @@ class VerificationCodeButton extends StatelessWidget {
           Navigator.pushNamed(
             context,
             Routes.newPasswordRoute,
-            arguments: context.read<ForgotPasswordCubit>(),
+            arguments: cubit,
           );
         }
       },

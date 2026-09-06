@@ -10,6 +10,8 @@ import 'package:aleman/feature/Authentication/presentation/screens/forget_passwo
 import 'package:aleman/feature/Authentication/presentation/screens/new_password_screen.dart';
 import 'package:aleman/feature/Authentication/presentation/screens/sign_in_view.dart';
 import 'package:aleman/feature/Authentication/presentation/screens/verification_code_screen.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
+import 'package:aleman/feature/cart/presentation/screen/cart_screen.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:aleman/feature/onboarding/presentation/screen/on_boarding_screen.dart';
@@ -29,40 +31,45 @@ class RouteGenerator {
         );
 
       case Routes.forgetPasswordRoute:
-        final cubit = settings.arguments as ForgotPasswordCubit? ??
+        final cubit =
+            settings.arguments as ForgotPasswordCubit? ??
             instance<ForgotPasswordCubit>();
         return _buildFadeRoute(
-          BlocProvider.value(
-            value: cubit,
-            child: const ForgetPasswordScreen(),
-          ),
+          BlocProvider.value(value: cubit, child: const ForgetPasswordScreen()),
         );
 
       case Routes.verificationCodeRoute:
-        final cubit = settings.arguments as ForgotPasswordCubit? ??
+        final cubit =
+            settings.arguments as ForgotPasswordCubit? ??
             instance<ForgotPasswordCubit>();
         cubit.startListeningForSms();
+        if (cubit.resendCountdown == 0) {
+          cubit.startResendTimer();
+        }
         return _buildFadeRoute(
-          BlocProvider.value(
-            value: cubit,
-            child: const VerificationCodeView(),
-          ),
+          BlocProvider.value(value: cubit, child: const VerificationCodeView()),
         );
 
       case Routes.newPasswordRoute:
-        final cubit = settings.arguments as ForgotPasswordCubit? ??
+        final cubit =
+            settings.arguments as ForgotPasswordCubit? ??
             instance<ForgotPasswordCubit>();
         return _buildFadeRoute(
-          BlocProvider.value(
-            value: cubit,
-            child: const NewPasswordView(),
-          ),
+          BlocProvider.value(value: cubit, child: const NewPasswordView()),
         );
 
       case Routes.homeRoute:
         return _buildFadeRoute(
-          BlocProvider(
-            create: (context) => instance<HomeCuibtCubit>()..fetchHomeData(),
+          MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    instance<HomeCuibtCubit>()..fetchHomeData(),
+              ),
+              BlocProvider(
+                create: (context) => instance<CartCubit>()..getCartCount(),
+              ),
+            ],
             child: const HomeScreen(),
           ),
         );
@@ -72,6 +79,14 @@ class RouteGenerator {
 
       case Routes.profileRoute:
         return _buildFadeRoute(const ProfileView());
+
+      case Routes.cartRoute:
+        return _buildFadeRoute(
+          BlocProvider.value(
+            value: instance<CartCubit>(),
+            child: const CartScreen(),
+          ),
+        );
 
       // ---------------------- DEFAULT -----------------------
       case Routes.noRoute:

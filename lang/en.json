@@ -128,6 +128,8 @@
   "pleaseEnterTheCode": "Please Enter the code we just send to email",
   "didntRecieveotp": "Didn't receive OTP?",
   "resendCode": "Resend Code",
+  "resendCodeIn": "Resend code in",
+  "editPhone": "Edit Phone Number",
   "verify": "Verify",
   "sessionExpired": "Your session has expired. Please log in again.",
   "home": "Home",

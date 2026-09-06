@@ -20,6 +20,7 @@ abstract class ForgotPasswordState with _$ForgotPasswordState {
     @Default(false) bool isNewPasswordValid,
     @Default(true) bool showNewPassword,
     @Default(true) bool showConfirmPassword,
+    @Default(0) int resendCountdown,
     String? message,
     String? error,
   }) = _ForgotPasswordState;

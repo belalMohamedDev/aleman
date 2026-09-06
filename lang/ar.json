@@ -129,6 +129,8 @@
   "pleaseEnterTheCode": "يرجى إدخال الرمز الذي أرسلناه للتو إلى",
   "didntRecieveotp": "لم تستلم رمز التحقق؟",
   "resendCode": "إعادة إرسال الرمز",
+  "resendCodeIn": "إعادة إرسال الرمز بعد",
+  "editPhone": "تعديل الرقم",
   "verify": "تحقق",
   "sessionExpired": "انتهت جلستك. يرجى تسجيل الدخول مرة أخرى.",
   "home": "  الرئيسية",

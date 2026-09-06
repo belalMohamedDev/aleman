@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
@@ -66,7 +67,8 @@ class AppToast {
     required Duration duration,
   }) {
     // Resolve context from navigatorKey if null
-    final targetContext = context ??
+    final targetContext =
+        context ??
         instance<GlobalKey<NavigatorState>>().currentState?.overlay?.context ??
         instance<GlobalKey<NavigatorState>>().currentContext;
 
@@ -142,25 +144,18 @@ class _ToastWidgetState extends State<_ToastWidget>
       duration: const Duration(milliseconds: 480),
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, -1.3),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const ElasticOutCurve(0.9),
-      ),
-    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, -1.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: const ElasticOutCurve(0.9),
+          ),
+        );
 
     _scaleAnimation = Tween<double>(
       begin: 0.88,
       end: 1.0,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeOutBack,
-      ),
-    );
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _fadeAnimation = CurvedAnimation(
       parent: _controller,
@@ -289,7 +284,8 @@ class _ToastWidgetState extends State<_ToastWidget>
                                       ImageAsset.feedBag,
                                       width: 80,
                                       height: 80,
-                                      errorBuilder: (c, e, s) => const SizedBox(),
+                                      errorBuilder: (c, e, s) =>
+                                          const SizedBox(),
                                     ),
                                   ),
                                 ),
@@ -298,9 +294,15 @@ class _ToastWidgetState extends State<_ToastWidget>
                                   children: [
                                     // Content Row
                                     Padding(
-                                      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                                      padding: const EdgeInsets.fromLTRB(
+                                        14,
+                                        12,
+                                        14,
+                                        12,
+                                      ),
                                       child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
                                         children: [
                                           _PeekingBadge(
                                             type: widget.type,
@@ -309,7 +311,8 @@ class _ToastWidgetState extends State<_ToastWidget>
                                           const SizedBox(width: 14),
                                           Expanded(
                                             child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Text(
@@ -321,13 +324,15 @@ class _ToastWidgetState extends State<_ToastWidget>
                                                     fontFamily: 'Cairo',
                                                   ),
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                                 const SizedBox(height: 3),
                                                 Text(
                                                   widget.message,
                                                   style: TextStyle(
-                                                    color: Colors.white.withValues(alpha: 0.9),
+                                                    color: Colors.white
+                                                        .withValues(alpha: 0.9),
                                                     fontSize: 12.8,
                                                     fontWeight: FontWeight.w500,
                                                     fontFamily: 'Cairo',
@@ -340,16 +345,24 @@ class _ToastWidgetState extends State<_ToastWidget>
                                           const SizedBox(width: 8),
                                           InkWell(
                                             onTap: _dismiss,
-                                            borderRadius: BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
                                             child: Container(
-                                              padding: const EdgeInsets.all(6.0),
+                                              padding: const EdgeInsets.all(
+                                                6.0,
+                                              ),
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
-                                                color: Colors.white.withValues(alpha: 0.08),
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.08,
+                                                ),
                                               ),
                                               child: Icon(
                                                 Icons.close_rounded,
-                                                color: Colors.white.withValues(alpha: 0.6),
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.6,
+                                                ),
                                                 size: 16,
                                               ),
                                             ),
@@ -450,10 +463,7 @@ class _PeekingBadge extends StatefulWidget {
   final ToastType type;
   final Color accentColor;
 
-  const _PeekingBadge({
-    required this.type,
-    required this.accentColor,
-  });
+  const _PeekingBadge({required this.type, required this.accentColor});
 
   @override
   State<_PeekingBadge> createState() => _PeekingBadgeState();
@@ -471,14 +481,14 @@ class _PeekingBadgeState extends State<_PeekingBadge>
       vsync: this,
       duration: const Duration(milliseconds: 600),
     );
-    _wiggleAnimation = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.0, end: -0.09), weight: 1),
-      TweenSequenceItem(tween: Tween(begin: -0.09, end: 0.09), weight: 2),
-      TweenSequenceItem(tween: Tween(begin: 0.09, end: 0.0), weight: 1),
-    ]).animate(CurvedAnimation(
-      parent: _wiggleController,
-      curve: Curves.easeInOut,
-    ));
+    _wiggleAnimation =
+        TweenSequence<double>([
+          TweenSequenceItem(tween: Tween(begin: 0.0, end: -0.09), weight: 1),
+          TweenSequenceItem(tween: Tween(begin: -0.09, end: 0.09), weight: 2),
+          TweenSequenceItem(tween: Tween(begin: 0.09, end: 0.0), weight: 1),
+        ]).animate(
+          CurvedAnimation(parent: _wiggleController, curve: Curves.easeInOut),
+        );
 
     Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) _wiggleController.forward();
@@ -496,10 +506,7 @@ class _PeekingBadgeState extends State<_PeekingBadge>
     return AnimatedBuilder(
       animation: _wiggleAnimation,
       builder: (context, child) {
-        return Transform.rotate(
-          angle: _wiggleAnimation.value,
-          child: child,
-        );
+        return Transform.rotate(angle: _wiggleAnimation.value, child: child);
       },
       child: _buildBadgeContent(),
     );
@@ -534,10 +541,7 @@ class _PeekingBadgeState extends State<_PeekingBadge>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
-                border: Border.all(
-                  color: widget.accentColor,
-                  width: 2.2,
-                ),
+                border: Border.all(color: widget.accentColor, width: 2.2),
                 gradient: const RadialGradient(
                   colors: [Colors.white, Color(0xFFF2FAF2)],
                 ),
@@ -605,10 +609,7 @@ class _PeekingBadgeState extends State<_PeekingBadge>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFF2C0F12),
-                border: Border.all(
-                  color: const Color(0xFFFF4D4D),
-                  width: 2.2,
-                ),
+                border: Border.all(color: const Color(0xFFFF4D4D), width: 2.2),
               ),
               padding: const EdgeInsets.all(8),
               child: const Icon(
@@ -645,10 +646,7 @@ class _PeekingBadgeState extends State<_PeekingBadge>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: const Color(0xFF2B1D04),
-                border: Border.all(
-                  color: widget.accentColor,
-                  width: 2.2,
-                ),
+                border: Border.all(color: widget.accentColor, width: 2.2),
               ),
               padding: const EdgeInsets.all(7),
               child: Image.asset(
@@ -703,13 +701,11 @@ class _ShrinkingProgressBarState extends State<_ShrinkingProgressBar>
           alignment: Alignment.centerRight,
           child: Container(
             height: 2.8,
-            width: MediaQuery.of(context).size.width * (1.0 - _controller.value),
+            width:
+                MediaQuery.of(context).size.width * (1.0 - _controller.value),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  widget.color.withValues(alpha: 0.3),
-                  widget.color,
-                ],
+                colors: [widget.color.withValues(alpha: 0.3), widget.color],
               ),
               boxShadow: [
                 BoxShadow(

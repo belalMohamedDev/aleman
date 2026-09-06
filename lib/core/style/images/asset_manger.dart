@@ -14,4 +14,5 @@ class ImageAsset {
   static const String hen = '$imagePath/hen.png';
   static const String duck = '$imagePath/duck.png';
   static const String rabbit = '$imagePath/rabbit.png';
+  static const String emptyCart = '$imagePath/emptyCart.png';
 }

@@ -9,6 +9,9 @@ class ApiConstants {
   static const String resetPassword = '/api/Auth/reset-password';
   static const String refreshToken = '/api/Auth/refresh';
   static const String logout = '/api/Auth/logout';
+  static const String cartItems = '/api/Cart/items';
+  static const String cartCount = '/api/Cart/count';
+  static const String getCart = '/api/Cart';
 
   static const int apiTimeOut = 120 * 1000;
 }

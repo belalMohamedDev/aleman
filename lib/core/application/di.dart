@@ -9,6 +9,9 @@ import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart'
 import 'package:aleman/feature/home/data/repository/home_repo.dart';
 import 'package:aleman/feature/home/data/repository/home_repo_imp.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
+import 'package:aleman/feature/cart/data/repository/cart_repo.dart';
+import 'package:aleman/feature/cart/data/repository/cart_repo_impl.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +23,7 @@ import 'package:image_picker/image_picker.dart';
 final instance = GetIt.instance;
 
 Future<void> initAppModule() async {
-  await Future.wait([_initAppModule(), _initLogin(), _initHome()]);
+  await Future.wait([_initAppModule(), _initLogin(), _initHome(), _initCart()]);
 }
 
 Future<void> _initAppModule() async {
@@ -62,5 +65,14 @@ Future<void> _initHome() async {
   );
   instance.registerFactory<HomeCuibtCubit>(
     () => HomeCuibtCubit(instance<HomeRepository>()),
+  );
+}
+
+Future<void> _initCart() async {
+  instance.registerFactory<CartRepository>(
+    () => CartRepositoryImplement(instance<AppServiceClient>()),
+  );
+  instance.registerLazySingleton<CartCubit>(
+    () => CartCubit(instance<CartRepository>()),
   );
 }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ForgotPasswordState {
 
- ForgotPasswordStatus get status; bool get isPhoneValid; bool get isCodeValid; bool get isNewPasswordValid; bool get showNewPassword; bool get showConfirmPassword; String? get message; String? get error;
+ ForgotPasswordStatus get status; bool get isPhoneValid; bool get isCodeValid; bool get isNewPasswordValid; bool get showNewPassword; bool get showConfirmPassword; int get resendCountdown; String? get message; String? get error;
 /// Create a copy of ForgotPasswordState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $ForgotPasswordStateCopyWith<ForgotPasswordState> get copyWith => _$ForgotPasswo
 @override
 bool operator ==(Object other) {
   final _this = this as ForgotPasswordState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ForgotPasswordState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.isPhoneValid, _this.isPhoneValid) || other.isPhoneValid == _this.isPhoneValid)&&(identical(other.isCodeValid, _this.isCodeValid) || other.isCodeValid == _this.isCodeValid)&&(identical(other.isNewPasswordValid, _this.isNewPasswordValid) || other.isNewPasswordValid == _this.isNewPasswordValid)&&(identical(other.showNewPassword, _this.showNewPassword) || other.showNewPassword == _this.showNewPassword)&&(identical(other.showConfirmPassword, _this.showConfirmPassword) || other.showConfirmPassword == _this.showConfirmPassword)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.error, _this.error) || other.error == _this.error));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ForgotPasswordState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.isPhoneValid, _this.isPhoneValid) || other.isPhoneValid == _this.isPhoneValid)&&(identical(other.isCodeValid, _this.isCodeValid) || other.isCodeValid == _this.isCodeValid)&&(identical(other.isNewPasswordValid, _this.isNewPasswordValid) || other.isNewPasswordValid == _this.isNewPasswordValid)&&(identical(other.showNewPassword, _this.showNewPassword) || other.showNewPassword == _this.showNewPassword)&&(identical(other.showConfirmPassword, _this.showConfirmPassword) || other.showConfirmPassword == _this.showConfirmPassword)&&(identical(other.resendCountdown, _this.resendCountdown) || other.resendCountdown == _this.resendCountdown)&&(identical(other.message, _this.message) || other.message == _this.message)&&(identical(other.error, _this.error) || other.error == _this.error));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ForgotPasswordState;
-  return Object.hash(runtimeType,_this.status,_this.isPhoneValid,_this.isCodeValid,_this.isNewPasswordValid,_this.showNewPassword,_this.showConfirmPassword,_this.message,_this.error);
+  return Object.hash(runtimeType,_this.status,_this.isPhoneValid,_this.isCodeValid,_this.isNewPasswordValid,_this.showNewPassword,_this.showConfirmPassword,_this.resendCountdown,_this.message,_this.error);
 }
 
 @override
 String toString() {
   final _this = this as ForgotPasswordState;
-  return 'ForgotPasswordState(status: ${_this.status}, isPhoneValid: ${_this.isPhoneValid}, isCodeValid: ${_this.isCodeValid}, isNewPasswordValid: ${_this.isNewPasswordValid}, showNewPassword: ${_this.showNewPassword}, showConfirmPassword: ${_this.showConfirmPassword}, message: ${_this.message}, error: ${_this.error})';
+  return 'ForgotPasswordState(status: ${_this.status}, isPhoneValid: ${_this.isPhoneValid}, isCodeValid: ${_this.isCodeValid}, isNewPasswordValid: ${_this.isNewPasswordValid}, showNewPassword: ${_this.showNewPassword}, showConfirmPassword: ${_this.showConfirmPassword}, resendCountdown: ${_this.resendCountdown}, message: ${_this.message}, error: ${_this.error})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $ForgotPasswordStateCopyWith<$Res>  {
   factory $ForgotPasswordStateCopyWith(ForgotPasswordState value, $Res Function(ForgotPasswordState) _then) = _$ForgotPasswordStateCopyWithImpl;
 @useResult
 $Res call({
- ForgotPasswordStatus status, bool isPhoneValid, bool isCodeValid, bool isNewPasswordValid, bool showNewPassword, bool showConfirmPassword, String? message, String? error
+ ForgotPasswordStatus status, bool isPhoneValid, bool isCodeValid, bool isNewPasswordValid, bool showNewPassword, bool showConfirmPassword, int resendCountdown, String? message, String? error
 });
 
 
@@ -68,7 +68,7 @@ class _$ForgotPasswordStateCopyWithImpl<$Res>
 
 /// Create a copy of ForgotPasswordState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? isPhoneValid = null,Object? isCodeValid = null,Object? isNewPasswordValid = null,Object? showNewPassword = null,Object? showConfirmPassword = null,Object? message = freezed,Object? error = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? isPhoneValid = null,Object? isCodeValid = null,Object? isNewPasswordValid = null,Object? showNewPassword = null,Object? showConfirmPassword = null,Object? resendCountdown = null,Object? message = freezed,Object? error = freezed,}) {
   return _then(ForgotPasswordState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as ForgotPasswordStatus,isPhoneValid: null == isPhoneValid ? _self.isPhoneValid : isPhoneValid // ignore: cast_nullable_to_non_nullable
@@ -76,7 +76,8 @@ as bool,isCodeValid: null == isCodeValid ? _self.isCodeValid : isCodeValid // ig
 as bool,isNewPasswordValid: null == isNewPasswordValid ? _self.isNewPasswordValid : isNewPasswordValid // ignore: cast_nullable_to_non_nullable
 as bool,showNewPassword: null == showNewPassword ? _self.showNewPassword : showNewPassword // ignore: cast_nullable_to_non_nullable
 as bool,showConfirmPassword: null == showConfirmPassword ? _self.showConfirmPassword : showConfirmPassword // ignore: cast_nullable_to_non_nullable
-as bool,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as bool,resendCountdown: null == resendCountdown ? _self.resendCountdown : resendCountdown // ignore: cast_nullable_to_non_nullable
+as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -163,10 +164,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ForgotPasswordStatus status,  bool isPhoneValid,  bool isCodeValid,  bool isNewPasswordValid,  bool showNewPassword,  bool showConfirmPassword,  String? message,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( ForgotPasswordStatus status,  bool isPhoneValid,  bool isCodeValid,  bool isNewPasswordValid,  bool showNewPassword,  bool showConfirmPassword,  int resendCountdown,  String? message,  String? error)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ForgotPasswordState() when $default != null:
-return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPasswordValid,_that.showNewPassword,_that.showConfirmPassword,_that.message,_that.error);case _:
+return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPasswordValid,_that.showNewPassword,_that.showConfirmPassword,_that.resendCountdown,_that.message,_that.error);case _:
   return orElse();
 
 }
@@ -184,10 +185,10 @@ return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPas
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ForgotPasswordStatus status,  bool isPhoneValid,  bool isCodeValid,  bool isNewPasswordValid,  bool showNewPassword,  bool showConfirmPassword,  String? message,  String? error)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( ForgotPasswordStatus status,  bool isPhoneValid,  bool isCodeValid,  bool isNewPasswordValid,  bool showNewPassword,  bool showConfirmPassword,  int resendCountdown,  String? message,  String? error)  $default,) {final _that = this;
 switch (_that) {
 case _ForgotPasswordState():
-return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPasswordValid,_that.showNewPassword,_that.showConfirmPassword,_that.message,_that.error);case _:
+return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPasswordValid,_that.showNewPassword,_that.showConfirmPassword,_that.resendCountdown,_that.message,_that.error);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -204,10 +205,10 @@ return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPas
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ForgotPasswordStatus status,  bool isPhoneValid,  bool isCodeValid,  bool isNewPasswordValid,  bool showNewPassword,  bool showConfirmPassword,  String? message,  String? error)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( ForgotPasswordStatus status,  bool isPhoneValid,  bool isCodeValid,  bool isNewPasswordValid,  bool showNewPassword,  bool showConfirmPassword,  int resendCountdown,  String? message,  String? error)?  $default,) {final _that = this;
 switch (_that) {
 case _ForgotPasswordState() when $default != null:
-return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPasswordValid,_that.showNewPassword,_that.showConfirmPassword,_that.message,_that.error);case _:
+return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPasswordValid,_that.showNewPassword,_that.showConfirmPassword,_that.resendCountdown,_that.message,_that.error);case _:
   return null;
 
 }
@@ -219,7 +220,7 @@ return $default(_that.status,_that.isPhoneValid,_that.isCodeValid,_that.isNewPas
 
 
 class _ForgotPasswordState implements ForgotPasswordState {
-  const _ForgotPasswordState({this.status = ForgotPasswordStatus.initial, this.isPhoneValid = false, this.isCodeValid = false, this.isNewPasswordValid = false, this.showNewPassword = true, this.showConfirmPassword = true, this.message, this.error});
+  const _ForgotPasswordState({this.status = ForgotPasswordStatus.initial, this.isPhoneValid = false, this.isCodeValid = false, this.isNewPasswordValid = false, this.showNewPassword = true, this.showConfirmPassword = true, this.resendCountdown = 0, this.message, this.error});
   
 
 @override@JsonKey() final  ForgotPasswordStatus status;
@@ -228,6 +229,7 @@ class _ForgotPasswordState implements ForgotPasswordState {
 @override@JsonKey() final  bool isNewPasswordValid;
 @override@JsonKey() final  bool showNewPassword;
 @override@JsonKey() final  bool showConfirmPassword;
+@override@JsonKey() final  int resendCountdown;
 @override final  String? message;
 @override final  String? error;
 
@@ -241,18 +243,18 @@ _$ForgotPasswordStateCopyWith<_ForgotPasswordState> get copyWith => __$ForgotPas
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ForgotPasswordState&&(identical(other.status, status) || other.status == status)&&(identical(other.isPhoneValid, isPhoneValid) || other.isPhoneValid == isPhoneValid)&&(identical(other.isCodeValid, isCodeValid) || other.isCodeValid == isCodeValid)&&(identical(other.isNewPasswordValid, isNewPasswordValid) || other.isNewPasswordValid == isNewPasswordValid)&&(identical(other.showNewPassword, showNewPassword) || other.showNewPassword == showNewPassword)&&(identical(other.showConfirmPassword, showConfirmPassword) || other.showConfirmPassword == showConfirmPassword)&&(identical(other.message, message) || other.message == message)&&(identical(other.error, error) || other.error == error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ForgotPasswordState&&(identical(other.status, status) || other.status == status)&&(identical(other.isPhoneValid, isPhoneValid) || other.isPhoneValid == isPhoneValid)&&(identical(other.isCodeValid, isCodeValid) || other.isCodeValid == isCodeValid)&&(identical(other.isNewPasswordValid, isNewPasswordValid) || other.isNewPasswordValid == isNewPasswordValid)&&(identical(other.showNewPassword, showNewPassword) || other.showNewPassword == showNewPassword)&&(identical(other.showConfirmPassword, showConfirmPassword) || other.showConfirmPassword == showConfirmPassword)&&(identical(other.resendCountdown, resendCountdown) || other.resendCountdown == resendCountdown)&&(identical(other.message, message) || other.message == message)&&(identical(other.error, error) || other.error == error));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,status,isPhoneValid,isCodeValid,isNewPasswordValid,showNewPassword,showConfirmPassword,message,error);
+    return Object.hash(runtimeType,status,isPhoneValid,isCodeValid,isNewPasswordValid,showNewPassword,showConfirmPassword,resendCountdown,message,error);
 }
 
 @override
 String toString() {
-    return 'ForgotPasswordState(status: $status, isPhoneValid: $isPhoneValid, isCodeValid: $isCodeValid, isNewPasswordValid: $isNewPasswordValid, showNewPassword: $showNewPassword, showConfirmPassword: $showConfirmPassword, message: $message, error: $error)';
+    return 'ForgotPasswordState(status: $status, isPhoneValid: $isPhoneValid, isCodeValid: $isCodeValid, isNewPasswordValid: $isNewPasswordValid, showNewPassword: $showNewPassword, showConfirmPassword: $showConfirmPassword, resendCountdown: $resendCountdown, message: $message, error: $error)';
 }
 
 
@@ -263,7 +265,7 @@ abstract mixin class _$ForgotPasswordStateCopyWith<$Res> implements $ForgotPassw
   factory _$ForgotPasswordStateCopyWith(_ForgotPasswordState value, $Res Function(_ForgotPasswordState) _then) = __$ForgotPasswordStateCopyWithImpl;
 @override @useResult
 $Res call({
- ForgotPasswordStatus status, bool isPhoneValid, bool isCodeValid, bool isNewPasswordValid, bool showNewPassword, bool showConfirmPassword, String? message, String? error
+ ForgotPasswordStatus status, bool isPhoneValid, bool isCodeValid, bool isNewPasswordValid, bool showNewPassword, bool showConfirmPassword, int resendCountdown, String? message, String? error
 });
 
 
@@ -280,7 +282,7 @@ class __$ForgotPasswordStateCopyWithImpl<$Res>
 
 /// Create a copy of ForgotPasswordState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? isPhoneValid = null,Object? isCodeValid = null,Object? isNewPasswordValid = null,Object? showNewPassword = null,Object? showConfirmPassword = null,Object? message = freezed,Object? error = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? isPhoneValid = null,Object? isCodeValid = null,Object? isNewPasswordValid = null,Object? showNewPassword = null,Object? showConfirmPassword = null,Object? resendCountdown = null,Object? message = freezed,Object? error = freezed,}) {
   return _then(_ForgotPasswordState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as ForgotPasswordStatus,isPhoneValid: null == isPhoneValid ? _self.isPhoneValid : isPhoneValid // ignore: cast_nullable_to_non_nullable
@@ -288,7 +290,8 @@ as bool,isCodeValid: null == isCodeValid ? _self.isCodeValid : isCodeValid // ig
 as bool,isNewPasswordValid: null == isNewPasswordValid ? _self.isNewPasswordValid : isNewPasswordValid // ignore: cast_nullable_to_non_nullable
 as bool,showNewPassword: null == showNewPassword ? _self.showNewPassword : showNewPassword // ignore: cast_nullable_to_non_nullable
 as bool,showConfirmPassword: null == showConfirmPassword ? _self.showConfirmPassword : showConfirmPassword // ignore: cast_nullable_to_non_nullable
-as bool,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as bool,resendCountdown: null == resendCountdown ? _self.resendCountdown : resendCountdown // ignore: cast_nullable_to_non_nullable
+as int,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

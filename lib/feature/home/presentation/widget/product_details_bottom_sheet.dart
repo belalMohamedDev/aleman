@@ -1,7 +1,8 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
-import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/home/data/mapper/product_mapper.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -13,8 +14,9 @@ import 'package:shimmer/shimmer.dart';
 
 class ProductDetailsBottomSheet extends StatelessWidget {
   final ProductEntity product;
+  final GlobalKey imageKey = GlobalKey();
 
-  const ProductDetailsBottomSheet({super.key, required this.product});
+  ProductDetailsBottomSheet({super.key, required this.product});
 
   String _getGrowthStageName(int stage) {
     switch (stage) {
@@ -81,6 +83,7 @@ class ProductDetailsBottomSheet extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               _HeroSection(
+                imageKey: imageKey,
                 product: product,
                 displayPrice: displayPrice,
                 isTonMode: isTonMode,
@@ -128,6 +131,7 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                 ),
               ),
               _ActionBar(
+                imageKey: imageKey,
                 product: product,
                 currentPackage: currentPackage,
                 currentWeight: currentWeight,
@@ -145,6 +149,7 @@ class ProductDetailsBottomSheet extends StatelessWidget {
 
 class _HeroSection extends StatelessWidget {
   const _HeroSection({
+    required this.imageKey,
     required this.product,
     required this.displayPrice,
     required this.isTonMode,
@@ -152,6 +157,7 @@ class _HeroSection extends StatelessWidget {
     required this.getFeedFormName,
   });
 
+  final GlobalKey imageKey;
   final ProductEntity product;
   final double displayPrice;
   final bool isTonMode;
@@ -186,6 +192,7 @@ class _HeroSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
+                key: imageKey,
                 width: 95.w,
                 height: 95.w,
                 padding: const EdgeInsets.all(8),
@@ -696,6 +703,7 @@ class _NutritionCard extends StatelessWidget {
 
 class _ActionBar extends StatelessWidget {
   const _ActionBar({
+    required this.imageKey,
     required this.product,
     required this.currentPackage,
     required this.currentWeight,
@@ -704,6 +712,7 @@ class _ActionBar extends StatelessWidget {
     required this.responsive,
   });
 
+  final GlobalKey imageKey;
   final ProductEntity product;
   final PackageEntity? currentPackage;
   final double currentWeight;
@@ -765,19 +774,74 @@ class _ActionBar extends StatelessWidget {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.pop(context);
-                  final unitLabel = isTonMode
-                      ? 'طن'
-                      : 'شكارة (${currentWeight > 0 ? currentWeight.toStringAsFixed(0) : ''} كجم)';
-                  final qtyLabel = quantity == quantity.truncateToDouble()
-                      ? quantity.toInt().toString()
-                      : quantity.toStringAsFixed(1);
-                  AppToast.showSuccess(
-                    context,
-                    title: 'أضيف للسلة 🌾',
-                    message:
-                        'تمت إضافة $qtyLabel $unitLabel من ${product.name} للسلة',
+                  // 1. Capture image coordinates & size BEFORE closing bottom sheet
+                  Offset? startCenter;
+                  Size? startSize;
+                  final renderBox =
+                      imageKey.currentContext?.findRenderObject() as RenderBox?;
+                  if (renderBox != null && renderBox.hasSize) {
+                    final pos = renderBox.localToGlobal(Offset.zero);
+                    startCenter =
+                        pos +
+                        Offset(
+                          renderBox.size.width / 2,
+                          renderBox.size.height / 2,
+                        );
+                    startSize = renderBox.size;
+                  }
+
+                  // 2. Capture CartCubit prior to pop
+                  final cartCubit = context.read<CartCubit>();
+                  final navigator = Navigator.of(context);
+
+                  // 3. Launch the fly-to-cart animation in the root Overlay
+                  // MUST be called before pop so that context can still find the Overlay.
+                  CartAnimationHelper.runFlyToCartAnimation(
+                    context: context,
+                    imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
+                    startOffset: startCenter,
+                    startSize: startSize,
                   );
+
+                  // 4. Send add-to-cart request with automatic ton-to-bags calculation
+                  final packageWeight = currentWeight > 0
+                      ? currentWeight
+                      : (product.weightPerSackKg > 0
+                            ? product.weightPerSackKg
+                            : 50.0);
+                  final packageId = currentPackage?.id ?? 0;
+
+                  cartCubit.addToCart(
+                    productId: product.id,
+                    productPackageId: packageId,
+                    packageWeightKg: packageWeight,
+                    quantity: quantity,
+                    isTonMode: isTonMode,
+                  );
+
+                  // 5. User feedback toast
+                  // final unitLabel = isTonMode
+                  //     ? 'طن'
+                  //     : 'شكارة (${packageWeight > 0 ? packageWeight.toStringAsFixed(0) : ''} كجم)';
+                  // final qtyLabel = quantity == quantity.truncateToDouble()
+                  //     ? quantity.toInt().toString()
+                  //     : quantity.toStringAsFixed(1);
+                  // final bagsCount = cartCubit.calculateQuantityBags(
+                  //   quantity: quantity,
+                  //   isTonMode: isTonMode,
+                  //   packageWeightKg: packageWeight,
+                  // );
+                  // final detailNote = isTonMode ? ' ($bagsCount شكارة)' : '';
+
+                  // AppToast.showSuccess(
+                  //   context,
+                  //   title: 'أضيف للسلة 🌾',
+                  //   message:
+                  //       'تمت إضافة $qtyLabel $unitLabel$detailNote من ${product.name} للسلة',
+                  // );
+
+                  // 6. Pop the bottom sheet immediately
+                  navigator.pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorManger.primaryLight,

@@ -9,6 +9,10 @@ import 'package:aleman/feature/Authentication/data/model/bodyRequest/logout/logo
 import 'package:aleman/feature/home/data/model/banner_model.dart';
 import 'package:aleman/feature/home/data/model/category_model.dart';
 import 'package:aleman/feature/home/data/model/product_model.dart';
+import 'package:aleman/feature/cart/data/model/add_to_cart_request_body.dart';
+import 'package:aleman/feature/cart/data/model/cart_count_response.dart';
+import 'package:aleman/feature/cart/data/model/cart_response_model.dart';
+import 'package:aleman/feature/cart/data/model/update_cart_item_request_body.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -48,5 +52,30 @@ abstract class AppServiceClient {
   @POST(ApiConstants.logout)
   Future<MessageResponse> logoutService(
     @Body() LogoutRequestBody body,
+  );
+
+  @POST(ApiConstants.cartItems)
+  Future<CartResponseModel> addToCartService(
+    @Body() AddToCartRequestBody body,
+  );
+
+  @GET(ApiConstants.cartCount)
+  Future<CartCountResponse> getCartCountService();
+
+  @GET(ApiConstants.getCart)
+  Future<CartResponseModel> getCartService();
+
+  @DELETE(ApiConstants.getCart)
+  Future<dynamic> clearCartService();
+
+  @PUT('${ApiConstants.cartItems}/{itemId}')
+  Future<CartResponseModel> updateCartItemService(
+    @Path('itemId') int itemId,
+    @Body() UpdateCartItemRequestBody body,
+  );
+
+  @DELETE('${ApiConstants.cartItems}/{itemId}')
+  Future<dynamic> deleteCartItemService(
+    @Path('itemId') int itemId,
   );
 }

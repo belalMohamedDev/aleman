@@ -187,6 +187,8 @@ class AppStrings {
   static const String pleaseEnterTheCode = 'pleaseEnterTheCode';
   static const String didntRecieveotp = 'didntRecieveotp';
   static const String resendCode = 'resendCode';
+  static const String resendCodeIn = 'resendCodeIn';
+  static const String editPhone = 'editPhone';
   static const String verify = 'verify';
   static const String sessionExpired = 'sessionExpired';
   static const String home = 'home';

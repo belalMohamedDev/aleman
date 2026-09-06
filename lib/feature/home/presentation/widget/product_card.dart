@@ -1,10 +1,11 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/home/data/mapper/product_mapper.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/style/color/color_manger.dart';
@@ -13,7 +14,7 @@ import 'product_details_bottom_sheet.dart';
 
 class ProductCard extends StatelessWidget {
   final ProductEntity product;
-  
+
   const ProductCard({super.key, required this.product});
 
   @override
@@ -23,13 +24,17 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         final cubit = context.read<HomeCuibtCubit>();
+        final cartCubit = context.read<CartCubit>();
         cubit.resetQuantity();
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
           backgroundColor: Colors.transparent,
-          builder: (context) => BlocProvider.value(
-            value: cubit,
+          builder: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider.value(value: cubit),
+              BlocProvider.value(value: cartCubit),
+            ],
             child: Padding(
               padding: EdgeInsets.only(
                 bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -72,15 +77,11 @@ class ProductCard extends StatelessWidget {
                       baseColor: Colors.grey.shade300,
                       highlightColor: Colors.grey.shade100,
                       child: Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                        ),
+                        decoration: const BoxDecoration(color: Colors.white),
                       ),
                     ),
-                    errorWidget: (context, url, error) => const Icon(
-                      Icons.broken_image,
-                      color: Colors.grey,
-                    ),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.broken_image, color: Colors.grey),
                   ),
                 ),
               ),
@@ -95,10 +96,10 @@ class ProductCard extends StatelessWidget {
                     Text(
                       product.name,
                       style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: ColorManger.primary,
-                            fontSize: responsive.setTextSize(3.2),
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: ColorManger.primary,
+                        fontSize: responsive.setTextSize(3.2),
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -106,40 +107,50 @@ class ProductCard extends StatelessWidget {
                     Text(
                       product.description,
                       style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                            color: Colors.grey.shade600,
-                            fontSize: responsive.setTextSize(2.7),
-                          ),
+                        color: Colors.grey.shade600,
+                        fontSize: responsive.setTextSize(2.7),
+                      ),
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const Spacer(),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${product.price} ج.م',
-                          style:
-                              Theme.of(context).textTheme.bodyLarge!.copyWith(
-                                    color: ColorManger.goldDark,
-                                    fontWeight: FontWeight.w800,
-                                    fontSize: responsive.setTextSize(3.5),
-                                  ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color:
-                                ColorManger.primaryLight.withValues(alpha: 0.9),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(
-                            Iconsax.bag_happy,
-                            color: Colors.white,
-                            size: 18,
-                          ),
-                        ),
-                      ],
+                    // const Spacer(),
+                    SizedBox(height: 5.h),
+                    Text(
+                      '${product.price} ج.م',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: ColorManger.goldDark,
+                        fontWeight: FontWeight.w800,
+                        fontSize: responsive.setTextSize(3.6),
+                      ),
                     ),
+
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     Text(
+                    //       '${product.price} ج.م',
+                    //       style: Theme.of(context).textTheme.bodyLarge!
+                    //           .copyWith(
+                    //             color: ColorManger.goldDark,
+                    //             fontWeight: FontWeight.w800,
+                    //             fontSize: responsive.setTextSize(3.5),
+                    //           ),
+                    //     ),
+                    //     // Container(
+                    //     //   padding: const EdgeInsets.all(6),
+                    //     //   decoration: BoxDecoration(
+                    //     //     color:
+                    //     //         ColorManger.primaryLight.withValues(alpha: 0.9),
+                    //     //     borderRadius: BorderRadius.circular(8),
+                    //     //   ),
+                    //     //   child: const Icon(
+                    //     //     Iconsax.bag_happy,
+                    //     //     color: Colors.white,
+                    //     //     size: 18,
+                    //     //   ),
+                    //     // ),
+                    //   ],
+                    // ),
                   ],
                 ),
               ),

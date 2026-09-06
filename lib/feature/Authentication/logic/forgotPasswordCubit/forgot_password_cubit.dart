@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/utils/app_regex.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_password/forgot_password_request_body.dart';
@@ -11,13 +13,18 @@ import 'package:smart_auth/smart_auth.dart';
 
 class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   ForgotPasswordCubit(this._authenticationRepository)
-      : super(const ForgotPasswordState());
+    : super(const ForgotPasswordState());
 
   final AuthenticationRepository _authenticationRepository;
   final SmartAuth _smartAuth = SmartAuth.instance;
+  Timer? _resendTimer;
+  final ValueNotifier<int> resendCountdownNotifier = ValueNotifier<int>(0);
+
+  int get resendCountdown => resendCountdownNotifier.value;
 
   final TextEditingController userPhoneController = TextEditingController();
   final TextEditingController otpCodeController = TextEditingController();
+  final FocusNode otpFocusNode = FocusNode();
   final TextEditingController userNewPasswordController =
       TextEditingController();
   final TextEditingController userConfirmPasswordController =
@@ -63,6 +70,29 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
     emit(state.copyWith(isNewPasswordValid: isPassValid && isMatch));
   }
 
+  void startResendTimer([int seconds = 60]) {
+    _resendTimer?.cancel();
+    resendCountdownNotifier.value = seconds;
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (isClosed) {
+        timer.cancel();
+        return;
+      }
+      if (resendCountdownNotifier.value > 1) {
+        resendCountdownNotifier.value -= 1;
+      } else {
+        timer.cancel();
+        resendCountdownNotifier.value = 0;
+      }
+    });
+  }
+
+  void cancelResendTimer() {
+    _resendTimer?.cancel();
+    _resendTimer = null;
+    resendCountdownNotifier.value = 0;
+  }
+
   Future<void> sendForgotPasswordCode() async {
     final phone = userPhoneController.text.trim();
     emit(state.copyWith(status: ForgotPasswordStatus.loading, error: null));
@@ -74,6 +104,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
     result.when(
       success: (message) {
         startListeningForSms();
+        startResendTimer();
         emit(
           state.copyWith(
             status: ForgotPasswordStatus.phoneSuccess,
@@ -93,6 +124,10 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   }
 
   Future<void> resendCode() async {
+    if (resendCountdownNotifier.value > 0 ||
+        state.status == ForgotPasswordStatus.loading) {
+      return;
+    }
     final phone = userPhoneController.text.trim();
     emit(state.copyWith(status: ForgotPasswordStatus.loading, error: null));
 
@@ -103,6 +138,7 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
     result.when(
       success: (message) {
         startListeningForSms();
+        startResendTimer();
         emit(
           state.copyWith(
             status: ForgotPasswordStatus.phoneSuccess,
@@ -194,18 +230,16 @@ class ForgotPasswordCubit extends Cubit<ForgotPasswordState> {
   }
 
   void resetStatus() {
-    emit(
-      state.copyWith(
-        status: ForgotPasswordStatus.initial,
-        error: null,
-      ),
-    );
+    emit(state.copyWith(status: ForgotPasswordStatus.initial, error: null));
   }
 
   @override
   Future<void> close() {
+    cancelResendTimer();
+    resendCountdownNotifier.dispose();
     userPhoneController.dispose();
     otpCodeController.dispose();
+    otpFocusNode.dispose();
     userNewPasswordController.dispose();
     userConfirmPasswordController.dispose();
     return super.close();
