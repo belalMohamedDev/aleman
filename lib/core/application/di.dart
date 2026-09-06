@@ -1,5 +1,6 @@
 import 'package:aleman/core/application/applogicCubit/app_logic_cubit.dart';
 import 'package:aleman/core/application/bloc_observer.dart';
+import 'package:aleman/core/application/network_cubit/network_cubit.dart';
 import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/dio_factory/dio_factory.dart';
 import 'package:aleman/feature/Authentication/data/repository/authentication_repo_imp.dart';
@@ -75,4 +76,6 @@ Future<void> _initCart() async {
   instance.registerLazySingleton<CartCubit>(
     () => CartCubit(instance<CartRepository>()),
   );
+
+  instance.registerLazySingleton<NetworkCubit>(() => NetworkCubit());
 }

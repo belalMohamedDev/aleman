@@ -4,6 +4,7 @@ import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
 import 'package:aleman/feature/cart/presentation/refactor/cart_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
@@ -23,9 +24,10 @@ class CartScreen extends StatelessWidget {
                 : Text(
                     'سلتي',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          color: Colors.black87,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.sp,
+                    ),
                   ),
             centerTitle: true,
             backgroundColor: Colors.transparent,
@@ -38,7 +40,7 @@ class CartScreen extends StatelessWidget {
                       onPressed: () {
                         context.read<CartCubit>().clearCart();
                       },
-                      icon: Icon(Icons.delete, color: ColorManger.primary),
+                      icon: Icon(Icons.delete, color: ColorManger.primaryLight),
                       tooltip: 'حذف السلة',
                     ),
                     const SizedBox(width: 8),

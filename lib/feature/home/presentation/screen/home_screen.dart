@@ -28,7 +28,6 @@ class HomeScreen extends StatelessWidget {
           final showLoginPrompt = state.showLoginPrompt;
 
           return Scaffold(
-            // Important: this allows the body to flow underneath the transparent/floating nav bar
             extendBody: true,
             body: Stack(
               children: [

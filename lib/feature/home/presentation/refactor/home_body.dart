@@ -22,6 +22,7 @@ class HomeBody extends StatelessWidget {
     return SafeArea(
       bottom: false,
       child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         padding: responsive.setPadding(left: 5.5, right: 5.5, top: 1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -15,4 +15,5 @@ class ImageAsset {
   static const String duck = '$imagePath/duck.png';
   static const String rabbit = '$imagePath/rabbit.png';
   static const String emptyCart = '$imagePath/emptyCart.png';
+  static const String noInternet = '$imagePath/noInternetConnection.png';
 }

@@ -55,7 +55,7 @@ class CartItemCard extends StatelessWidget {
                   item.productName,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: ColorManger.chipForm,
                     fontSize: 13.sp,
                   ),
                   maxLines: 1,
@@ -65,7 +65,7 @@ class CartItemCard extends StatelessWidget {
                 // Rating stars placeholder
                 if (item.packageSize != null && item.packageSize!.isNotEmpty)
                   Text(
-                    'العبوة: ${item.packageSize}',
+                    'الشكارة: ${item.packageSize}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.grey.shade600,
                       fontSize: 12.sp,
@@ -79,13 +79,13 @@ class CartItemCard extends StatelessWidget {
                       fontSize: 13.sp,
                     ),
                   ),
-                SizedBox(height: 4.h),
+                SizedBox(height: 6.h),
                 Text(
                   'إجمالي: ${item.subtotal} جنيه',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.black87,
+                    color: ColorManger.goldDark,
                     fontWeight: FontWeight.w600,
-                    fontSize: 13.sp,
+                    fontSize: 12.sp,
                   ),
                 ),
               ],
@@ -147,7 +147,7 @@ class CartItemCard extends StatelessWidget {
                   child: Container(
                     padding: const EdgeInsets.all(6.0),
                     decoration: BoxDecoration(
-                      color: ColorManger.primary,
+                      color: ColorManger.primaryLight,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(Icons.add, size: 16.w, color: Colors.white),
