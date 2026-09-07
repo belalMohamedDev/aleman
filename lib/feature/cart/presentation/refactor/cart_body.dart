@@ -1,13 +1,17 @@
+import 'package:aleman/core/language/localization_extensions.dart';
+import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/statsScreen/error_info.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
+import 'package:aleman/feature/cart/presentation/screen/cart_error.dart';
+import 'package:aleman/feature/cart/presentation/screen/cart_loading.dart';
 import 'package:aleman/feature/cart/presentation/widget/cart_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shimmer/shimmer.dart';
+import 'package:iconsax/iconsax.dart';
 
 class CartBody extends StatefulWidget {
   const CartBody({super.key});
@@ -29,36 +33,11 @@ class _CartBodyState extends State<CartBody> {
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, state) {
         if (state.status == CartStatus.loading) {
-          return const _CartShimmer();
+          return const CartLoadingScreen();
         }
 
         if (state.status == CartStatus.error) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                const SizedBox(height: 16),
-                Text(
-                  state.errorMessage ?? 'حدث خطأ غير متوقع',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<CartCubit>().getCart();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorManger.primaryLight,
-                  ),
-                  child: const Text(
-                    'إعادة المحاولة',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
-            ),
-          );
+          return CartError();
         }
 
         final cart = state.cart;
@@ -244,101 +223,6 @@ class _CartSummaryBottomBar extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _CartShimmer extends StatelessWidget {
-  const _CartShimmer();
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade300,
-      highlightColor: Colors.grey.shade100,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        itemCount: 4,
-        separatorBuilder: (_, _) => const SizedBox(height: 12),
-        itemBuilder: (_, _) {
-          return Container(
-            height: 110.h,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Row(
-                children: [
-                  Container(
-                    width: 85.w,
-                    height: 85.w,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          height: 14.h,
-                          color: Colors.white,
-                        ),
-                        SizedBox(height: 8.h),
-                        Container(
-                          width: 120.w,
-                          height: 12.h,
-                          color: Colors.white,
-                        ),
-                        SizedBox(height: 8.h),
-                        Container(
-                          width: 80.w,
-                          height: 12.h,
-                          color: Colors.white,
-                        ),
-                        SizedBox(height: 10.h),
-                        Row(
-                          children: [
-                            Container(
-                              width: 24.w,
-                              height: 24.w,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            SizedBox(width: 8.w),
-                            Container(
-                              width: 30.w,
-                              height: 14.h,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 8.w),
-                            Container(
-                              width: 24.w,
-                              height: 24.w,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      ),
     );
   }
 }

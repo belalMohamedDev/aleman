@@ -10,7 +10,6 @@ import 'package:aleman/feature/Authentication/presentation/screens/forget_passwo
 import 'package:aleman/feature/Authentication/presentation/screens/new_password_screen.dart';
 import 'package:aleman/feature/Authentication/presentation/screens/sign_in_view.dart';
 import 'package:aleman/feature/Authentication/presentation/screens/verification_code_screen.dart';
-import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/cart/presentation/screen/cart_screen.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
@@ -28,6 +27,7 @@ class RouteGenerator {
             create: (context) => instance<LoginCubit>(),
             child: const LoginView(),
           ),
+          settings,
         );
 
       case Routes.forgetPasswordRoute:
@@ -36,6 +36,7 @@ class RouteGenerator {
             instance<ForgotPasswordCubit>();
         return _buildFadeRoute(
           BlocProvider.value(value: cubit, child: const ForgetPasswordScreen()),
+          settings,
         );
 
       case Routes.verificationCodeRoute:
@@ -48,6 +49,7 @@ class RouteGenerator {
         }
         return _buildFadeRoute(
           BlocProvider.value(value: cubit, child: const VerificationCodeView()),
+          settings,
         );
 
       case Routes.newPasswordRoute:
@@ -56,39 +58,38 @@ class RouteGenerator {
             instance<ForgotPasswordCubit>();
         return _buildFadeRoute(
           BlocProvider.value(value: cubit, child: const NewPasswordView()),
+          settings,
         );
 
       case Routes.homeRoute:
         return _buildFadeRoute(
           MultiBlocProvider(
             providers: [
+              // BlocProvider(
+              //   create: (context) => instance<CartCubit>()..getCartCount(),
+              // ),
               BlocProvider(
                 create: (context) =>
                     instance<HomeCuibtCubit>()..fetchHomeData(),
               ),
-              BlocProvider.value(value: instance<CartCubit>()..getCartCount()),
             ],
             child: const HomeScreen(),
           ),
+          settings,
         );
 
       case Routes.onBoardingRoute:
         return _buildFadeRoute(const OnBoardingScreen());
 
       case Routes.profileRoute:
-        return _buildFadeRoute(const ProfileView());
+        return _buildFadeRoute(const ProfileView(), settings);
 
       case Routes.cartRoute:
-        return _buildFadeRoute(
-          BlocProvider.value(
-            value: instance<CartCubit>(),
-            child: const CartScreen(),
-          ),
-        );
+        return _buildFadeRoute(const CartScreen(), settings);
 
       // ---------------------- DEFAULT -----------------------
       case Routes.noRoute:
-        return _buildFadeRoute(const RouteStatesScreen());
+        return _buildFadeRoute(const RouteStatesScreen(), settings);
 
       default:
         return unDefinedRoute();
@@ -96,8 +97,12 @@ class RouteGenerator {
   }
 
   // Helper method for Fade Transition Animation
-  static Route<dynamic> _buildFadeRoute(Widget page) {
+  static Route<dynamic> _buildFadeRoute(
+    Widget page, [
+    RouteSettings? settings,
+  ]) {
     return PageRouteBuilder(
+      settings: settings,
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {

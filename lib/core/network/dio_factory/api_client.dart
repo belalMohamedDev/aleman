@@ -185,11 +185,16 @@ class TokenInterceptor extends Interceptor {
         message: 'انتهت صلاحية الجلسة، يرجى إعادة تسجيل الدخول',
       );
 
-      instance<GlobalKey<NavigatorState>>().currentState
-          ?.pushNamedAndRemoveUntil(
-            Routes.loginRoute,
+      final context = instance<GlobalKey<NavigatorState>>().currentContext;
+      if (context != null && context.mounted) {
+        final currentRouteName = ModalRoute.of(context)?.settings.name;
+        if (currentRouteName != Routes.homeRoute) {
+          Navigator.of(context).pushNamedAndRemoveUntil(
+            Routes.homeRoute,
             (Route<dynamic> route) => false,
           );
+        }
+      }
     } finally {
       Future.delayed(const Duration(seconds: 3), () {
         _isSessionExpiredHandling = false;

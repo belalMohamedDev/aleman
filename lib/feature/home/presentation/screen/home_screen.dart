@@ -12,8 +12,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey _cartKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    CartAnimationHelper.cartKey = _cartKey;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +80,7 @@ class HomeScreen extends StatelessWidget {
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
             floatingActionButton: FloatingActionButton(
-              key: CartAnimationHelper.cartKey,
+              key: _cartKey,
               onPressed: () {
                 Navigator.of(context).pushNamed(Routes.cartRoute);
               },

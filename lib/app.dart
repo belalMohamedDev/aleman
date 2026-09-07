@@ -2,6 +2,7 @@ import 'package:aleman/core/application/applogicCubit/app_logic_cubit.dart';
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/language/app_localizations_setup.dart';
 import 'package:aleman/core/style/theme/theme_manger.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 
 import 'package:aleman/feature/splash/presentation/screen/splash_screen.dart';
 import 'package:aleman/core/routing/route_manger.dart';
@@ -23,41 +24,41 @@ class MyApp extends StatelessWidget {
           create: (context) => instance<AppLogicCubit>()..getSavedLanguage(),
         ),
         BlocProvider(create: (context) => instance<NetworkCubit>()),
+        BlocProvider(create: (context) => instance<CartCubit>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
         minTextAdapt: true,
         useInheritedMediaQuery: true,
         builder: (context, child) {
-          return BlocBuilder<AppLogicCubit, AppLogicState>(
-            builder: (context, state) {
-              return MaterialApp(
-                locale: Locale(context.read<AppLogicCubit>().currentLangCode),
-                supportedLocales: AppLocalizationsSetup.supportedLocales,
-                localizationsDelegates:
-                    AppLocalizationsSetup.localizationsDelegates,
-                localeResolutionCallback:
-                    AppLocalizationsSetup.localeResolutionCallback,
-                navigatorKey: instance<GlobalKey<NavigatorState>>(),
-                title: 'الإيمان للأعلاف',
-                debugShowCheckedModeBanner: false,
-                onGenerateRoute: RouteGenerator.getRoute,
-                home: const SplashScreen(),
-                theme: getApplicationTheme(context),
-                builder: (context, child) {
-                  return BlocBuilder<NetworkCubit, NetworkState>(
-                    builder: (context, networkState) {
-                      return Stack(
-                        children: [
-                          ?child,
-                          if (networkState.maybeWhen(
-                            disconnected: () => true,
-                            orElse: () => false,
-                          ))
-                            const Positioned.fill(child: NoInternetScreen()),
-                        ],
-                      );
-                    },
+          final langCode = context.select(
+            (AppLogicCubit cubit) => cubit.currentLangCode,
+          );
+          return MaterialApp(
+            locale: Locale(langCode),
+            supportedLocales: AppLocalizationsSetup.supportedLocales,
+            localizationsDelegates:
+                AppLocalizationsSetup.localizationsDelegates,
+            localeResolutionCallback:
+                AppLocalizationsSetup.localeResolutionCallback,
+            navigatorKey: instance<GlobalKey<NavigatorState>>(),
+            title: 'الإيمان للأعلاف',
+            debugShowCheckedModeBanner: false,
+            onGenerateRoute: RouteGenerator.getRoute,
+            home: const SplashScreen(),
+            theme: getApplicationTheme(context),
+            builder: (context, child) {
+              return BlocBuilder<NetworkCubit, NetworkState>(
+                builder: (context, networkState) {
+                  return Stack(
+                    children: [
+                      ?child,
+                      if (networkState.maybeWhen(
+                        disconnected: () => true,
+                        orElse: () => false,
+                      ))
+                        const Positioned.fill(child: NoInternetScreen()),
+                    ],
                   );
                 },
               );

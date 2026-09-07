@@ -149,7 +149,9 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
   }
 
   void resetQuantity() {
-    emit(state.copyWith(quantity: 1, isTonMode: false, selectedPackageIndex: 0));
+    emit(
+      state.copyWith(quantity: 1, isTonMode: false, selectedPackageIndex: 0),
+    );
   }
 
   void setQuantity(double val) {

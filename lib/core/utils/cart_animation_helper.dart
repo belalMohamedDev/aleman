@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 
 class CartAnimationHelper {
   /// GlobalKey attached to the Cart icon/FAB to accurately target its position.
-  static final GlobalKey cartKey = GlobalKey();
+  static GlobalKey cartKey = GlobalKey();
   
   /// GlobalKey attached to the Cart icon in the Search AppBar.
-  static final GlobalKey cartSearchKey = GlobalKey();
+  static GlobalKey cartSearchKey = GlobalKey();
 
   /// Executes the flying image to cart animation using an OverlayEntry without any setState.
   static void runFlyToCartAnimation({

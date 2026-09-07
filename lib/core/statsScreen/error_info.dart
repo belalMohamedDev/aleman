@@ -48,7 +48,7 @@ class ErrorInfo extends StatelessWidget {
               title,
               style: Theme.of(context)
                   .textTheme
-                  .titleLarge, // Use large title style from theme
+                  .titleMedium, // Use large title style from theme
             ),
 
             // Add space between the title and description
@@ -64,7 +64,7 @@ class ErrorInfo extends StatelessWidget {
             ),
 
             // Add more space before the button
-            const SizedBox(height: 16 * 2.5),
+            const SizedBox(height: 16 * 1.5),
 
             // Conditionally show the button if btnText is provided, otherwise show nothing
             btnText == null
@@ -79,7 +79,7 @@ class ErrorInfo extends StatelessWidget {
                             50,
                           ), // Make button full width and 50 height
                           backgroundColor: ColorManger
-                              .buttonColor, // Set button color to primary color
+                              .primary, // Set button color to primary color
                           foregroundColor:
                               ColorManger.white, // Set text color to white
                           shape: const RoundedRectangleBorder(
