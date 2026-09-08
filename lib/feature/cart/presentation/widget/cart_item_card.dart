@@ -191,7 +191,7 @@ class CartItemCard extends StatelessWidget {
                       item.quantity == 1 ? Icons.delete_outline : Icons.remove,
                       size: 16.w,
                       color: item.quantity == 1
-                          ? Colors.red.shade700
+                          ? Colors.black54
                           : Colors.black54,
                     ),
                   ),

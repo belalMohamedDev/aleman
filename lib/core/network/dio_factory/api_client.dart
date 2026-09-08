@@ -1,14 +1,18 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/network/api_constant/api_constant.dart';
 import 'package:aleman/core/routing/routes.dart';
+import 'package:aleman/core/services/app_logger.dart';
 import 'package:aleman/core/services/app_logout.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class TokenInterceptor extends Interceptor {
   final Dio dio;
@@ -83,6 +87,7 @@ class TokenInterceptor extends Interceptor {
       );
 
       if (oldRefreshToken.isEmpty) {
+        appLogger.warning('Cannot refresh token: oldRefreshToken is empty');
         _refreshCompleter?.complete(null);
         _refreshCompleter = null;
         _showSessionExpiredMessage();
@@ -105,6 +110,18 @@ class TokenInterceptor extends Interceptor {
           ),
         );
 
+        if (!kReleaseMode) {
+          refreshDio.interceptors.add(
+            PrettyDioLogger(
+              requestBody: true,
+              requestHeader: true,
+              responseHeader: true,
+            ),
+          );
+        }
+
+        appLogger.info('Attempting to refresh token via ${ApiConstants.baseUrl}${ApiConstants.refreshToken}');
+
         final response = await refreshDio.post(
           '${ApiConstants.baseUrl}${ApiConstants.refreshToken}',
           data: {
@@ -113,14 +130,25 @@ class TokenInterceptor extends Interceptor {
           },
         );
 
-        if (response.statusCode == 200 && response.data != null) {
-          final newAccessToken = response.data['accessToken'] as String?;
-          final newRefreshToken = response.data['refreshToken'] as String?;
+        appLogger.info('Refresh token response status: ${response.statusCode}');
+
+        dynamic responseData = response.data;
+        if (responseData is String) {
+          try {
+            responseData = jsonDecode(responseData);
+          } catch (_) {}
+        }
+
+        if (response.statusCode == 200 && responseData != null && responseData is Map) {
+          final newAccessToken = (responseData['accessToken'] ?? responseData['AccessToken']) as String?;
+          final newRefreshToken = (responseData['refreshToken'] ?? responseData['RefreshToken']) as String?;
 
           if (newAccessToken != null &&
               newAccessToken.isNotEmpty &&
               newRefreshToken != null &&
               newRefreshToken.isNotEmpty) {
+            appLogger.info('Refresh token succeeded! Updating storage and retrying request.');
+
             // Save the updated tokens in secure storage
             await SharedPrefHelper.setSecuredString(
               PrefKeys.userAccessToken,
@@ -144,14 +172,21 @@ class TokenInterceptor extends Interceptor {
 
             final cloneReq = await dio.fetch(err.requestOptions);
             return handler.resolve(cloneReq);
+          } else {
+            appLogger.warning('Tokens in refresh response are null or empty: $responseData');
           }
         }
 
+        appLogger.warning('Refresh token failed with response status ${response.statusCode} or invalid data: ${response.data}');
         _refreshCompleter?.complete(null);
         _refreshCompleter = null;
         _showSessionExpiredMessage();
         return handler.reject(err);
-      } catch (e) {
+      } catch (e, stack) {
+        appLogger.error('Refresh token request threw exception: $e', stack);
+        if (e is DioException) {
+          appLogger.error('Refresh DioException response status: ${e.response?.statusCode}, body: ${e.response?.data}');
+        }
         _refreshCompleter?.complete(null);
         _refreshCompleter = null;
         _showSessionExpiredMessage();
