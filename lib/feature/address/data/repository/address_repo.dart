@@ -20,7 +20,20 @@ class UserAddressRepositoryImplement implements UserAddressRepository {
   Future<ApiResult<List<UserAddressModel>>> getMyAddresses() async {
     try {
       final response = await _dio.get(ApiConstants.userAddresses);
-      final list = (response.data as List<dynamic>)
+      List<dynamic> listData = [];
+      if (response.data is List) {
+        listData = response.data as List<dynamic>;
+      } else if (response.data is Map<String, dynamic>) {
+        final map = response.data as Map<String, dynamic>;
+        if (map['addresses'] is List) {
+          listData = map['addresses'] as List<dynamic>;
+        } else if (map['data'] is List) {
+          listData = map['data'] as List<dynamic>;
+        } else if (map['items'] is List) {
+          listData = map['items'] as List<dynamic>;
+        }
+      }
+      final list = listData
           .map((e) => UserAddressModel.fromJson(e as Map<String, dynamic>))
           .toList();
       return ApiResult.success(list);

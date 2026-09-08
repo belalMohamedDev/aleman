@@ -16,8 +16,10 @@ import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/profile/data/repository/profile_repository.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_cubit.dart';
 import 'package:aleman/feature/address/data/repository/address_repo.dart';
+import 'package:aleman/feature/address/logic/cubit/address_cubit.dart';
 import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:aleman/feature/order/cubit/checkout_cubit.dart';
+import 'package:aleman/feature/order/cubit/orders_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -117,5 +119,13 @@ Future<void> _initOrderAndAddress() async {
       instance<OrderRepository>(),
       instance<UserAddressRepository>(),
     ),
+  );
+
+  instance.registerFactory<AddressCubit>(
+    () => AddressCubit(instance<UserAddressRepository>()),
+  );
+
+  instance.registerFactory<OrdersCubit>(
+    () => OrdersCubit(instance<OrderRepository>()),
   );
 }

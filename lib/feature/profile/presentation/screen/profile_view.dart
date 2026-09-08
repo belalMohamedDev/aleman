@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'package:aleman/core/application/di.dart';
+import 'package:aleman/feature/address/presentation/screen/user_addresses_screen.dart';
+import 'package:aleman/feature/order/presentation/screen/my_orders_screen.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_cubit.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,7 +66,14 @@ class ProfileView extends StatelessWidget {
                           _ProfileMenuItem(
                             icon: Iconsax.location,
                             title: 'العناوين',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const UserAddressesScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -76,7 +85,14 @@ class ProfileView extends StatelessWidget {
                           _ProfileMenuItem(
                             icon: Iconsax.box,
                             title: 'طلباتي',
-                            onTap: () {},
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const MyOrdersScreen(),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

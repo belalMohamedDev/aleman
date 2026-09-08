@@ -228,10 +228,8 @@ class ReviewStepWidget extends StatelessWidget {
             SizedBox(height: 8.h),
           ],
 
-          // سعر المنتجات
           _buildSummaryRow('إجمالي سعر المنتجات', '$cartSubtotal ج.م'),
 
-          // قيمة الخصم إن وجدت
           if (state.discount > 0) ...[
             SizedBox(height: 8.h),
             _buildSummaryRow(
@@ -241,7 +239,6 @@ class ReviewStepWidget extends StatelessWidget {
             ),
           ],
 
-          // تكلفة الشحن (في حالة وصال)
           if (state.isWesal && state.shippingFee > 0) ...[
             SizedBox(height: 8.h),
             _buildSummaryRow(
@@ -252,7 +249,6 @@ class ReviewStepWidget extends StatelessWidget {
 
           Divider(height: 24.h, color: Colors.grey.shade300),
 
-          // الإجمالي النهائي
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
