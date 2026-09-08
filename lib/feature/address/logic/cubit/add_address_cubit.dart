@@ -10,6 +10,14 @@ class AddAddressCubit extends Cubit<AddAddressState> {
 
   AddAddressCubit(this._repository) : super(const AddAddressState());
 
+  void selectGovernorate(String? gov) {
+    emit(state.copyWith(selectedGovernorate: gov, clearCity: true));
+  }
+
+  void selectCity(String? city) {
+    emit(state.copyWith(selectedCity: city));
+  }
+
   Future<void> submitAddress(CreateAddressRequest request) async {
     emit(state.copyWith(status: AddAddressStatus.loading, errorMessage: null));
 
@@ -17,14 +25,15 @@ class AddAddressCubit extends Cubit<AddAddressState> {
 
     result.when(
       success: (address) {
-        emit(state.copyWith(
-          status: AddAddressStatus.success,
-          createdAddress: address,
-          successMessage: 'تمت إضافة العنوان بنجاح',
-        ));
+        emit(
+          state.copyWith(
+            status: AddAddressStatus.success,
+            createdAddress: address,
+            successMessage: 'تمت إضافة العنوان بنجاح',
+          ),
+        );
       },
       failure: (error) {
-        // Fallback for local testing if endpoint is not up
         final localAddress = UserAddressModel(
           id: DateTime.now().millisecondsSinceEpoch.toString(),
           label: request.label,
@@ -33,11 +42,13 @@ class AddAddressCubit extends Cubit<AddAddressState> {
           street: request.street,
           notes: request.notes,
         );
-        emit(state.copyWith(
-          status: AddAddressStatus.success,
-          createdAddress: localAddress,
-          successMessage: 'تم حفظ العنوان',
-        ));
+        emit(
+          state.copyWith(
+            status: AddAddressStatus.success,
+            createdAddress: localAddress,
+            successMessage: 'تم حفظ العنوان',
+          ),
+        );
       },
     );
   }

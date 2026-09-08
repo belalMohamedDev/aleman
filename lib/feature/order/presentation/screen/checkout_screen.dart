@@ -63,7 +63,6 @@ class _CheckoutScreenContent extends StatelessWidget {
 
         if (state.status == CheckoutStatus.success &&
             state.createdOrder != null) {
-          // تفريغ السلة محلياً بعد نجاح الطلب
           cartCubit.clearCart();
 
           Navigator.pushReplacement(
@@ -105,7 +104,6 @@ class _CheckoutScreenContent extends StatelessWidget {
             ),
             body: Column(
               children: [
-                // Stepper Header (الاستلام - الدفع - المراجعة)
                 CheckoutStepperHeader(currentStep: state.currentStep),
 
                 // Step Content
@@ -119,7 +117,6 @@ class _CheckoutScreenContent extends StatelessWidget {
                   ),
                 ),
 
-                // Bottom Navigation Actions (يختفي تلقائياً عند فتح الكيبورد)
                 _buildBottomBar(context, state, cubit, cartSubtotal),
               ],
             ),
@@ -321,7 +318,6 @@ class _CheckoutScreenContent extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // سعر الطلبات
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -341,7 +337,6 @@ class _CheckoutScreenContent extends StatelessWidget {
             ),
             SizedBox(height: 6.h),
 
-            // سعر الشحن
             state.isFactoryPickup
                 ? SizedBox.shrink()
                 : Row(
@@ -369,7 +364,6 @@ class _CheckoutScreenContent extends StatelessWidget {
                     ],
                   ),
 
-            // إجمالي الكمية كوزن
             if (state.totalWeightTons > 0) ...[
               SizedBox(height: 6.h),
               Row(
@@ -393,7 +387,6 @@ class _CheckoutScreenContent extends StatelessWidget {
 
             Divider(height: 16.h, color: Colors.grey.shade300),
 
-            // الإجمالي النهائي
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -417,7 +410,6 @@ class _CheckoutScreenContent extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
 
-            // أزرار التنقل
             Row(
               children: [
                 // if (state.currentStep > 1) ...[

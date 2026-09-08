@@ -69,6 +69,7 @@ class _MyOrdersView extends StatelessWidget {
               : RefreshIndicator(
                   onRefresh: cubit.loadOrders,
                   color: ColorManger.primaryLight,
+                  backgroundColor: Colors.white,
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: EdgeInsets.symmetric(
@@ -84,19 +85,40 @@ class _MyOrdersView extends StatelessWidget {
                         _buildTabsToggle(context, state, cubit),
                         SizedBox(height: 16.h),
 
-                        if (state.filteredOrders.isEmpty)
-                          _buildEmptyOrdersState(state.selectedTab)
-                        else
-                          ListView.separated(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: state.filteredOrders.length,
-                            separatorBuilder: (_, _) => SizedBox(height: 12.h),
-                            itemBuilder: (context, index) {
-                              final order = state.filteredOrders[index];
-                              return _buildOrderCard(context, order);
-                            },
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 250),
+                          switchInCurve: Curves.easeOutCubic,
+                          switchOutCurve: Curves.easeInCubic,
+                          transitionBuilder: (child, animation) {
+                            return FadeTransition(
+                              opacity: animation,
+                              child: SlideTransition(
+                                position: Tween<Offset>(
+                                  begin: const Offset(0, 0.03),
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              ),
+                            );
+                          },
+                          child: KeyedSubtree(
+                            key: ValueKey<int>(state.selectedTab),
+                            child: state.filteredOrders.isEmpty
+                                ? _buildEmptyOrdersState(state.selectedTab)
+                                : ListView.separated(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount: state.filteredOrders.length,
+                                    separatorBuilder: (_, _) =>
+                                        SizedBox(height: 12.h),
+                                    itemBuilder: (context, index) {
+                                      final order = state.filteredOrders[index];
+                                      return _buildOrderCard(context, order);
+                                    },
+                                  ),
                           ),
+                        ),
                       ],
                     ),
                   ),
@@ -196,27 +218,66 @@ class _MyOrdersView extends StatelessWidget {
     OrdersState state,
     OrdersCubit cubit,
   ) {
+    final activeCount = state.activeOrdersCount;
+    final pastCount = state.completedOrdersCount + state.cancelledOrdersCount;
+
     return Container(
+      height: 48.h,
       padding: EdgeInsets.all(4.r),
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(12.r),
+        color: const Color(0xFFE9ECEF),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: Colors.grey.shade300, width: 0.8),
       ),
-      child: Row(
+      child: Stack(
         children: [
-          Expanded(
-            child: _buildTabButton(
-              title: 'الطلبات الحالية',
-              isSelected: state.selectedTab == 0,
-              onTap: () => cubit.changeTab(0),
+          // Animated sliding pill indicator
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.fastOutSlowIn,
+            alignment: state.selectedTab == 0
+                ? AlignmentDirectional.centerStart
+                : AlignmentDirectional.centerEnd,
+            child: FractionallySizedBox(
+              widthFactor: 0.5,
+              heightFactor: 1.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: ColorManger.primaryLight,
+                  borderRadius: BorderRadius.circular(10.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorManger.primary.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-          Expanded(
-            child: _buildTabButton(
-              title: 'الطلبات السابقة',
-              isSelected: state.selectedTab == 1,
-              onTap: () => cubit.changeTab(1),
-            ),
+          // Interactive tab buttons
+          Row(
+            children: [
+              Expanded(
+                child: _buildTabButton(
+                  title: 'الطلبات الحالية',
+                  icon: Iconsax.clock,
+                  count: activeCount,
+                  isSelected: state.selectedTab == 0,
+                  onTap: () => cubit.changeTab(0),
+                ),
+              ),
+              Expanded(
+                child: _buildTabButton(
+                  title: 'الطلبات السابقة',
+                  icon: Iconsax.archive_tick,
+                  count: pastCount,
+                  isSelected: state.selectedTab == 1,
+                  onTap: () => cubit.changeTab(1),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -225,34 +286,58 @@ class _MyOrdersView extends StatelessWidget {
 
   Widget _buildTabButton({
     required String title,
+    required IconData icon,
+    required int count,
     required bool isSelected,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(vertical: 10.h),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: isSelected ? ColorManger.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(10.r),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10.r),
+        child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 16.sp,
+                color: isSelected ? Colors.white : Colors.grey.shade600,
+              ),
+              SizedBox(width: 6.w),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 12.5.sp,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                  color: isSelected ? Colors.white : Colors.grey.shade700,
+                ),
+              ),
+              if (count > 0) ...[
+                SizedBox(width: 6.w),
+                AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? Colors.white.withValues(alpha: 0.22)
+                        : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
-                ]
-              : null,
-        ),
-        child: Text(
-          title,
-          style: TextStyle(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.bold,
-            color: isSelected ? Colors.white : Colors.grey.shade700,
+                  child: Text(
+                    '$count',
+                    style: TextStyle(
+                      fontSize: 10.5.sp,
+                      fontWeight: FontWeight.bold,
+                      color: isSelected ? Colors.white : Colors.grey.shade800,
+                    ),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ),

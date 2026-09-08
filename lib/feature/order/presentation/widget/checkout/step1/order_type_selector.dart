@@ -78,14 +78,14 @@ class OrderTypeSelector extends StatelessWidget {
           borderRadius: BorderRadius.circular(14.r),
           border: Border.all(
             color: isSelected
-                ? ColorManger.primary.withValues(alpha: 0.2)
+                ? ColorManger.primaryLight.withValues(alpha: 0.3)
                 : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
+            width: 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: primary.withValues(alpha: 0.12),
+                    color: primary.withValues(alpha: 0.09),
                     blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),

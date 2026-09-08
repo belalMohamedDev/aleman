@@ -4,13 +4,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CartAnimationHelper {
-  /// GlobalKey attached to the Cart icon/FAB to accurately target its position.
   static GlobalKey cartKey = GlobalKey();
-  
-  /// GlobalKey attached to the Cart icon in the Search AppBar.
+
   static GlobalKey cartSearchKey = GlobalKey();
 
-  /// Executes the flying image to cart animation using an OverlayEntry without any setState.
   static void runFlyToCartAnimation({
     required BuildContext context,
     required String imageUrl,
@@ -20,23 +17,23 @@ class CartAnimationHelper {
     final overlayState = Overlay.of(context, rootOverlay: true);
 
     // Calculate start position
-    final start = startOffset ??
+    final start =
+        startOffset ??
         Offset(
           MediaQuery.of(context).size.width / 2 - 40,
           MediaQuery.of(context).size.height / 2 - 40,
         );
     final initialSize = startSize ?? const Size(80, 80);
 
-    // Calculate end position (Cart FAB)
     Offset endOffset;
     Size endSize = const Size(48, 48);
 
-    // Prioritize search cart key if the search screen is active
     RenderBox? targetRenderBox =
         cartSearchKey.currentContext?.findRenderObject() as RenderBox?;
-        
+
     if (targetRenderBox == null || !targetRenderBox.hasSize) {
-      targetRenderBox = cartKey.currentContext?.findRenderObject() as RenderBox?;
+      targetRenderBox =
+          cartKey.currentContext?.findRenderObject() as RenderBox?;
     }
 
     if (targetRenderBox != null && targetRenderBox.hasSize) {
@@ -137,10 +134,12 @@ class _FlyingImageWidgetState extends State<_FlyingImageWidget>
         final t = _curveAnimation.value;
 
         // Parabolic curved trajectory: lifts slightly before falling to cart
-        final double currentX = widget.startOffset.dx +
+        final double currentX =
+            widget.startOffset.dx +
             (widget.targetCenter.dx - widget.startOffset.dx) * t;
 
-        final double linearY = widget.startOffset.dy +
+        final double linearY =
+            widget.startOffset.dy +
             (widget.targetCenter.dy - widget.startOffset.dy) * t;
 
         // Quadratic arc peak in the middle
@@ -149,7 +148,8 @@ class _FlyingImageWidgetState extends State<_FlyingImageWidget>
 
         // Scale down from original size to miniature
         final double currentWidth = widget.initialSize.width * (1.0 - 0.75 * t);
-        final double currentHeight = widget.initialSize.height * (1.0 - 0.75 * t);
+        final double currentHeight =
+            widget.initialSize.height * (1.0 - 0.75 * t);
 
         // Subtle rotation & fade
         final double rotation = t * 0.4;

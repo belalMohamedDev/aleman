@@ -16,6 +16,7 @@ class ApiConstants {
   static const String userAddresses = '/api/user-addresses';
   static const String orders = '/api/orders';
   static const String calculateShipping = '/api/orders/calculate-shipping';
+  static const String smallMerchantsOrders = '/api/Orders/small-merchants';
 
   static const int apiTimeOut = 120 * 1000;
 }

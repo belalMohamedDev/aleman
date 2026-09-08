@@ -8,6 +8,9 @@ import 'package:aleman/feature/address/presentation/screen/user_addresses_screen
 import 'package:aleman/feature/order/presentation/screen/my_orders_screen.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_cubit.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_state.dart';
+import 'package:aleman/core/services/app_logout.dart';
+import 'package:aleman/feature/order/presentation/screen/small_merchants_orders_screen.dart';
+import 'package:aleman/feature/profile/presentation/screen/my_small_merchants_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -40,7 +43,11 @@ class ProfileView extends StatelessWidget {
               loading: () => const _ProfileShimmer(),
               error: (error) => Center(child: Text(error.message ?? 'حدث خطأ')),
               success: (profile) {
-                final bool isMainCustomer = profile.role == 'ParentMerchant';
+                final bool isMainCustomer =
+                    profile.role == 'ParentMerchantId' ||
+                        profile.role == 'ParentMerchant' ||
+                        profile.role.toLowerCase().contains('parentmerchant') ||
+                        profile.role.toLowerCase().contains('bigmerchant');
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
@@ -51,7 +58,7 @@ class ProfileView extends StatelessWidget {
                     children: [
                       _ProfileHeader(
                         name: profile.name,
-                        role: isMainCustomer ? 'عميل رئيسي' : 'عميل',
+                        role: isMainCustomer ? 'وكيل معتمد (تاجر كبير)' : 'عميل',
                       ),
                       SizedBox(height: 24.h),
 
@@ -77,7 +84,7 @@ class ProfileView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 10.h),
 
                       _buildMenuGroup(
                         title: 'الطلبات',
@@ -105,19 +112,35 @@ class ProfileView extends StatelessWidget {
                             _ProfileMenuItem(
                               icon: Iconsax.people,
                               title: 'عملائي',
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => MySmallMerchantsScreen(
+                                      merchants: profile.smallMerchants ?? [],
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                             _ProfileMenuItem(
                               icon: Iconsax.task_square,
                               title: 'أوردرات العملاء',
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const SmallMerchantsOrdersScreen(),
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
                         SizedBox(height: 20.h),
                       ],
 
-                      // القسم الرابع: تسجيل الخروج
                       _buildMenuGroup(
                         items: [
                           _ProfileMenuItem(
@@ -126,7 +149,7 @@ class ProfileView extends StatelessWidget {
                             textColor: Colors.red,
                             iconColor: Colors.red,
                             showTrailing: false,
-                            onTap: () {},
+                            onTap: () => _showLogoutConfirmation(context),
                           ),
                         ],
                       ),
@@ -190,6 +213,155 @@ class ProfileView extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  void _showLogoutConfirmation(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (bottomSheetContext) {
+        bool isLoggingOut = false;
+
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return Container(
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, -4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40.w,
+                    height: 4.h,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+
+                  Container(
+                    padding: EdgeInsets.all(16.r),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF2F2),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFFFECDD3),
+                        width: 2,
+                      ),
+                    ),
+                    child: Icon(
+                      Iconsax.logout,
+                      color: const Color(0xFFDC2626),
+                      size: 32.sp,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+
+                  Text(
+                    'تسجيل الخروج',
+                    style: TextStyle(
+                      fontSize: 17.sp,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF1E293B),
+                    ),
+                  ),
+                  SizedBox(height: 8.h),
+                  Text(
+                    'هل أنت متأكد من رغبتك في تسجيل الخروج من حسابك؟',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: Colors.grey.shade600,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 24.h),
+
+                  // أزرار التأكيد والإلغاء
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton(
+                          onPressed: isLoggingOut
+                              ? null
+                              : () => Navigator.pop(bottomSheetContext),
+                          style: OutlinedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(vertical: 12.h),
+                            side: BorderSide(color: Colors.grey.shade300),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: Text(
+                            'إلغاء',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.grey.shade700,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: isLoggingOut
+                              ? null
+                              : () async {
+                                  setSheetState(() {
+                                    isLoggingOut = true;
+                                  });
+                                  await const AppLogout()
+                                      .logOutThenNavigateToLogin(context);
+                                },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFDC2626),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            // padding: EdgeInsets.symmetric(vertical: 12.h),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          child: isLoggingOut
+                              ? SizedBox(
+                                  width: 20.w,
+                                  height: 20.w,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : Text(
+                                  'تأكيد الخروج',
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10.h),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

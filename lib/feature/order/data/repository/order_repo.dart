@@ -4,6 +4,7 @@ import 'package:aleman/core/network/error_handler/api_error_handler.dart';
 import 'package:aleman/feature/order/data/model/calculate_shipping_model.dart';
 import 'package:aleman/feature/order/data/model/create_order_request.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
+import 'package:aleman/feature/order/data/model/small_merchants_orders_response.dart';
 import 'package:dio/dio.dart';
 
 abstract class OrderRepository {
@@ -16,6 +17,10 @@ abstract class OrderRepository {
   Future<ApiResult<List<OrderResponseModel>>> getMyOrders({int? status});
   Future<ApiResult<OrderResponseModel>> getOrderDetails(String orderId);
   Future<ApiResult<void>> cancelOrder(String orderId);
+  Future<ApiResult<SmallMerchantsOrdersResponse>> getSmallMerchantsOrders({
+    int page = 1,
+    int pageSize = 10,
+  });
 }
 
 class OrderRepositoryImplement implements OrderRepository {
@@ -115,6 +120,28 @@ class OrderRepositoryImplement implements OrderRepository {
     try {
       await _dio.post('${ApiConstants.orders}/$orderId/cancel');
       return const ApiResult.success(null);
+    } catch (e) {
+      return ApiResult.failure(ApiErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<SmallMerchantsOrdersResponse>> getSmallMerchantsOrders({
+    int page = 1,
+    int pageSize = 10,
+  }) async {
+    try {
+      final response = await _dio.get(
+        ApiConstants.smallMerchantsOrders,
+        queryParameters: {
+          'page': page,
+          'pageSize': pageSize,
+        },
+      );
+      final result = SmallMerchantsOrdersResponse.fromJson(
+        response.data as Map<String, dynamic>,
+      );
+      return ApiResult.success(result);
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));
     }

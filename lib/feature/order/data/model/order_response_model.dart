@@ -18,21 +18,24 @@ class OrderItemModel {
   });
 
   factory OrderItemModel.fromJson(Map<String, dynamic> json) => OrderItemModel(
-        id: (json['id'] as num?)?.toInt() ?? 0,
-        productName: json['productName'] as String? ??
-            json['name'] as String? ??
-            'علف آل إيمان',
-        productImage:
-            json['productImage'] as String? ?? json['imageUrl'] as String?,
-        weightKg: (json['weightKg'] as num?)?.toDouble() ?? 50.0,
-        quantity: (json['quantity'] as num?)?.toInt() ?? 1,
-        unitPrice: (json['unitPrice'] as num?)?.toDouble() ??
-            (json['price'] as num?)?.toDouble() ??
-            0.0,
-        totalPrice: (json['totalPrice'] as num?)?.toDouble() ??
-            (json['total'] as num?)?.toDouble() ??
-            0.0,
-      );
+    id: (json['id'] as num?)?.toInt() ?? 0,
+    productName:
+        json['productName'] as String? ??
+        json['name'] as String? ??
+        'علف آل إيمان',
+    productImage:
+        json['productImage'] as String? ?? json['imageUrl'] as String?,
+    weightKg: (json['weightKg'] as num?)?.toDouble() ?? 50.0,
+    quantity: (json['quantity'] as num?)?.toInt() ?? 1,
+    unitPrice:
+        (json['unitPrice'] as num?)?.toDouble() ??
+        (json['price'] as num?)?.toDouble() ??
+        0.0,
+    totalPrice:
+        (json['totalPrice'] as num?)?.toDouble() ??
+        (json['total'] as num?)?.toDouble() ??
+        0.0,
+  );
 }
 
 class OrderResponseModel {
@@ -58,6 +61,8 @@ class OrderResponseModel {
   final String? vehiclePlateNumber;
   final String? driverLicenseNumber;
   final DateTime? expectedPickupDate;
+  final String? customerName;
+  final String? userId;
   final String? addressText;
   final String? notes;
   final List<OrderItemModel> items;
@@ -83,6 +88,8 @@ class OrderResponseModel {
     this.vehiclePlateNumber,
     this.driverLicenseNumber,
     this.expectedPickupDate,
+    this.customerName,
+    this.userId,
     this.addressText,
     this.notes,
     this.items = const [],
@@ -108,7 +115,8 @@ class OrderResponseModel {
     }
 
     String statusText = 'قيد الانتظار';
-    if (json['statusName'] is String && (json['statusName'] as String).isNotEmpty) {
+    if (json['statusName'] is String &&
+        (json['statusName'] as String).isNotEmpty) {
       statusText = json['statusName'] as String;
     } else {
       switch (parsedStatusCode) {
@@ -145,42 +153,83 @@ class OrderResponseModel {
           .toList();
     }
 
+    String? cleanStr(dynamic val) {
+      if (val is! String) return null;
+      final trimmed = val.trim();
+      if (trimmed.isEmpty || trimmed.toLowerCase() == 'string') return null;
+      return trimmed;
+    }
+
+    final rawOrderNumber = cleanStr(json['orderNumber']);
+    final rawId = json['id']?.toString() ?? '';
+    final orderNumber =
+        rawOrderNumber ?? (rawId.isNotEmpty && rawId != '0' ? rawId : '1001');
+
+    final rawTypeName = cleanStr(json['orderTypeName']);
+    final orderTypeName =
+        rawTypeName ?? ((json['orderType'] == 2) ? 'أرض المصنع' : 'وصال');
+
+    final rawPayName = cleanStr(json['paymentMethodName']);
+    final paymentMethodName =
+        rawPayName ??
+        ((json['paymentMethod'] == 2) ? 'بطاقة دفع' : 'كاش عند الاستلام');
+
+    String? addressText;
+    if (json['deliveryAddress'] is Map) {
+      final addr = json['deliveryAddress'] as Map;
+      final parts = [
+        cleanStr(addr['city']),
+        cleanStr(addr['district']),
+        cleanStr(addr['street']),
+      ].whereType<String>().toList();
+      if (parts.isNotEmpty) {
+        addressText = parts.join(' - ');
+      }
+    } else if (json['address'] is Map) {
+      addressText = cleanStr(json['address']['street']);
+    } else {
+      addressText = cleanStr(json['addressText']);
+    }
+
     return OrderResponseModel(
-      id: json['id']?.toString() ?? '',
-      orderNumber: json['orderNumber'] as String? ?? '',
+      id: rawId,
+      orderNumber: orderNumber,
       orderType: (json['orderType'] as num?)?.toInt() ?? 1,
-      orderTypeName: json['orderTypeName'] as String? ??
-          ((json['orderType'] == 2) ? 'أرض المصنع' : 'وصال'),
-      subTotal: (json['subtotal'] as num?)?.toDouble() ??
+      orderTypeName: orderTypeName,
+      subTotal:
+          (json['subtotal'] as num?)?.toDouble() ??
           (json['subTotal'] as num?)?.toDouble() ??
           0.0,
       shippingFee: (json['shippingFee'] as num?)?.toDouble() ?? 0.0,
-      discount: (json['discountAmount'] as num?)?.toDouble() ??
+      discount:
+          (json['discountAmount'] as num?)?.toDouble() ??
           (json['discount'] as num?)?.toDouble() ??
           0.0,
-      total: (json['totalAmount'] as num?)?.toDouble() ??
+      total:
+          (json['totalAmount'] as num?)?.toDouble() ??
           (json['total'] as num?)?.toDouble() ??
           0.0,
       paymentMethod: (json['paymentMethod'] as num?)?.toInt() ?? 1,
-      paymentMethodName: json['paymentMethodName'] as String? ??
-          ((json['paymentMethod'] == 2) ? 'بطاقة دفع' : 'كاش عند الاستلام'),
+      paymentMethodName: paymentMethodName,
       statusCode: parsedStatusCode,
       status: statusText,
       totalWeightTons: (json['totalWeightTons'] as num?)?.toDouble() ?? 0.0,
-      totalItemsCount: (json['totalItemsCount'] as num?)?.toInt() ?? parsedItems.length,
+      totalItemsCount:
+          (json['totalItemsCount'] as num?)?.toInt() ?? parsedItems.length,
       createdAt: json['createdAt'] != null
           ? DateTime.tryParse(json['createdAt'] as String)
           : null,
-      truckName: json['truckName'] as String?,
-      driverName: json['driverName'] as String?,
-      vehiclePlateNumber: json['vehiclePlateNumber'] as String?,
-      driverLicenseNumber: json['driverLicenseNumber'] as String?,
+      truckName: cleanStr(json['truckName']),
+      driverName: cleanStr(json['driverName']),
+      vehiclePlateNumber: cleanStr(json['vehiclePlateNumber']),
+      driverLicenseNumber: cleanStr(json['driverLicenseNumber']),
       expectedPickupDate: json['expectedPickupDate'] != null
           ? DateTime.tryParse(json['expectedPickupDate'] as String)
           : null,
-      addressText: json['addressText'] as String? ??
-          (json['address'] is Map ? json['address']['street']?.toString() : null),
-      notes: json['notes'] as String?,
+      customerName: cleanStr(json['customerName']),
+      userId: cleanStr(json['userId']?.toString()),
+      addressText: addressText,
+      notes: cleanStr(json['notes']),
       items: parsedItems,
     );
   }
