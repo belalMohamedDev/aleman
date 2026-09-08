@@ -1,0 +1,528 @@
+/*
+import 'package:elminiawy/core/common/shared/shared_imports.dart'; //
+
+class ReviewPaymentBody extends StatefulWidget {
+  const ReviewPaymentBody({super.key});
+
+  @override
+  State<ReviewPaymentBody> createState() => _ReviewPaymentBodyState();
+}
+
+class _ReviewPaymentBodyState extends State<ReviewPaymentBody>
+    with SingleTickerProviderStateMixin {
+  @override
+  Widget build(BuildContext context) {
+    final paymentCuibt = context.read<PaymentCubit>();
+
+    final responsive = ResponsiveUtils(context);
+    final bool isEnLocale = AppLocalizations.of(context)?.isEnLocale ?? true;
+    final addressData = AppInitialRoute.role == 'admin'
+        ? null
+        : context.read<UserAddressCubit>().addressDataList[context
+              .read<UserAddressCubit>()
+              .addressIndex];
+
+    return Padding(
+      padding: responsive.setPadding(top: 3, right: 6, left: 6, bottom: 5),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppInitialRoute.role == 'admin'
+                ? const SizedBox()
+                : const CheckOutProcessing(screenIndex: 3),
+            responsive.setSizeBox(
+              height: AppInitialRoute.role == 'admin' ? 0 : 3,
+            ),
+            _shippingAddressCart(
+              context,
+              responsive,
+              paymentCuibt,
+              isEnLocale,
+              addressData,
+            ),
+
+            responsive.setSizeBox(height: 1),
+
+            _deferredPaymentToAdmin(
+              context,
+              responsive,
+              paymentCuibt,
+              isEnLocale,
+            ),
+
+            _paymentCard(context, responsive, isEnLocale),
+
+            _addNotes(context, responsive),
+
+            responsive.setSizeBox(
+              height: AppInitialRoute.role == 'admin' ? 3 : 0,
+            ),
+
+            AppInitialRoute.role == 'admin'
+                ? const ApplyCouponCode()
+                : const SizedBox(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Column _shippingAddressCart(
+    BuildContext context,
+    ResponsiveUtils responsive,
+    PaymentCubit paymentCuibt,
+    bool isEnLocale,
+    GetAddressResponseData? addressData,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.translate(AppStrings.shippingAddress),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontSize: responsive.setTextSize(4)),
+        ),
+
+        Padding(
+          padding: responsive.setPadding(bottom: 1, top: 2),
+          child: InkWell(
+            onTap: () async {
+              if (AppInitialRoute.role == 'admin') {
+                final selected = await showMenu<String>(
+                  color: ColorManger.backgroundItem,
+                  context: context,
+                  position: RelativeRect.fromLTRB(
+                    100,
+                    responsive.setHeight(26.3),
+                    responsive.setWidth(6.5),
+                    100,
+                  ),
+                  items: [
+                    PopupMenuItem(
+                      value: 'Store Pickup',
+                      child: Text(context.translate(AppStrings.storePickup)),
+                    ),
+                    PopupMenuItem(
+                      value: 'By Phone',
+                      child: Text(context.translate(AppStrings.byPhone)),
+                    ),
+                  ],
+                );
+
+                if (selected != null &&
+                    selected != paymentCuibt.selectedOption) {
+                  paymentCuibt.changeOrderType(selected);
+                }
+              } else {
+                context.read<UserAddressCubit>().isPaymentAddress = true;
+
+                Navigator.of(
+                  context,
+                  rootNavigator: !false,
+                ).popAndPushNamed(Routes.map);
+              }
+            },
+            child: Container(
+              width: double.infinity,
+              height: responsive.setHeight(6),
+              decoration: BoxDecoration(
+                color: ColorManger.backgroundItem,
+                borderRadius: BorderRadius.circular(
+                  responsive.setBorderRadius(2),
+                ),
+                border: Border.all(
+                  color: ColorManger.brownLight,
+                  width: responsive.setWidth(0.1),
+                ),
+              ),
+              child: Padding(
+                padding: responsive.setPadding(
+                  left: isEnLocale ? 2 : 0,
+                  right: isEnLocale ? 0 : 2,
+                ),
+                child: Row(
+                  children: [
+                    Icon(IconlyBold.location, color: ColorManger.brun),
+                    responsive.setSizeBox(width: 1.5),
+                    BlocBuilder<PaymentCubit, PaymentState>(
+                      builder: (context, state) {
+                        return ConstrainedBox(
+                          constraints: BoxConstraints(maxWidth: 275.w),
+                          child: Text(
+                            AppInitialRoute.role == 'admin'
+                                ? paymentCuibt.selectedOption == 'By Phone'
+                                      ? context.translate(AppStrings.byPhone)
+                                      : context.translate(
+                                          AppStrings.storePickup,
+                                        )
+                                : addressData!.region ?? '',
+                            maxLines: 1,
+                            textAlign: TextAlign.start,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.titleLarge!
+                                .copyWith(
+                                  fontSize: responsive.setTextSize(3.5),
+                                ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+
+        /// Animated Container for "By Phone"
+        BlocBuilder<PaymentCubit, PaymentState>(
+          builder: (context, state) {
+            return AnimatedSize(
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOut,
+              child: paymentCuibt.isPhoneOrder
+                  ? Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: ColorManger.backgroundItem,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: ColorManger.backgroundItem),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTextField(
+                            controller: paymentCuibt.customerNameController,
+                            label: context.translate(AppStrings.customerName),
+                            icon: Icons.person,
+                          ),
+                          SizedBox(height: 10.h),
+                          _buildTextField(
+                            controller: paymentCuibt.customerPhoneController,
+                            label: context.translate(AppStrings.customerPhone),
+                            icon: Icons.phone,
+                            keyboardType: TextInputType.phone,
+                          ),
+                          SizedBox(height: 10.h),
+                          _buildTextField(
+                            controller:
+                                paymentCuibt.customerAddressTextController,
+                            label: context.translate(
+                              AppStrings.customerAddress,
+                            ),
+                            icon: Icons.location_on,
+                          ),
+                        ],
+                      ),
+                    )
+                  : const SizedBox(),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _paymentCard(
+    BuildContext context,
+    ResponsiveUtils responsive,
+    bool isEnLocale,
+  ) {
+    return AppInitialRoute.role != 'admin'
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.translate(AppStrings.payment),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  fontSize: responsive.setTextSize(4),
+                ),
+              ),
+
+              Padding(
+                padding: responsive.setPadding(bottom: 1, top: 0.8),
+                child: InkWell(
+                  onTap: () {
+                    context.read<UserAddressCubit>().isPaymentAddress = true;
+
+                    Navigator.of(
+                      context,
+                      rootNavigator: !false,
+                    ).popAndPushNamed(Routes.map);
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: responsive.setHeight(6),
+                    decoration: BoxDecoration(
+                      color: ColorManger.backgroundItem,
+                      borderRadius: BorderRadius.circular(
+                        responsive.setBorderRadius(2),
+                      ),
+                      border: Border.all(
+                        color: ColorManger.brownLight,
+                        width: responsive.setWidth(0.1),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: responsive.setPadding(
+                        left: isEnLocale ? 2 : 0,
+                        right: isEnLocale ? 0 : 2,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(Icons.credit_card, color: ColorManger.brun),
+                          responsive.setSizeBox(width: 1.5),
+                          ConstrainedBox(
+                            constraints: BoxConstraints(maxWidth: 275.w),
+                            child: Text(
+                              context
+                                          .read<PaymentCubit>()
+                                          .choosePaymentMethod ==
+                                      'Cash'
+                                  ? context.translate(AppStrings.cashOnDelivery)
+                                  : context.translate(
+                                      AppStrings.creditOrDebitCard,
+                                    ),
+                              maxLines: 1,
+                              textAlign: TextAlign.start,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleLarge!
+                                  .copyWith(
+                                    fontSize: responsive.setTextSize(3.5),
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        : const SizedBox();
+  }
+
+  Widget _deferredPaymentToAdmin(
+    BuildContext context,
+    ResponsiveUtils responsive,
+    PaymentCubit paymentCuibt,
+    bool isEnLocale,
+  ) {
+    return AppInitialRoute.role == 'admin'
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.translate(AppStrings.paymentType),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  fontSize: responsive.setTextSize(4),
+                ),
+              ),
+
+              Padding(
+                padding: responsive.setPadding(bottom: 1, top: 2),
+                child: InkWell(
+                  onTap: () async {
+                    final selected = await showMenu<String>(
+                      color: ColorManger.backgroundItem,
+                      context: context,
+                      position: RelativeRect.fromLTRB(
+                        100,
+                        responsive.setHeight(38.5),
+                        responsive.setWidth(6.5),
+                        100,
+                      ),
+                      items: [
+                        PopupMenuItem(
+                          value: 'full Payment',
+                          child: Text(
+                            context.translate(AppStrings.fullPayment),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          value: 'deferred Payment',
+                          child: Text(
+                            context.translate(AppStrings.deferredPayment),
+                          ),
+                        ),
+                      ],
+                    );
+
+                    if (selected != null &&
+                        selected != paymentCuibt.selectedPaymentOption) {
+                      paymentCuibt.changePaymetType(selected);
+                    }
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: responsive.setHeight(6),
+                    decoration: BoxDecoration(
+                      color: ColorManger.backgroundItem,
+                      borderRadius: BorderRadius.circular(
+                        responsive.setBorderRadius(2),
+                      ),
+                      border: Border.all(
+                        color: ColorManger.brownLight,
+                        width: responsive.setWidth(0.1),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: responsive.setPadding(
+                        left: isEnLocale ? 2 : 0,
+                        right: isEnLocale ? 0 : 2,
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(IconlyBold.location, color: ColorManger.brun),
+                          responsive.setSizeBox(width: 1.5),
+                          BlocBuilder<PaymentCubit, PaymentState>(
+                            builder: (context, state) {
+                              return ConstrainedBox(
+                                constraints: BoxConstraints(maxWidth: 275.w),
+                                child: Text(
+                                  paymentCuibt.selectedPaymentOption ==
+                                          'full Payment'
+                                      ? context.translate(
+                                          AppStrings.fullPayment,
+                                        )
+                                      : context.translate(
+                                          AppStrings.deferredPayment,
+                                        ),
+                                  maxLines: 1,
+                                  textAlign: TextAlign.start,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.titleLarge!
+                                      .copyWith(
+                                        fontSize: responsive.setTextSize(3.5),
+                                      ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              BlocBuilder<PaymentCubit, PaymentState>(
+                builder: (context, state) {
+                  return AnimatedSize(
+                    duration: const Duration(milliseconds: 400),
+                    curve: Curves.easeInOut,
+                    child: paymentCuibt.isDeferredPayment
+                        ? Container(
+                            width: double.infinity,
+                            padding: EdgeInsets.all(12.w),
+                            decoration: BoxDecoration(
+                              color: ColorManger.backgroundItem,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: ColorManger.backgroundItem,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildTextField(
+                                  controller: paymentCuibt.paidAmountController,
+                                  label: context.translate(
+                                    AppStrings.enterPaidAmount,
+                                  ),
+                                  icon: IconlyBold.wallet,
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox(),
+                  );
+                },
+              ),
+              responsive.setSizeBox(height: 1),
+            ],
+          )
+        : const SizedBox();
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        prefixIcon: Icon(icon, color: ColorManger.brown),
+        labelText: label,
+        labelStyle: TextStyle(color: ColorManger.brown),
+        filled: true,
+        fillColor: Colors.white,
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: ColorManger.backgroundItem),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: ColorManger.backgroundItem, width: 1.2),
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
+
+  Column _addNotes(BuildContext context, ResponsiveUtils responsive) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          context.translate(AppStrings.addNotes),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge!.copyWith(fontSize: responsive.setTextSize(4)),
+        ),
+        responsive.setSizeBox(height: 2),
+        TextFormField(
+          controller: context.read<PaymentCubit>().notesController,
+          keyboardType: TextInputType.text,
+          minLines: 1,
+          maxLines: 10,
+          decoration: InputDecoration(
+            hintText: context.translate(
+              AppStrings.typeAnyNoteRelatedToThisOrder,
+            ),
+            hintStyle: Theme.of(context).textTheme.titleMedium!.copyWith(
+              fontSize: responsive.setTextSize(3.5),
+            ),
+            fillColor: ColorManger.backgroundItem,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: ColorManger.brownLight, width: 0.5),
+              borderRadius: BorderRadius.all(
+                Radius.elliptical(
+                  responsive.setBorderRadius(2),
+                  responsive.setBorderRadius(2),
+                ),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: ColorManger.backgroundItem),
+              borderRadius: BorderRadius.all(
+                Radius.elliptical(
+                  responsive.setBorderRadius(2),
+                  responsive.setBorderRadius(2),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+*/

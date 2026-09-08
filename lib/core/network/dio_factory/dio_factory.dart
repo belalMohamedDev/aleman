@@ -20,6 +20,7 @@ class DioFactory {
     if (dio == null) {
       dio = Dio();
       dio!
+        ..options.baseUrl = ApiConstants.baseUrl
         ..options.connectTimeout = timeOut
         ..options.receiveTimeout = timeOut
         ..options.receiveDataWhenStatusError = true;
@@ -33,6 +34,7 @@ class DioFactory {
 
       return dio!;
     } else {
+      dio!.options.baseUrl = ApiConstants.baseUrl;
       return dio!;
     }
   }

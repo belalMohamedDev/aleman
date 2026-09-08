@@ -7,5 +7,6 @@ class Routes {
   static const String verificationCodeRoute = 'verificationCodeScreen';
   static const String newPasswordRoute = 'newPasswordScreen';
   static const String cartRoute = 'cartScreen';
+  static const String checkoutRoute = 'checkoutScreen';
   static const String noRoute = 'noRoute';
 }

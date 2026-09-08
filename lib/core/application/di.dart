@@ -15,6 +15,9 @@ import 'package:aleman/feature/cart/data/repository/cart_repo_impl.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/profile/data/repository/profile_repository.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_cubit.dart';
+import 'package:aleman/feature/address/data/repository/address_repo.dart';
+import 'package:aleman/feature/order/data/repository/order_repo.dart';
+import 'package:aleman/feature/order/cubit/checkout_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,7 +29,14 @@ import 'package:image_picker/image_picker.dart';
 final instance = GetIt.instance;
 
 Future<void> initAppModule() async {
-  await Future.wait([_initAppModule(), _initLogin(), _initHome(), _initCart(), _initProfile()]);
+  await Future.wait([
+    _initAppModule(),
+    _initLogin(),
+    _initHome(),
+    _initCart(),
+    _initProfile(),
+    _initOrderAndAddress(),
+  ]);
 }
 
 Future<void> _initAppModule() async {
@@ -88,5 +98,24 @@ Future<void> _initProfile() async {
   );
   instance.registerFactory<ProfileCubit>(
     () => ProfileCubit(instance<ProfileRepository>()),
+  );
+}
+
+Future<void> _initOrderAndAddress() async {
+  final dio = DioFactory.getDio();
+
+  instance.registerLazySingleton<UserAddressRepository>(
+    () => UserAddressRepositoryImplement(dio),
+  );
+
+  instance.registerLazySingleton<OrderRepository>(
+    () => OrderRepositoryImplement(dio),
+  );
+
+  instance.registerFactory<CheckoutCubit>(
+    () => CheckoutCubit(
+      instance<OrderRepository>(),
+      instance<UserAddressRepository>(),
+    ),
   );
 }

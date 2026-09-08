@@ -1,5 +1,4 @@
-import 'package:aleman/core/language/localization_extensions.dart';
-import 'package:aleman/core/language/strings_manger.dart';
+import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/statsScreen/error_info.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
@@ -11,7 +10,6 @@ import 'package:aleman/feature/cart/presentation/widget/cart_item_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
 
 class CartBody extends StatefulWidget {
   const CartBody({super.key});
@@ -177,7 +175,7 @@ class _CartSummaryBottomBar extends StatelessWidget {
               height: 54.h,
               child: ElevatedButton(
                 onPressed: () {
-                  // Checkout logic later
+                  Navigator.pushNamed(context, Routes.checkoutRoute);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorManger.primaryLight,

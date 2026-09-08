@@ -1,4 +1,5 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
@@ -774,6 +775,15 @@ class _ActionBar extends StatelessWidget {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
+                  final homeCubit = context.read<HomeCuibtCubit>();
+                  if (!homeCubit.state.isLoggedIn) {
+                    Navigator.pop(context);
+                    Navigator.of(context, rootNavigator: true)
+                        .pushNamed(Routes.loginRoute)
+                        .then((_) => homeCubit.checkLoginStatus());
+                    return;
+                  }
+
                   // 1. Capture image coordinates & size BEFORE closing bottom sheet
                   Offset? startCenter;
                   Size? startSize;

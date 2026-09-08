@@ -1,6 +1,8 @@
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/home/data/mapper/product_mapper.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 
 import 'product_card.dart';
@@ -59,6 +61,9 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
           buildWhen: (previous, current) =>
               previous.totalItemsCount != current.totalItemsCount,
           builder: (context, cartState) {
+            if (!homeCubit.state.isLoggedIn) {
+              return const SizedBox.shrink();
+            }
             final count = cartState.totalItemsCount;
             return Stack(
               clipBehavior: Clip.none,
@@ -156,18 +161,9 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
     }).toList();
 
     if (filteredProducts.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Iconsax.search_status, size: 80, color: Colors.grey.shade400),
-            const SizedBox(height: 16),
-            Text(
-              'لا توجد منتجات مطابقة لبحثك',
-              style: TextStyle(fontSize: 18, color: Colors.grey.shade600),
-            ),
-          ],
-        ),
+      return Padding(
+        padding: EdgeInsets.only(top: 60.h, left: 30.w, right: 30.w),
+        child: Image.asset(ImageAsset.search, height: 480.h),
       );
     }
 

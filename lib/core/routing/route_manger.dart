@@ -15,6 +15,7 @@ import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:aleman/feature/onboarding/presentation/screen/on_boarding_screen.dart';
 import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
+import 'package:aleman/feature/order/presentation/screen/checkout_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -86,6 +87,9 @@ class RouteGenerator {
 
       case Routes.cartRoute:
         return _buildFadeRoute(const CartScreen(), settings);
+
+      case Routes.checkoutRoute:
+        return _buildFadeRoute(const CheckoutScreen(), settings);
 
       // ---------------------- DEFAULT -----------------------
       case Routes.noRoute:
