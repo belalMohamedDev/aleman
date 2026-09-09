@@ -46,10 +46,10 @@ class NotificationBadgeIcon extends StatelessWidget {
 
             if (unreadCount > 0)
               Positioned(
-                top: 6.h,
-                right: 6.w,
+                top: 1.h,
+                right: 2.w,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
                   decoration: BoxDecoration(
                     color: ColorManger.redError,
                     shape: unreadCount > 9

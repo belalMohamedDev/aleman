@@ -3,6 +3,7 @@ import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/fonts/styles_manger.dart';
 import 'package:aleman/feature/notification/domain/entity/notification_item_entity.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
+import 'package:aleman/feature/notification/presentation/widget/notification_details_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,22 +12,19 @@ import 'package:iconsax/iconsax.dart';
 class NotificationCard extends StatelessWidget {
   final NotificationItemEntity notification;
 
-  const NotificationCard({
-    super.key,
-    required this.notification,
-  });
+  const NotificationCard({super.key, required this.notification});
 
   @override
   Widget build(BuildContext context) {
     final bool isUnread = !notification.isRead;
-    final String type = (notification.data['type'] ?? '').toString().toLowerCase();
+    final String type = (notification.data['type'] ?? '')
+        .toString()
+        .toLowerCase();
 
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: isUnread
-            ? ColorManger.primary.withAlpha(12)
-            : ColorManger.white,
+        color: isUnread ? ColorManger.primary.withAlpha(12) : ColorManger.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: isUnread
@@ -50,7 +48,26 @@ class NotificationCard extends StatelessWidget {
             if (isUnread) {
               context.read<NotificationCubit>().markAsRead(notification.id);
             }
-            NotificationRouter.handleNavigation(notification.data);
+            final String type = (notification.data['type'] ?? '')
+                .toString()
+                .toLowerCase();
+            final String? orderId =
+                (notification.data['orderId'] ??
+                        notification.data['order_id'] ??
+                        notification.data['id'])
+                    ?.toString();
+
+            final bool hasDirectTarget =
+                type == 'order' ||
+                type == 'order_status' ||
+                type == 'cart' ||
+                (orderId != null && orderId.isNotEmpty && type != 'product');
+
+            if (hasDirectTarget) {
+              NotificationRouter.handleNavigation(notification.data);
+            } else {
+              NotificationDetailsBottomSheet.show(context, notification);
+            }
           },
           child: Padding(
             padding: EdgeInsets.all(14.w),
@@ -149,16 +166,9 @@ class NotificationCard extends StatelessWidget {
     return Container(
       width: 42.w,
       height: 42.w,
-      decoration: BoxDecoration(
-        color: bgColor,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
       child: Center(
-        child: Icon(
-          iconData,
-          color: iconColor,
-          size: 20.sp,
-        ),
+        child: Icon(iconData, color: iconColor, size: 20.sp),
       ),
     );
   }

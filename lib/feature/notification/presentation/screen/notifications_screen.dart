@@ -1,7 +1,6 @@
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/fonts/styles_manger.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
-import 'package:aleman/feature/notification/logic/notification_state.dart';
 import 'package:aleman/feature/notification/presentation/refactor/notifications_body.dart';
 
 import 'package:flutter/material.dart';
@@ -56,33 +55,33 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           'مركز الإشعارات',
           style: getBoldStyle(fontSize: 17.sp, color: ColorManger.primary),
         ),
-        actions: [
-          BlocBuilder<NotificationCubit, NotificationState>(
-            buildWhen: (prev, curr) => prev.unreadCount != curr.unreadCount,
-            builder: (context, state) {
-              if (state.unreadCount > 0) {
-                return TextButton.icon(
-                  onPressed: () {
-                    context.read<NotificationCubit>().markAllAsRead();
-                  },
-                  icon: Icon(
-                    Icons.done_all,
-                    size: 16.sp,
-                    color: ColorManger.buttonColor,
-                  ),
-                  label: Text(
-                    'قراءة الكل',
-                    style: getBoldStyle(
-                      fontSize: 12.sp,
-                      color: ColorManger.buttonColor,
-                    ),
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
-        ],
+        // actions: [
+        //   BlocBuilder<NotificationCubit, NotificationState>(
+        //     buildWhen: (prev, curr) => prev.unreadCount != curr.unreadCount,
+        //     builder: (context, state) {
+        //       if (state.unreadCount > 0) {
+        //         return TextButton.icon(
+        //           onPressed: () {
+        //             context.read<NotificationCubit>().markAllAsRead();
+        //           },
+        //           icon: Icon(
+        //             Icons.done_all,
+        //             size: 16.sp,
+        //             color: ColorManger.buttonColor,
+        //           ),
+        //           label: Text(
+        //             'قراءة الكل',
+        //             style: getBoldStyle(
+        //               fontSize: 12.sp,
+        //               color: ColorManger.buttonColor,
+        //             ),
+        //           ),
+        //         );
+        //       }
+        //       return const SizedBox.shrink();
+        //     },
+        //   ),
+        // ],
       ),
       body: NotificationsBody(scrollController: _scrollController),
     );

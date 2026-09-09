@@ -95,6 +95,18 @@ class OrderResponseModel {
     this.items = const [],
   });
 
+  factory OrderResponseModel.fromId(String id) => OrderResponseModel(
+    id: id,
+    orderNumber: id,
+    orderType: 1,
+    subTotal: 0,
+    shippingFee: 0,
+    discount: 0,
+    total: 0,
+    paymentMethod: 1,
+    status: '',
+  );
+
   bool get isWesal => orderType == 1;
   bool get isFactoryPickup => orderType == 2;
   bool get isPending => statusCode == 1;
