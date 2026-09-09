@@ -1,4 +1,5 @@
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/fonts/styles_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/home/data/mapper/product_mapper.dart';
 import 'package:flutter/material.dart';
@@ -161,10 +162,45 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
     }).toList();
 
     if (filteredProducts.isEmpty) {
-      return Padding(
-        padding: EdgeInsets.only(top: 30.h, left: 35.w, right: 20.w),
-        child: Image.asset(ImageAsset.search, height: 480.h),
+      return Center(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32.w),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(ImageAsset.search, width: 280.w, height: 280.w),
+
+                SizedBox(height: 8.h),
+                Text(
+                  'لم نجد ما يطابق بحثك حالياً.',
+                  style: getBoldStyle(
+                    fontSize: 18.sp,
+                    color: ColorManger.primary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 5.h),
+                Text(
+                  'جرّب البحث بكلمات مختلفة\n أو تأكد من اسم المنتج.',
+                  style: getRegularStyle(
+                    fontSize: 14.sp,
+                    color: ColorManger.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 150.h),
+              ],
+            ),
+          ),
+        ),
       );
+
+      //  Padding(
+      //   padding: EdgeInsets.only(top: 30.h, left: 35.w, right: 20.w),
+      //   child: Image.asset(ImageAsset.search, height: 480.h),
+      // );
     }
 
     return Padding(

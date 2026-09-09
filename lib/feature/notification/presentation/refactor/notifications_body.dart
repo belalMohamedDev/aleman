@@ -4,7 +4,6 @@ import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:aleman/feature/notification/logic/notification_state.dart';
 import 'package:aleman/feature/notification/presentation/widget/empty_notifications_view.dart';
 import 'package:aleman/feature/notification/presentation/widget/notification_card.dart';
-import 'package:aleman/feature/notification/presentation/widget/notifications_shimmer_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,19 +12,16 @@ import 'package:iconsax/iconsax.dart';
 class NotificationsBody extends StatelessWidget {
   final ScrollController? scrollController;
 
-  const NotificationsBody({
-    super.key,
-    this.scrollController,
-  });
+  const NotificationsBody({super.key, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationCubit, NotificationState>(
       builder: (context, state) {
-        if (state.status == NotificationStatus.loading &&
-            state.notifications.isEmpty) {
-          return const NotificationsShimmerLoading();
-        }
+        // if (state.status == NotificationStatus.loading &&
+        //     state.notifications.isEmpty) {
+        //   return const NotificationsShimmerLoading();
+        // }
 
         if (state.status == NotificationStatus.error &&
             state.notifications.isEmpty) {
@@ -50,9 +46,9 @@ class NotificationsBody extends StatelessWidget {
                 SizedBox(height: 16.h),
                 ElevatedButton(
                   onPressed: () {
-                    context
-                        .read<NotificationCubit>()
-                        .getNotifications(refresh: true);
+                    context.read<NotificationCubit>().getNotifications(
+                      refresh: true,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorManger.buttonColor,
@@ -73,9 +69,7 @@ class NotificationsBody extends StatelessWidget {
         if (state.notifications.isEmpty) {
           return EmptyNotificationsView(
             onRefresh: () {
-              context
-                  .read<NotificationCubit>()
-                  .getNotifications(refresh: true);
+              context.read<NotificationCubit>().getNotifications(refresh: true);
             },
           );
         }
@@ -83,14 +77,15 @@ class NotificationsBody extends StatelessWidget {
         return RefreshIndicator(
           color: ColorManger.buttonColor,
           onRefresh: () async {
-            await context
-                .read<NotificationCubit>()
-                .getNotifications(refresh: true);
+            await context.read<NotificationCubit>().getNotifications(
+              refresh: true,
+            );
           },
           child: ListView.builder(
             controller: scrollController,
             padding: EdgeInsets.only(top: 8.h, bottom: 24.h),
-            itemCount: state.notifications.length +
+            itemCount:
+                state.notifications.length +
                 (state.status == NotificationStatus.loadingMore ? 1 : 0),
             itemBuilder: (context, index) {
               if (index < state.notifications.length) {

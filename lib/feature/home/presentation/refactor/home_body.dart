@@ -8,8 +8,10 @@ import 'package:aleman/feature/home/presentation/widget/banner_carousel_slider.d
 import 'package:aleman/feature/home/presentation/widget/category_list_view_builder.dart';
 import 'package:aleman/feature/home/presentation/widget/product_gride_view.dart';
 import 'package:aleman/feature/home/presentation/widget/search_row.dart';
+import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/notification/presentation/widget/notification_badge_icon.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class HomeBody extends StatelessWidget {
@@ -80,24 +82,40 @@ class HomeBody extends StatelessWidget {
         ),
         const Spacer(),
 
-        Container(
-          height: responsive.setHeight(5),
-          width: responsive.setWidth(11),
-          decoration: BoxDecoration(
-            color: ColorManger.backgroundItem,
-            borderRadius: BorderRadius.circular(responsive.setBorderRadius(5)),
-          ),
-          child: NotificationBadgeIcon(
-            iconColor: ColorManger.primaryLight,
-            onTap: () {
-              Navigator.of(
-                context,
-                rootNavigator: true,
-              ).pushNamed(Routes.notificationsRoute);
-            },
-          ),
+        BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
+          buildWhen: (previous, current) =>
+              previous.isLoggedIn != current.isLoggedIn,
+          builder: (context, state) {
+            if (!state.isLoggedIn) {
+              return const SizedBox.shrink();
+            }
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  height: responsive.setHeight(5),
+                  width: responsive.setWidth(11),
+                  decoration: BoxDecoration(
+                    color: ColorManger.backgroundItem,
+                    borderRadius: BorderRadius.circular(
+                      responsive.setBorderRadius(5),
+                    ),
+                  ),
+                  child: NotificationBadgeIcon(
+                    iconColor: ColorManger.primaryLight,
+                    onTap: () {
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(Routes.notificationsRoute);
+                    },
+                  ),
+                ),
+                responsive.setSizeBox(width: 3),
+              ],
+            );
+          },
         ),
-        responsive.setSizeBox(width: 3),
         GestureDetector(
           onTap: () async {
             final token = await SharedPrefHelper.getSecuredString(

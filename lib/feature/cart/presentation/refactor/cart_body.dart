@@ -1,10 +1,9 @@
 import 'package:aleman/core/routing/routes.dart';
-import 'package:aleman/core/statsScreen/error_info.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
-import 'package:aleman/feature/cart/presentation/screen/cart_error.dart';
+import 'package:aleman/feature/cart/presentation/screen/empty_cart.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/feature/cart/presentation/screen/cart_loading.dart';
 import 'package:aleman/feature/cart/presentation/widget/cart_item_card.dart';
 import 'package:flutter/material.dart';
@@ -44,20 +43,21 @@ class _CartBodyState extends State<CartBody> {
 
         final cart = state.cart;
         if (cart == null || cart.items.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(ImageAsset.emptyCart, height: 220.h),
-                SizedBox(height: 24.h),
+          return EmptyCart();
+          // Center(
+          //   child: Column(
+          //     mainAxisAlignment: MainAxisAlignment.center,
+          //     children: [
+          //       Image.asset(ImageAsset.emptyCart, height: 220.h),
+          //       SizedBox(height: 24.h),
 
-                ErrorInfo(
-                  title: "سلة فارغة!",
-                  description: "يبدو أنك لم تضف أي شيء إلى سلتك بعد.\n دعنا نجد بعض العناصر الرائعة لملئها!",
-                ),
-              ],
-            ),
-          );
+          //       ErrorInfo(
+          //         title: "سلة فارغة!",
+          //         description: "يبدو أنك لم تضف أي شيء إلى سلتك بعد.\n دعنا نجد بعض العناصر الرائعة لملئها!",
+          //       ),
+          //     ],
+          //   ),
+          // );
         }
 
         return Column(

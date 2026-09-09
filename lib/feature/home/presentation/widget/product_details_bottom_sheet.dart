@@ -131,15 +131,45 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                   ),
                 ),
               ),
-              _ActionBar(
-                imageKey: imageKey,
-                product: product,
-                currentPackage: currentPackage,
-                currentWeight: currentWeight,
-                quantity: quantity,
-                isTonMode: isTonMode,
-                responsive: responsive,
-              ),
+              if (state.isLoggedIn)
+                _ActionBar(
+                  imageKey: imageKey,
+                  product: product,
+                  currentPackage: currentPackage,
+                  currentWeight: currentWeight,
+                  quantity: quantity,
+                  isTonMode: isTonMode,
+                  responsive: responsive,
+                ),
+              if (!state.isLoggedIn)
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.only(
+                    left: responsive.setWidth(5),
+                    right: responsive.setWidth(5),
+                    bottom: responsive.setHeight(4),
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, Routes.loginRoute);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorManger.primaryLight,
+
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'تسجيل الدخول للشراء',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         );

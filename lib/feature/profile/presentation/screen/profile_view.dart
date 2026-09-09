@@ -1,5 +1,5 @@
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/feature/cart/presentation/screen/cart_error.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';

@@ -1,9 +1,7 @@
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
-import 'package:aleman/core/utils/cart_animation_helper.dart';
-import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
-import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
+
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
 import 'package:flutter/material.dart';
@@ -20,14 +18,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey _cartKey = GlobalKey();
-
-  @override
-  void initState() {
-    super.initState();
-    CartAnimationHelper.cartKey = _cartKey;
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -78,84 +68,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ],
             ),
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-            floatingActionButton: !state.isLoggedIn
-                ? null
-                : FloatingActionButton(
-                    key: _cartKey,
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.cartRoute);
-                    },
-                    backgroundColor: ColorManger.primaryLight.withValues(
-                      alpha: 0.95,
-                    ),
-                    child: BlocBuilder<CartCubit, CartState>(
-                      buildWhen: (previous, current) =>
-                          previous.totalItemsCount != current.totalItemsCount,
-                      builder: (context, cartState) {
-                        final count = cartState.totalItemsCount;
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          alignment: Alignment.center,
-                          children: [
-                            const Icon(
-                              Iconsax.bag_happy4,
-                              color: Colors.white,
-                              size: 24,
-                            ),
-                            if (count > 0)
-                              Positioned(
-                                top: -18,
-                                right: -18,
-                                child: TweenAnimationBuilder<double>(
-                                  key: ValueKey(count),
-                                  tween: Tween(begin: 0.4, end: 1.0),
-                                  duration: const Duration(milliseconds: 350),
-                                  curve: Curves.elasticOut,
-                                  builder: (context, scale, child) =>
-                                      Transform.scale(
-                                        scale: scale,
-                                        child: child,
-                                      ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorManger.chipProtein,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.2,
-                                          ),
-                                          blurRadius: 4,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 18,
-                                      minHeight: 18,
-                                    ),
-                                    child: Text(
-                                      count > 99 ? '99+' : '$count',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
           );
         },
       ),

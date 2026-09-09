@@ -4,10 +4,8 @@ import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class EmptyNotificationsView extends StatelessWidget {
-  final VoidCallback onRefresh;
-
-  const EmptyNotificationsView({super.key, required this.onRefresh});
+class EmptyCart extends StatelessWidget {
+  const EmptyCart({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,11 +17,11 @@ class EmptyNotificationsView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(ImageAsset.notification, width: 280.w, height: 280.w),
+              Image.asset(ImageAsset.emptyCart, width: 280.w, height: 280.w),
 
-              SizedBox(height: 2.h),
+              SizedBox(height: 8.h),
               Text(
-                'لا توجد إشعارات حالياً',
+                'سلة المشتريات فارغة',
                 style: getBoldStyle(
                   fontSize: 18.sp,
                   color: ColorManger.primary,
@@ -32,7 +30,7 @@ class EmptyNotificationsView extends StatelessWidget {
               ),
               SizedBox(height: 5.h),
               Text(
-                'ستظهر هنا جميع التنبيهات الخاصة بحالة طلباتك\n والعروض الحصرية فور وصولها.',
+                'أضف منتجاتك المفضلة إلى السلة لتظهر هنا، ثم راجع اختياراتك وأكمل طلبك بكل سهولة.',
                 style: getRegularStyle(
                   fontSize: 13.sp,
                   color: ColorManger.grey,

@@ -52,7 +52,7 @@ class ErrorInfo extends StatelessWidget {
             ),
 
             // Add space between the title and description
-            const SizedBox(height: 16),
+            const SizedBox(height: 8),
 
             // Display the description text for the error or message
             Text(

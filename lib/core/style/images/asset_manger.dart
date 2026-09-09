@@ -19,4 +19,6 @@ class ImageAsset {
 
   static const String error = '$imagePath/error.png';
   static const String search = '$imagePath/search.png';
+  static const String notification = '$imagePath/notification.png';
+  static const String cart = '$imagePath/cart.png';
 }
