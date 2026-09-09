@@ -106,106 +106,117 @@ class _SearchRowState extends State<SearchRow> {
             builder: (context, homeState) {
               final isLoggedIn = homeState.isLoggedIn;
 
-              return Container(
-                key: _cartKey,
-                height: responsive.setHeight(isLoggedIn ? 8 : 5.5),
-                margin: responsive.setMargin(
-                  right: isEnLocale ? null : 2,
-                  left: isEnLocale ? 2 : null,
-                ),
-                decoration: BoxDecoration(
-                  color: isLoggedIn
-                      ? ColorManger.primaryLight.withValues(alpha: 0.0)
-                      : ColorManger.primaryLight.withValues(alpha: 0.8),
-                  borderRadius: BorderRadius.circular(
-                    responsive.setBorderRadius(2),
-                  ),
-                ),
-                child: Builder(
-                  builder: (btnContext) {
-                    if (!isLoggedIn) {
-                      return IconButton(
-                        icon: Image.asset(
-                          ImageAsset.chickenIcon,
-                          color: Colors.white,
-                        ),
-                        onPressed: () {
-                          // Show fun Easter egg animation!
-                          showFallingEggs(btnContext);
-                        },
-                      );
-                    }
-
-                    return BlocBuilder<CartCubit, CartState>(
-                      buildWhen: (previous, current) =>
-                          previous.totalItemsCount != current.totalItemsCount,
-                      builder: (context, cartState) {
-                        final count = cartState.totalItemsCount;
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          alignment: Alignment.center,
-                          children: [
-                            IconButton(
-                              icon: Image.asset(ImageAsset.cart),
-                              onPressed: () {
-                                Navigator.pushNamed(context, Routes.cartRoute);
-                              },
-                            ),
-                            if (count > 0)
-                              Positioned(
-                                top: 0,
-                                left: 3,
-                                child: TweenAnimationBuilder<double>(
-                                  key: ValueKey(count),
-                                  tween: Tween(begin: 0.4, end: 1.0),
-                                  duration: const Duration(milliseconds: 350),
-                                  curve: Curves.elasticOut,
-                                  builder: (context, scale, child) =>
-                                      Transform.scale(
-                                        scale: scale,
-                                        child: child,
+              return isLoggedIn
+                  ? Builder(
+                      key: _cartKey,
+                      builder: (btnContext) {
+                        return BlocBuilder<CartCubit, CartState>(
+                          buildWhen: (previous, current) =>
+                              previous.totalItemsCount !=
+                              current.totalItemsCount,
+                          builder: (context, cartState) {
+                            final count = cartState.totalItemsCount;
+                            return Stack(
+                              clipBehavior: Clip.none,
+                              alignment: Alignment.center,
+                              children: [
+                                IconButton(
+                                  icon: Image.asset(
+                                    ImageAsset.cart,
+                                    height: responsive.setHeight(6),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.cartRoute,
+                                    );
+                                  },
+                                ),
+                                if (count > 0)
+                                  Positioned(
+                                    top: 5,
+                                    right: 3,
+                                    child: TweenAnimationBuilder<double>(
+                                      key: ValueKey(count),
+                                      tween: Tween(begin: 0.4, end: 1.0),
+                                      duration: const Duration(
+                                        milliseconds: 350,
                                       ),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: ColorManger.chipProtein,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.2,
+                                      curve: Curves.elasticOut,
+                                      builder: (context, scale, child) =>
+                                          Transform.scale(
+                                            scale: scale,
+                                            child: child,
                                           ),
-                                          blurRadius: 4,
-                                          offset: const Offset(0, 2),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 4,
+                                          vertical: 2,
                                         ),
-                                      ],
-                                    ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 18,
-                                      minHeight: 18,
-                                    ),
-                                    child: Text(
-                                      count > 99 ? '99+' : '$count',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
+                                        decoration: BoxDecoration(
+                                          color: ColorManger.chipProtein,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withValues(
+                                                alpha: 0.2,
+                                              ),
+                                              blurRadius: 4,
+                                              offset: const Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        constraints: const BoxConstraints(
+                                          minWidth: 18,
+                                          minHeight: 18,
+                                        ),
+                                        child: Text(
+                                          count > 99 ? '99+' : '$count',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
                                       ),
-                                      textAlign: TextAlign.center,
                                     ),
                                   ),
-                                ),
-                              ),
-                          ],
+                              ],
+                            );
+                          },
                         );
                       },
+                    )
+                  : Container(
+                      height: responsive.setHeight(5.5),
+                      margin: responsive.setMargin(
+                        right: isEnLocale ? null : 2,
+                        left: isEnLocale ? 2 : null,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorManger.primaryLight.withValues(alpha: 0.8),
+                        borderRadius: BorderRadius.circular(
+                          responsive.setBorderRadius(2),
+                        ),
+                      ),
+                      child: Builder(
+                        builder: (btnContext) {
+                          return IconButton(
+                            icon: Image.asset(
+                              ImageAsset.chickenIcon,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              // Show fun Easter egg animation!
+                              showFallingEggs(btnContext);
+                            },
+                          );
+                        },
+                      ),
                     );
-                  },
-                ),
-              );
             },
           ),
         ],

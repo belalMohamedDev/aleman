@@ -63,20 +63,13 @@ class ProfileView extends StatelessWidget {
                     children: [
                       _ProfileHeader(
                         name: profile.name,
-                        role: isMainCustomer
-                            ? 'وكيل معتمد (تاجر كبير)'
-                            : 'عميل',
+                        role: isMainCustomer ? 'وكيل معتمد' : 'عميل',
                       ),
                       SizedBox(height: 24.h),
 
                       _buildMenuGroup(
                         title: 'إعدادات الحساب',
                         items: [
-                          // _ProfileMenuItem(
-                          //   icon: Iconsax.profile_circle,
-                          //   title: 'الملف الشخصي',
-                          //   onTap: () {},
-                          // ),
                           _ProfileMenuItem(
                             icon: Iconsax.location,
                             title: 'العناوين',
