@@ -17,6 +17,11 @@ import 'package:aleman/feature/profile/data/model/user_profile_model.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import 'package:aleman/feature/notification/data/model/request/register_token_request_body.dart';
+import 'package:aleman/feature/notification/data/model/request/remove_token_request_body.dart';
+import 'package:aleman/feature/notification/data/model/response/notifications_list_response.dart';
+import 'package:aleman/feature/notification/data/model/response/unread_count_response.dart';
+
 part 'app_api.g.dart';
 
 @RestApi(baseUrl: ApiConstants.baseUrl)
@@ -82,4 +87,31 @@ abstract class AppServiceClient {
   Future<dynamic> deleteCartItemService(
     @Path('itemId') int itemId,
   );
+
+  @POST(ApiConstants.registerToken)
+  Future<MessageResponse> registerDeviceToken(
+    @Body() RegisterTokenRequestBody body,
+  );
+
+  @POST(ApiConstants.removeToken)
+  Future<MessageResponse> removeDeviceToken(
+    @Body() RemoveTokenRequestBody body,
+  );
+
+  @GET(ApiConstants.notifications)
+  Future<NotificationsListResponse> getNotifications(
+    @Query('page') int page,
+    @Query('limit') int limit,
+  );
+
+  @GET(ApiConstants.notificationsUnreadCount)
+  Future<UnreadCountResponse> getUnreadNotificationsCount();
+
+  @PATCH('${ApiConstants.notifications}/{id}/read')
+  Future<MessageResponse> markNotificationAsRead(
+    @Path('id') int id,
+  );
+
+  @POST(ApiConstants.markAllNotificationsRead)
+  Future<MessageResponse> markAllNotificationsAsRead();
 }

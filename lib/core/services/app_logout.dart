@@ -5,6 +5,8 @@ import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/core/utils/extensions.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/logout/logout_body_request.dart';
 import 'package:aleman/feature/Authentication/data/repository/authentication_repository.dart';
+import 'package:aleman/feature/notification/data/model/request/remove_token_request_body.dart';
+import 'package:aleman/feature/notification/domain/usecase/remove_device_token_use_case.dart';
 import 'package:flutter/material.dart';
 
 class AppLogout {
@@ -26,6 +28,18 @@ class AppLogout {
       } catch (_) {
         // Silently continue so local logout always succeeds even if offline or server returns an error
       }
+    }
+
+    final String fcmToken = await SharedPrefHelper.getSecuredString(
+      PrefKeys.fcmDeviceToken,
+    );
+
+    if (fcmToken.isNotEmpty && instance.isRegistered<RemoveDeviceTokenUseCase>()) {
+      try {
+        await instance<RemoveDeviceTokenUseCase>().execute(
+          RemoveTokenRequestBody(fcmToken: fcmToken),
+        );
+      } catch (_) {}
     }
 
     await SharedPrefHelper.clearAllSecuredData();

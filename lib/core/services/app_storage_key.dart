@@ -22,4 +22,5 @@ class PrefKeys {
   static const String storeRegion = 'storeRegion';
   static const String prefsKeyFirstRun = 'prefsKeyFirstRun';
   static const String hasDismissedLoginPrompt = 'hasDismissedLoginPrompt';
+  static const String fcmDeviceToken = 'FCM_DEVICE_TOKEN';
 }

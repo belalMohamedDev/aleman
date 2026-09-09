@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 
+import 'package:aleman/core/services/notification_service.dart';
+
 void main() async {
   DevicePreview.enable(enabled: kDebugMode);
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -27,5 +29,12 @@ void main() async {
 
   await initAppModule();
   appLogger.info('Dependency Injection initialized');
+
+  try {
+    await instance<NotificationService>().initialize();
+  } catch (e) {
+    appLogger.warning('NotificationService initialization skipped/failed: $e');
+  }
+
   runApp(const MyApp());
 }

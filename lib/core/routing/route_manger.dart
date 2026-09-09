@@ -16,6 +16,7 @@ import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:aleman/feature/onboarding/presentation/screen/on_boarding_screen.dart';
 import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
 import 'package:aleman/feature/order/presentation/screen/checkout_screen.dart';
+import 'package:aleman/feature/notification/presentation/screen/notifications_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -90,6 +91,12 @@ class RouteGenerator {
 
       case Routes.checkoutRoute:
         return _buildFadeRoute(const CheckoutScreen(), settings);
+
+      case Routes.notificationsRoute:
+        return _buildFadeRoute(
+          const NotificationsScreen(),
+          settings,
+        );
 
       // ---------------------- DEFAULT -----------------------
       case Routes.noRoute:

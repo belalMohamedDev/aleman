@@ -20,6 +20,16 @@ import 'package:aleman/feature/address/logic/cubit/address_cubit.dart';
 import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:aleman/feature/order/cubit/checkout_cubit.dart';
 import 'package:aleman/feature/order/cubit/orders_cubit.dart';
+import 'package:aleman/core/services/notification_service.dart';
+import 'package:aleman/feature/notification/data/repository/notification_repository_impl.dart';
+import 'package:aleman/feature/notification/domain/repository/notification_repository.dart';
+import 'package:aleman/feature/notification/domain/usecase/get_notifications_use_case.dart';
+import 'package:aleman/feature/notification/domain/usecase/get_unread_count_use_case.dart';
+import 'package:aleman/feature/notification/domain/usecase/mark_all_notifications_read_use_case.dart';
+import 'package:aleman/feature/notification/domain/usecase/mark_notification_read_use_case.dart';
+import 'package:aleman/feature/notification/domain/usecase/register_device_token_use_case.dart';
+import 'package:aleman/feature/notification/domain/usecase/remove_device_token_use_case.dart';
+import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,6 +48,7 @@ Future<void> initAppModule() async {
     _initCart(),
     _initProfile(),
     _initOrderAndAddress(),
+    _initNotification(),
   ]);
 }
 
@@ -127,5 +138,47 @@ Future<void> _initOrderAndAddress() async {
 
   instance.registerFactory<OrdersCubit>(
     () => OrdersCubit(instance<OrderRepository>()),
+  );
+}
+
+Future<void> _initNotification() async {
+  // Repository
+  instance.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(instance<AppServiceClient>()),
+  );
+
+  // Use Cases
+  instance.registerLazySingleton<GetNotificationsUseCase>(
+    () => GetNotificationsUseCase(instance<NotificationRepository>()),
+  );
+  instance.registerLazySingleton<GetUnreadCountUseCase>(
+    () => GetUnreadCountUseCase(instance<NotificationRepository>()),
+  );
+  instance.registerLazySingleton<MarkNotificationReadUseCase>(
+    () => MarkNotificationReadUseCase(instance<NotificationRepository>()),
+  );
+  instance.registerLazySingleton<MarkAllNotificationsReadUseCase>(
+    () => MarkAllNotificationsReadUseCase(instance<NotificationRepository>()),
+  );
+  instance.registerLazySingleton<RegisterDeviceTokenUseCase>(
+    () => RegisterDeviceTokenUseCase(instance<NotificationRepository>()),
+  );
+  instance.registerLazySingleton<RemoveDeviceTokenUseCase>(
+    () => RemoveDeviceTokenUseCase(instance<NotificationRepository>()),
+  );
+
+  // Notification Service
+  instance.registerLazySingleton<NotificationService>(
+    () => NotificationService(),
+  );
+
+  // Cubit
+  instance.registerFactory<NotificationCubit>(
+    () => NotificationCubit(
+      instance<GetNotificationsUseCase>(),
+      instance<GetUnreadCountUseCase>(),
+      instance<MarkNotificationReadUseCase>(),
+      instance<MarkAllNotificationsReadUseCase>(),
+    ),
   );
 }

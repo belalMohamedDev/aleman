@@ -1,4 +1,6 @@
+import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
+import 'package:aleman/core/services/notification_service.dart';
 import 'package:aleman/core/utils/app_regex.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
@@ -55,6 +57,10 @@ class LoginCubit extends Cubit<LoginState> {
           PrefKeys.userRefreshToken,
           authEntity.refreshToken,
         );
+
+        if (instance.isRegistered<NotificationService>()) {
+          instance<NotificationService>().syncTokenWithBackend();
+        }
 
         emit(state.copyWith(status: LoginRequestStatus.success));
       },

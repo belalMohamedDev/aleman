@@ -3,6 +3,7 @@ import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/language/app_localizations_setup.dart';
 import 'package:aleman/core/style/theme/theme_manger.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
+import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 
 import 'package:aleman/feature/splash/presentation/screen/splash_screen.dart';
 import 'package:aleman/core/routing/route_manger.dart';
@@ -25,6 +26,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => instance<NetworkCubit>()),
         BlocProvider(create: (context) => instance<CartCubit>()),
+        BlocProvider(
+          create: (context) =>
+              instance<NotificationCubit>()..getUnreadCount(),
+        ),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812),

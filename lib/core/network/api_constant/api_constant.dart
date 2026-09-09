@@ -17,6 +17,12 @@ class ApiConstants {
   static const String orders = '/api/orders';
   static const String calculateShipping = '/api/orders/calculate-shipping';
   static const String smallMerchantsOrders = '/api/Orders/small-merchants';
+  static const String registerToken = '/api/notifications/register-token';
+  static const String removeToken = '/api/notifications/remove-token';
+  static const String notifications = '/api/notifications';
+  static const String notificationsUnreadCount = '/api/notifications/unread-count';
+  static const String markAllNotificationsRead = '/api/notifications/mark-all-read';
+  static const String sendTestNotification = '/api/notifications/send-test';
 
   static const int apiTimeOut = 120 * 1000;
 }
