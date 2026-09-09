@@ -162,7 +162,7 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
 
     if (filteredProducts.isEmpty) {
       return Padding(
-        padding: EdgeInsets.only(top: 60.h, left: 30.w, right: 30.w),
+        padding: EdgeInsets.only(top: 30.h, left: 35.w, right: 20.w),
         child: Image.asset(ImageAsset.search, height: 480.h),
       );
     }

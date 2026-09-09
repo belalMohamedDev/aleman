@@ -35,7 +35,11 @@ class _CartBodyState extends State<CartBody> {
         }
 
         if (state.status == CartStatus.error) {
-          return CartError();
+          return GlobalError(
+            onTap: () {
+              context.read<CartCubit>().getCart();
+            },
+          );
         }
 
         final cart = state.cart;

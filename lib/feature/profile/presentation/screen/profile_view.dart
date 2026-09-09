@@ -1,4 +1,5 @@
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/feature/cart/presentation/screen/cart_error.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
@@ -41,13 +42,17 @@ class ProfileView extends StatelessWidget {
             return state.when(
               initial: () => const _ProfileShimmer(),
               loading: () => const _ProfileShimmer(),
-              error: (error) => Center(child: Text(error.message ?? 'حدث خطأ')),
+              error: (error) => GlobalError(
+                onTap: () {
+                  context.read<ProfileCubit>().fetchUserProfile();
+                },
+              ),
               success: (profile) {
                 final bool isMainCustomer =
                     profile.role == 'ParentMerchantId' ||
-                        profile.role == 'ParentMerchant' ||
-                        profile.role.toLowerCase().contains('parentmerchant') ||
-                        profile.role.toLowerCase().contains('bigmerchant');
+                    profile.role == 'ParentMerchant' ||
+                    profile.role.toLowerCase().contains('parentmerchant') ||
+                    profile.role.toLowerCase().contains('bigmerchant');
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
@@ -58,7 +63,9 @@ class ProfileView extends StatelessWidget {
                     children: [
                       _ProfileHeader(
                         name: profile.name,
-                        role: isMainCustomer ? 'وكيل معتمد (تاجر كبير)' : 'عميل',
+                        role: isMainCustomer
+                            ? 'وكيل معتمد (تاجر كبير)'
+                            : 'عميل',
                       ),
                       SizedBox(height: 24.h),
 
