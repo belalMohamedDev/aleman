@@ -44,20 +44,6 @@ class _CartBodyState extends State<CartBody> {
         final cart = state.cart;
         if (cart == null || cart.items.isEmpty) {
           return EmptyCart();
-          // Center(
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: [
-          //       Image.asset(ImageAsset.emptyCart, height: 220.h),
-          //       SizedBox(height: 24.h),
-
-          //       ErrorInfo(
-          //         title: "سلة فارغة!",
-          //         description: "يبدو أنك لم تضف أي شيء إلى سلتك بعد.\n دعنا نجد بعض العناصر الرائعة لملئها!",
-          //       ),
-          //     ],
-          //   ),
-          // );
         }
 
         return Column(

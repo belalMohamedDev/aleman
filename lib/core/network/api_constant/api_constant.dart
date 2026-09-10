@@ -1,5 +1,6 @@
 class ApiConstants {
   static const String baseUrl = 'http://10.0.2.239:5094';
+  //static const String baseUrl = 'http://10.0.2.2:5094';
   static const String banner = '/api/Banners';
   static const String category = '/api/Categories';
   static const String product = '/api/Products';
@@ -20,8 +21,10 @@ class ApiConstants {
   static const String registerToken = '/api/notifications/register-token';
   static const String removeToken = '/api/notifications/remove-token';
   static const String notifications = '/api/notifications';
-  static const String notificationsUnreadCount = '/api/notifications/unread-count';
-  static const String markAllNotificationsRead = '/api/notifications/mark-all-read';
+  static const String notificationsUnreadCount =
+      '/api/notifications/unread-count';
+  static const String markAllNotificationsRead =
+      '/api/notifications/mark-all-read';
   static const String sendTestNotification = '/api/notifications/send-test';
 
   static const int apiTimeOut = 120 * 1000;

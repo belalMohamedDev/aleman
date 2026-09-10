@@ -93,8 +93,8 @@ class HomeBody extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  height: responsive.setHeight(5),
-                  width: responsive.setWidth(11),
+                  height: responsive.setHeight(6),
+                  width: responsive.setWidth(12),
                   decoration: BoxDecoration(
                     color: ColorManger.backgroundItem,
                     borderRadius: BorderRadius.circular(
@@ -136,8 +136,8 @@ class HomeBody extends StatelessWidget {
             }
           },
           child: Container(
-            height: responsive.setHeight(4.5),
-            width: responsive.setWidth(9.8),
+            height: responsive.setHeight(6),
+            width: responsive.setWidth(12),
             decoration: BoxDecoration(
               color: ColorManger.backgroundItem,
               borderRadius: BorderRadius.circular(
@@ -147,18 +147,20 @@ class HomeBody extends StatelessWidget {
             child: Stack(
               children: [
                 Positioned(
-                  right: -1,
-                  top: -1.2,
+                  right: -2,
+                  top: 3,
                   child: Icon(
                     Icons.settings,
-                    size: 10.sp,
+                    size: 16.sp,
                     color: ColorManger.primaryLight,
                   ),
                 ),
                 Image.asset(
                   ImageAsset.farmer,
-                  fit: BoxFit.contain,
-                  color: ColorManger.primaryLight,
+                  height: responsive.setHeight(6),
+                  width: responsive.setWidth(15),
+
+                  // color: ColorManger.primaryLight,
                 ),
               ],
             ),
