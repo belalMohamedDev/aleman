@@ -72,15 +72,25 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
               children: [
                 IconButton(
                   key: CartAnimationHelper.cartSearchKey,
-                  icon: const Icon(Iconsax.bag_happy4, size: 24),
                   onPressed: () {
                     Navigator.of(context).pushNamed(Routes.cartRoute);
                   },
+                  icon: SizedBox(
+                    height: 50.h,
+                    child: Image.asset(ImageAsset.cart),
+                  ),
                 ),
+                // IconButton(
+                //   key: CartAnimationHelper.cartSearchKey,
+                //   icon: const Icon(Iconsax.bag_happy4, size: 24),
+                //   onPressed: () {
+                //     Navigator.of(context).pushNamed(Routes.cartRoute);
+                //   },
+                // ),
                 if (count > 0)
                   Positioned(
-                    top: 8,
-                    right: 8,
+                    top: 3,
+                    right: 5,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 4,

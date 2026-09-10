@@ -66,7 +66,7 @@ class NotificationBadgeIcon extends StatelessWidget {
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
                   decoration: BoxDecoration(
-                    color: ColorManger.redError,
+                    color: ColorManger.chipProtein,
                     shape: unreadCount > 9
                         ? BoxShape.rectangle
                         : BoxShape.circle,
