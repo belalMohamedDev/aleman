@@ -1,7 +1,7 @@
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
-
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +18,16 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<CartCubit>().getCartCount();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -38,7 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: ColorManger.primary,
                   backgroundColor: ColorManger.white,
                   onRefresh: () async {
-                    await context.read<HomeCuibtCubit>().fetchHomeData();
+                    await Future.wait([
+                      context.read<HomeCuibtCubit>().fetchHomeData(),
+                      context.read<CartCubit>().getCartCount(),
+                    ]);
                   },
                   child: const HomeBody(),
                 ),

@@ -7,6 +7,8 @@ import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
 import 'package:aleman/feature/Authentication/data/repository/authentication_repository.dart';
 import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
+import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -60,6 +62,14 @@ class LoginCubit extends Cubit<LoginState> {
 
         if (instance.isRegistered<NotificationService>()) {
           instance<NotificationService>().syncTokenWithBackend();
+        }
+
+        if (instance.isRegistered<CartCubit>()) {
+          instance<CartCubit>().getCartCount();
+        }
+
+        if (instance.isRegistered<NotificationCubit>()) {
+          instance<NotificationCubit>().getUnreadCount();
         }
 
         emit(state.copyWith(status: LoginRequestStatus.success));

@@ -25,7 +25,9 @@ class MyApp extends StatelessWidget {
           create: (context) => instance<AppLogicCubit>()..getSavedLanguage(),
         ),
         BlocProvider(create: (context) => instance<NetworkCubit>()),
-        BlocProvider(create: (context) => instance<CartCubit>()),
+        BlocProvider(
+          create: (context) => instance<CartCubit>()..getCartCount(),
+        ),
         BlocProvider(
           create: (context) =>
               instance<NotificationCubit>()..getUnreadCount(),
