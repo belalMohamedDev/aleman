@@ -1,6 +1,7 @@
 import 'package:aleman/feature/address/data/model/user_address_model.dart';
 import 'package:aleman/feature/order/data/model/enums/order_enums.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
+import 'package:aleman/feature/vehicle/data/model/user_vehicle_model.dart';
 
 enum CheckoutStatus {
   initial,
@@ -21,24 +22,23 @@ class CheckoutState {
   final double shippingFee;
   final String? estimatedDelivery;
 
-  // أرض المصنع
+  final List<UserVehicleModel> vehicles;
+  final UserVehicleModel? selectedVehicle;
   final String driverName;
   final String vehiclePlateNumber;
   final String driverLicenseNumber;
   final DateTime? expectedPickupDate;
+  final bool saveVehicle;
 
-  // الدفع
   final PaymentMethodType paymentMethod;
   final String? couponCode;
   final double discount;
   final bool isApplyingCoupon;
 
-  // الملاحظات
   final String? notes;
 
   final double totalWeightTons;
 
-  // النتيجة والخطأ
   final String? errorMessage;
   final OrderResponseModel? createdOrder;
 
@@ -52,10 +52,13 @@ class CheckoutState {
     this.shippingFee = 0.0,
     this.estimatedDelivery,
     this.totalWeightTons = 0.0,
+    this.vehicles = const [],
+    this.selectedVehicle,
     this.driverName = '',
     this.vehiclePlateNumber = '',
     this.driverLicenseNumber = '',
     this.expectedPickupDate,
+    this.saveVehicle = false,
     this.paymentMethod = PaymentMethodType.cashOnDelivery,
     this.couponCode,
     this.discount = 0.0,
@@ -78,10 +81,13 @@ class CheckoutState {
     double? shippingFee,
     String? estimatedDelivery,
     double? totalWeightTons,
+    List<UserVehicleModel>? vehicles,
+    UserVehicleModel? selectedVehicle,
     String? driverName,
     String? vehiclePlateNumber,
     String? driverLicenseNumber,
     DateTime? expectedPickupDate,
+    bool? saveVehicle,
     PaymentMethodType? paymentMethod,
     String? couponCode,
     double? discount,
@@ -90,6 +96,7 @@ class CheckoutState {
     String? errorMessage,
     OrderResponseModel? createdOrder,
     bool clearSelectedAddress = false,
+    bool clearSelectedVehicle = false,
   }) {
     return CheckoutState(
       status: status ?? this.status,
@@ -103,10 +110,15 @@ class CheckoutState {
       shippingFee: shippingFee ?? this.shippingFee,
       estimatedDelivery: estimatedDelivery ?? this.estimatedDelivery,
       totalWeightTons: totalWeightTons ?? this.totalWeightTons,
+      vehicles: vehicles ?? this.vehicles,
+      selectedVehicle: clearSelectedVehicle
+          ? null
+          : (selectedVehicle ?? this.selectedVehicle),
       driverName: driverName ?? this.driverName,
       vehiclePlateNumber: vehiclePlateNumber ?? this.vehiclePlateNumber,
       driverLicenseNumber: driverLicenseNumber ?? this.driverLicenseNumber,
       expectedPickupDate: expectedPickupDate ?? this.expectedPickupDate,
+      saveVehicle: saveVehicle ?? this.saveVehicle,
       paymentMethod: paymentMethod ?? this.paymentMethod,
       couponCode: couponCode ?? this.couponCode,
       discount: discount ?? this.discount,

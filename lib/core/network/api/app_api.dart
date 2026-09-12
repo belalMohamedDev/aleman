@@ -21,6 +21,14 @@ import 'package:aleman/feature/notification/data/model/request/register_token_re
 import 'package:aleman/feature/notification/data/model/request/remove_token_request_body.dart';
 import 'package:aleman/feature/notification/data/model/response/notifications_list_response.dart';
 import 'package:aleman/feature/notification/data/model/response/unread_count_response.dart';
+import 'package:aleman/feature/vehicle/data/model/user_vehicle_model.dart';
+import 'package:aleman/feature/vehicle/data/model/create_vehicle_request.dart';
+import 'package:aleman/feature/address/data/model/user_address_model.dart';
+import 'package:aleman/feature/address/data/model/create_address_request.dart';
+import 'package:aleman/feature/order/data/model/calculate_shipping_model.dart';
+import 'package:aleman/feature/order/data/model/create_order_request.dart';
+import 'package:aleman/feature/order/data/model/order_response_model.dart';
+import 'package:aleman/feature/order/data/model/small_merchants_orders_response.dart';
 
 part 'app_api.g.dart';
 
@@ -114,4 +122,81 @@ abstract class AppServiceClient {
 
   @POST(ApiConstants.markAllNotificationsRead)
   Future<MessageResponse> markAllNotificationsAsRead();
+
+  // ----------------------------------------------------
+  // User Vehicles
+  // ----------------------------------------------------
+  @GET(ApiConstants.userVehicles)
+  Future<dynamic> getVehicles();
+
+  @POST(ApiConstants.userVehicles)
+  Future<UserVehicleModel> createVehicle(
+    @Body() CreateVehicleRequest request,
+  );
+
+  @PUT('${ApiConstants.userVehicles}/{id}')
+  Future<UserVehicleModel> updateVehicle(
+    @Path('id') String id,
+    @Body() CreateVehicleRequest request,
+  );
+
+  @DELETE('${ApiConstants.userVehicles}/{id}')
+  Future<dynamic> deleteVehicle(
+    @Path('id') String id,
+  );
+
+  @PATCH('${ApiConstants.userVehicles}/{id}/set-default')
+  Future<dynamic> setDefaultVehicle(
+    @Path('id') String id,
+  );
+
+  // ----------------------------------------------------
+  // User Addresses
+  // ----------------------------------------------------
+  @GET(ApiConstants.userAddresses)
+  Future<dynamic> getAddresses();
+
+  @POST(ApiConstants.userAddresses)
+  Future<UserAddressModel> createAddress(
+    @Body() CreateAddressRequest request,
+  );
+
+  @DELETE('${ApiConstants.userAddresses}/{id}')
+  Future<dynamic> deleteAddress(
+    @Path('id') String id,
+  );
+
+  // ----------------------------------------------------
+  // Orders
+  // ----------------------------------------------------
+  @POST(ApiConstants.calculateShipping)
+  Future<CalculateShippingResponse> calculateShipping(
+    @Body() CalculateShippingRequest request,
+  );
+
+  @POST(ApiConstants.orders)
+  Future<OrderResponseModel> createOrder(
+    @Body() CreateOrderRequest request,
+  );
+
+  @GET(ApiConstants.orders)
+  Future<dynamic> getMyOrders(
+    @Query('status') int? status,
+  );
+
+  @GET('${ApiConstants.orders}/{orderId}')
+  Future<dynamic> getOrderDetails(
+    @Path('orderId') String orderId,
+  );
+
+  @POST('${ApiConstants.orders}/{orderId}/cancel')
+  Future<dynamic> cancelOrder(
+    @Path('orderId') String orderId,
+  );
+
+  @GET(ApiConstants.smallMerchantsOrders)
+  Future<SmallMerchantsOrdersResponse> getSmallMerchantsOrders(
+    @Query('page') int page,
+    @Query('pageSize') int pageSize,
+  );
 }

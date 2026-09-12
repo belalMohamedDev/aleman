@@ -1,11 +1,10 @@
-import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/network/error_handler/api_error_handler.dart';
 import 'package:aleman/feature/order/data/model/calculate_shipping_model.dart';
 import 'package:aleman/feature/order/data/model/create_order_request.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/order/data/model/small_merchants_orders_response.dart';
-import 'package:dio/dio.dart';
 
 abstract class OrderRepository {
   Future<ApiResult<CalculateShippingResponse>> calculateShipping(
@@ -24,22 +23,16 @@ abstract class OrderRepository {
 }
 
 class OrderRepositoryImplement implements OrderRepository {
-  final Dio _dio;
+  final AppServiceClient _apiService;
 
-  OrderRepositoryImplement(this._dio);
+  OrderRepositoryImplement(this._apiService);
 
   @override
   Future<ApiResult<CalculateShippingResponse>> calculateShipping(
     CalculateShippingRequest request,
   ) async {
     try {
-      final response = await _dio.post(
-        ApiConstants.calculateShipping,
-        data: request.toJson(),
-      );
-      final result = CalculateShippingResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final result = await _apiService.calculateShipping(request);
       return ApiResult.success(result);
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));
@@ -51,13 +44,7 @@ class OrderRepositoryImplement implements OrderRepository {
     CreateOrderRequest request,
   ) async {
     try {
-      final response = await _dio.post(
-        ApiConstants.orders,
-        data: request.toJson(),
-      );
-      final result = OrderResponseModel.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final result = await _apiService.createOrder(request);
       return ApiResult.success(result);
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));
@@ -67,22 +54,18 @@ class OrderRepositoryImplement implements OrderRepository {
   @override
   Future<ApiResult<List<OrderResponseModel>>> getMyOrders({int? status}) async {
     try {
-      final response = await _dio.get(
-        ApiConstants.orders,
-        queryParameters: status != null ? {'status': status} : null,
-      );
+      final response = await _apiService.getMyOrders(status);
 
       List<dynamic> listData = [];
-      if (response.data is List) {
-        listData = response.data as List<dynamic>;
-      } else if (response.data is Map<String, dynamic>) {
-        final map = response.data as Map<String, dynamic>;
-        if (map['orders'] is List) {
-          listData = map['orders'] as List<dynamic>;
-        } else if (map['data'] is List) {
-          listData = map['data'] as List<dynamic>;
-        } else if (map['items'] is List) {
-          listData = map['items'] as List<dynamic>;
+      if (response is List) {
+        listData = response;
+      } else if (response is Map<String, dynamic>) {
+        if (response['orders'] is List) {
+          listData = response['orders'] as List<dynamic>;
+        } else if (response['data'] is List) {
+          listData = response['data'] as List<dynamic>;
+        } else if (response['items'] is List) {
+          listData = response['items'] as List<dynamic>;
         }
       }
 
@@ -98,10 +81,10 @@ class OrderRepositoryImplement implements OrderRepository {
   @override
   Future<ApiResult<OrderResponseModel>> getOrderDetails(String orderId) async {
     try {
-      final response = await _dio.get('${ApiConstants.orders}/$orderId');
+      final response = await _apiService.getOrderDetails(orderId);
       Map<String, dynamic> map = {};
-      if (response.data is Map<String, dynamic>) {
-        map = response.data as Map<String, dynamic>;
+      if (response is Map<String, dynamic>) {
+        map = response;
         if (map.containsKey('order') && map['order'] is Map<String, dynamic>) {
           map = map['order'] as Map<String, dynamic>;
         } else if (map.containsKey('data') && map['data'] is Map<String, dynamic>) {
@@ -118,7 +101,7 @@ class OrderRepositoryImplement implements OrderRepository {
   @override
   Future<ApiResult<void>> cancelOrder(String orderId) async {
     try {
-      await _dio.post('${ApiConstants.orders}/$orderId/cancel');
+      await _apiService.cancelOrder(orderId);
       return const ApiResult.success(null);
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));
@@ -131,16 +114,7 @@ class OrderRepositoryImplement implements OrderRepository {
     int pageSize = 10,
   }) async {
     try {
-      final response = await _dio.get(
-        ApiConstants.smallMerchantsOrders,
-        queryParameters: {
-          'page': page,
-          'pageSize': pageSize,
-        },
-      );
-      final result = SmallMerchantsOrdersResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      final result = await _apiService.getSmallMerchantsOrders(page, pageSize);
       return ApiResult.success(result);
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));

@@ -6,6 +6,7 @@ import 'package:iconsax/iconsax.dart';
 
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/feature/address/presentation/screen/user_addresses_screen.dart';
+import 'package:aleman/feature/vehicle/presentation/screen/user_vehicles_screen.dart';
 import 'package:aleman/feature/order/presentation/screen/my_orders_screen.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_cubit.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_state.dart';
@@ -78,6 +79,18 @@ class ProfileView extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => const UserAddressesScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          _ProfileMenuItem(
+                            icon: Iconsax.truck_fast,
+                            title: 'سيارات التحميل والسائقين',
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const UserVehiclesScreen(),
                                 ),
                               );
                             },

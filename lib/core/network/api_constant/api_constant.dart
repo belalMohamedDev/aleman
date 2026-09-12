@@ -15,6 +15,7 @@ class ApiConstants {
   static const String getCart = '/api/Cart';
   static const String userProfile = '/api/Users/me';
   static const String userAddresses = '/api/user-addresses';
+  static const String userVehicles = '/api/user-vehicles';
   static const String orders = '/api/orders';
   static const String calculateShipping = '/api/orders/calculate-shipping';
   static const String smallMerchantsOrders = '/api/Orders/small-merchants';

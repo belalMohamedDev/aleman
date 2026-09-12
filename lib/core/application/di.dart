@@ -20,6 +20,8 @@ import 'package:aleman/feature/address/logic/cubit/address_cubit.dart';
 import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:aleman/feature/order/cubit/checkout_cubit.dart';
 import 'package:aleman/feature/order/cubit/orders_cubit.dart';
+import 'package:aleman/feature/vehicle/data/repository/vehicle_repo.dart';
+import 'package:aleman/feature/vehicle/logic/cubit/vehicle_cubit.dart';
 import 'package:aleman/core/services/notification_service.dart';
 import 'package:aleman/feature/notification/data/repository/notification_repository_impl.dart';
 import 'package:aleman/feature/notification/domain/repository/notification_repository.dart';
@@ -115,25 +117,32 @@ Future<void> _initProfile() async {
 }
 
 Future<void> _initOrderAndAddress() async {
-  final dio = DioFactory.getDio();
-
   instance.registerLazySingleton<UserAddressRepository>(
-    () => UserAddressRepositoryImplement(dio),
+    () => UserAddressRepositoryImplement(instance<AppServiceClient>()),
   );
 
   instance.registerLazySingleton<OrderRepository>(
-    () => OrderRepositoryImplement(dio),
+    () => OrderRepositoryImplement(instance<AppServiceClient>()),
+  );
+
+  instance.registerLazySingleton<UserVehicleRepository>(
+    () => UserVehicleRepositoryImplement(instance<AppServiceClient>()),
   );
 
   instance.registerFactory<CheckoutCubit>(
     () => CheckoutCubit(
       instance<OrderRepository>(),
       instance<UserAddressRepository>(),
+      instance<UserVehicleRepository>(),
     ),
   );
 
   instance.registerFactory<AddressCubit>(
     () => AddressCubit(instance<UserAddressRepository>()),
+  );
+
+  instance.registerFactory<VehicleCubit>(
+    () => VehicleCubit(instance<UserVehicleRepository>()),
   );
 
   instance.registerFactory<OrdersCubit>(

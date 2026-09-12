@@ -1,9 +1,8 @@
-import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/network/error_handler/api_error_handler.dart';
 import 'package:aleman/feature/address/data/model/create_address_request.dart';
 import 'package:aleman/feature/address/data/model/user_address_model.dart';
-import 'package:dio/dio.dart';
 
 abstract class UserAddressRepository {
   Future<ApiResult<List<UserAddressModel>>> getMyAddresses();
@@ -12,25 +11,24 @@ abstract class UserAddressRepository {
 }
 
 class UserAddressRepositoryImplement implements UserAddressRepository {
-  final Dio _dio;
+  final AppServiceClient _apiService;
 
-  UserAddressRepositoryImplement(this._dio);
+  UserAddressRepositoryImplement(this._apiService);
 
   @override
   Future<ApiResult<List<UserAddressModel>>> getMyAddresses() async {
     try {
-      final response = await _dio.get(ApiConstants.userAddresses);
+      final response = await _apiService.getAddresses();
       List<dynamic> listData = [];
-      if (response.data is List) {
-        listData = response.data as List<dynamic>;
-      } else if (response.data is Map<String, dynamic>) {
-        final map = response.data as Map<String, dynamic>;
-        if (map['addresses'] is List) {
-          listData = map['addresses'] as List<dynamic>;
-        } else if (map['data'] is List) {
-          listData = map['data'] as List<dynamic>;
-        } else if (map['items'] is List) {
-          listData = map['items'] as List<dynamic>;
+      if (response is List) {
+        listData = response;
+      } else if (response is Map<String, dynamic>) {
+        if (response['addresses'] is List) {
+          listData = response['addresses'] as List<dynamic>;
+        } else if (response['data'] is List) {
+          listData = response['data'] as List<dynamic>;
+        } else if (response['items'] is List) {
+          listData = response['items'] as List<dynamic>;
         }
       }
       final list = listData
@@ -45,12 +43,7 @@ class UserAddressRepositoryImplement implements UserAddressRepository {
   @override
   Future<ApiResult<UserAddressModel>> addAddress(CreateAddressRequest request) async {
     try {
-      final response = await _dio.post(
-        ApiConstants.userAddresses,
-        data: request.toJson(),
-      );
-      final address =
-          UserAddressModel.fromJson(response.data as Map<String, dynamic>);
+      final address = await _apiService.createAddress(request);
       return ApiResult.success(address);
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));
@@ -60,7 +53,7 @@ class UserAddressRepositoryImplement implements UserAddressRepository {
   @override
   Future<ApiResult<void>> deleteAddress(String id) async {
     try {
-      await _dio.delete('${ApiConstants.userAddresses}/$id');
+      await _apiService.deleteAddress(id);
       return const ApiResult.success(null);
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));

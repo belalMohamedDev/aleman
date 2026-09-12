@@ -17,6 +17,9 @@ import 'package:aleman/feature/order/presentation/widget/checkout/step1/order_ty
 // import 'package:aleman/feature/order/presentation/widget/checkout/step2/coupon_input_widget.dart';
 import 'package:aleman/feature/order/presentation/widget/checkout/step2/payment_methods_widget.dart';
 import 'package:aleman/feature/order/presentation/widget/checkout/step3/review_step_widget.dart';
+import 'package:aleman/feature/vehicle/data/repository/vehicle_repo.dart';
+import 'package:aleman/feature/vehicle/logic/cubit/vehicle_cubit.dart';
+import 'package:aleman/feature/vehicle/presentation/widget/add_edit_vehicle_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,9 +37,11 @@ class CheckoutScreen extends StatelessWidget {
           CheckoutCubit(
               instance<OrderRepository>(),
               instance<UserAddressRepository>(),
+              instance<UserVehicleRepository>(),
             )
             ..initFromCart(totalWeightTons: totalWeightTons)
-            ..loadAddresses(),
+            ..loadAddresses()
+            ..loadVehicles(),
       child: const _CheckoutScreenContent(),
     );
   }
@@ -161,11 +166,22 @@ class _CheckoutScreenContent extends StatelessWidget {
               // /* _buildAutoAssignedTruckCard(context, state), */
             ] else ...[
               FactoryPickupFormWidget(
-                driverName: state.driverName,
-                vehiclePlateNumber: state.vehiclePlateNumber,
-                driverLicenseNumber: state.driverLicenseNumber,
+                vehicles: state.vehicles,
+                selectedVehicle: state.selectedVehicle,
+                onVehicleSelected: cubit.selectVehicle,
                 expectedPickupDate: state.expectedPickupDate,
-                onInfoChanged: cubit.updateDriverInfo,
+                onDateChanged: (date) => cubit.updateDriverInfo(date: date),
+                onAddNewVehicle: () {
+                  AddEditVehicleBottomSheet.show(
+                    context,
+                    vehicleCubit:
+                        VehicleCubit(instance<UserVehicleRepository>()),
+                    onVehicleSaved: (newVehicle) {
+                      cubit.loadVehicles();
+                      cubit.selectVehicle(newVehicle);
+                    },
+                  );
+                },
               ),
             ],
             SizedBox(height: 20.h),

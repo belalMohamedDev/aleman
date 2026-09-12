@@ -16,7 +16,8 @@ class UserAddressesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => AddressCubit(instance<UserAddressRepository>())..loadAddresses(),
+      create: (_) =>
+          AddressCubit(instance<UserAddressRepository>())..loadAddresses(),
       child: const _UserAddressesView(),
     );
   }
@@ -67,23 +68,23 @@ class _UserAddressesView extends StatelessWidget {
           body: state.status == AddressStatus.loading
               ? const Center(child: CircularProgressIndicator())
               : state.addresses.isEmpty
-                  ? _buildEmptyState(context, cubit)
-                  : RefreshIndicator(
-                      onRefresh: cubit.loadAddresses,
-                      color: ColorManger.primaryLight,
-                      child: ListView.separated(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 16.h,
-                        ),
-                        itemCount: state.addresses.length,
-                        separatorBuilder: (_, _) => SizedBox(height: 12.h),
-                        itemBuilder: (context, index) {
-                          final address = state.addresses[index];
-                          return _buildAddressCard(context, address, cubit);
-                        },
-                      ),
+              ? _buildEmptyState(context, cubit)
+              : RefreshIndicator(
+                  onRefresh: cubit.loadAddresses,
+                  color: ColorManger.primaryLight,
+                  child: ListView.separated(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 16.h,
                     ),
+                    itemCount: state.addresses.length,
+                    separatorBuilder: (_, _) => SizedBox(height: 12.h),
+                    itemBuilder: (context, index) {
+                      final address = state.addresses[index];
+                      return _buildAddressCard(context, address, cubit);
+                    },
+                  ),
+                ),
           bottomNavigationBar: _buildBottomBar(context, cubit),
         );
       },
@@ -180,7 +181,8 @@ class _UserAddressesView extends StatelessWidget {
                     height: 1.3,
                   ),
                 ),
-                if (address.notes != null && address.notes!.trim().isNotEmpty) ...[
+                if (address.notes != null &&
+                    address.notes!.trim().isNotEmpty) ...[
                   SizedBox(height: 4.h),
                   Text(
                     'ملاحظة: ${address.notes}',
@@ -196,11 +198,7 @@ class _UserAddressesView extends StatelessWidget {
 
           // Delete Action
           IconButton(
-            icon: Icon(
-              Iconsax.trash,
-              color: Colors.red.shade400,
-              size: 20.sp,
-            ),
+            icon: Icon(Iconsax.trash, color: Colors.red.shade400, size: 20.sp),
             onPressed: () => _confirmDeleteAddress(context, address, cubit),
             tooltip: 'حذف العنوان',
           ),
@@ -280,10 +278,7 @@ class _UserAddressesView extends StatelessWidget {
             icon: Icon(Icons.add_location_alt_outlined, size: 20.sp),
             label: Text(
               'إضافة عنوان جديد',
-              style: TextStyle(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.bold),
             ),
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorManger.primaryLight,
@@ -307,12 +302,13 @@ class _UserAddressesView extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
         ),
         title: const Text(
           'حذف العنوان',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
         content: Text('هل أنت متأكد من رغبتك في حذف "${address.label}"؟'),
         actions: [
