@@ -75,7 +75,7 @@ class _SearchRowState extends State<SearchRow> {
                     AppStrings.findYourProducts,
                   ), // Placeholder text
                   prefixIcon: Image.asset(
-                    ImageAsset.search,
+                    ImageAsset.searchIcon,
                     // height: responsive.setIconSize(2),
                     width: responsive.setWidth(18),
                     // color:
