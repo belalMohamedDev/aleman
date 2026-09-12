@@ -29,7 +29,7 @@ class _CartBodyState extends State<CartBody> {
   Widget build(BuildContext context) {
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, state) {
-        if (state.status == CartStatus.loading) {
+        if (state.status == CartStatus.loading && !state.isDeleting) {
           return const CartLoadingScreen();
         }
 

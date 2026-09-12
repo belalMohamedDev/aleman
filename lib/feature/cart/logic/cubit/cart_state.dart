@@ -8,6 +8,7 @@ class CartState {
   final String? errorMessage;
   final String? successMessage;
   final int totalItemsCount;
+  final bool isDeleting;
 
   const CartState({
     this.status = CartStatus.initial,
@@ -15,6 +16,7 @@ class CartState {
     this.errorMessage,
     this.successMessage,
     this.totalItemsCount = 0,
+    this.isDeleting = false,
   });
 
   CartState copyWith({
@@ -23,6 +25,7 @@ class CartState {
     String? errorMessage,
     String? successMessage,
     int? totalItemsCount,
+    bool? isDeleting,
   }) {
     return CartState(
       status: status ?? this.status,
@@ -30,6 +33,7 @@ class CartState {
       errorMessage: errorMessage,
       successMessage: successMessage,
       totalItemsCount: totalItemsCount ?? this.totalItemsCount,
+      isDeleting: isDeleting ?? this.isDeleting,
     );
   }
 }

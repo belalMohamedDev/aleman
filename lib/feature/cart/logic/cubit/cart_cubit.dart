@@ -103,8 +103,10 @@ class CartCubit extends Cubit<CartState> {
     );
   }
 
-  Future<void> getCart() async {
-    emit(state.copyWith(status: CartStatus.loading, errorMessage: null));
+  Future<void> getCart({bool isSilent = false}) async {
+    if (!isSilent) {
+      emit(state.copyWith(status: CartStatus.loading, errorMessage: null));
+    }
 
     final result = await _cartRepository.getCart();
 
@@ -115,18 +117,20 @@ class CartCubit extends Cubit<CartState> {
         getCartCount();
       },
       failure: (errorHandler) {
-        emit(
-          state.copyWith(
-            status: CartStatus.error,
-            errorMessage: errorHandler.getMessage,
-          ),
-        );
+        if (!isSilent) {
+          emit(
+            state.copyWith(
+              status: CartStatus.error,
+              errorMessage: errorHandler.getMessage,
+            ),
+          );
+        }
       },
     );
   }
 
   Future<void> clearCart() async {
-    emit(state.copyWith(status: CartStatus.loading, errorMessage: null));
+    emit(state.copyWith(isDeleting: true, errorMessage: null));
 
     final result = await _cartRepository.clearCart();
 
@@ -135,6 +139,7 @@ class CartCubit extends Cubit<CartState> {
         // Clear the cart in the UI and reset the counter
         emit(
           state.copyWith(
+            isDeleting: false,
             status: CartStatus.success,
             cart: const CartResponseModel(
               id: 0,
@@ -151,6 +156,7 @@ class CartCubit extends Cubit<CartState> {
       failure: (errorHandler) {
         emit(
           state.copyWith(
+            isDeleting: false,
             status: CartStatus.error,
             errorMessage: errorHandler.getMessage,
           ),
@@ -209,13 +215,14 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<void> deleteCartItem(int itemId) async {
-    // Optimistically remove from state immediately for snappy UX
+    // Optimistically remove from state immediately for snappy UX and trigger loading overlay
     final currentItems = state.cart?.items ?? [];
     final updatedItems = currentItems.where((e) => e.id != itemId).toList();
 
     if (state.cart != null) {
       emit(
         state.copyWith(
+          isDeleting: true,
           cart: CartResponseModel(
             id: state.cart!.id,
             items: updatedItems,
@@ -227,20 +234,35 @@ class CartCubit extends Cubit<CartState> {
           totalItemsCount: updatedItems.length,
         ),
       );
+    } else {
+      emit(state.copyWith(isDeleting: true));
     }
 
-    // Send request to API silently
+    // Send request to API
     final result = await _cartRepository.deleteCartItem(itemId);
 
-    result.when(
-      success: (_) {
-        // Already updated optimistically, refresh cart to sync totals
-        getCart();
+    await result.when(
+      success: (_) async {
+        // Refresh cart silently to sync totals without showing full-page shimmer
+        await getCart(isSilent: true);
+        emit(state.copyWith(isDeleting: false));
       },
       failure: (errorHandler) {
         // Restore original items on failure
         emit(
           state.copyWith(
+            isDeleting: false,
+            cart: state.cart != null
+                ? CartResponseModel(
+                    id: state.cart!.id,
+                    items: currentItems,
+                    totalItemsCount: currentItems.length,
+                    totalWeightKg: state.cart!.totalWeightKg,
+                    totalWeightTons: state.cart!.totalWeightTons,
+                    totalPrice: state.cart!.totalPrice,
+                  )
+                : null,
+            totalItemsCount: currentItems.length,
             status: CartStatus.error,
             errorMessage: errorHandler.getMessage,
           ),
