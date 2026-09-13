@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -81,6 +80,17 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ],
             ),
+
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {},
+              backgroundColor: ColorManger.primaryLight,
+              child: Image.asset(
+                ImageAsset.whatsapp,
+                color: ColorManger.white,
+                width: 35.w,
+                height: 35.h,
+              ),
+            ),
           );
         },
       ),
@@ -129,8 +139,8 @@ class _WelcomeLoginCard extends StatelessWidget {
             ),
           ),
           Container(
-            width: 72.w,
-            height: 72.w,
+            width: 1000.w,
+            height: 100.h,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
@@ -151,13 +161,13 @@ class _WelcomeLoginCard extends StatelessWidget {
             ),
             child: Image.asset(
               ImageAsset.farmer,
-              width: 10.w,
-              height: 10.h,
-              color: ColorManger.primaryLight,
+              width: 16.w,
+              height: 16.h,
+              // color: ColorManger.primaryLight,
               fit: BoxFit.contain,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
           Text(
             'سجل حسابك الآن',
             style: TextStyle(
@@ -194,27 +204,20 @@ class _WelcomeLoginCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Iconsax.login_1, size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    'تسجيل الدخول الآن',
-                    style: TextStyle(
-                      fontSize: 13.5.sp,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
+              child: Text(
+                'تسجيل الدخول الآن',
+                style: TextStyle(
+                  fontSize: 13.5.sp,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 12.h),
           TextButton(
             onPressed: onDismiss,
             style: TextButton.styleFrom(
-              foregroundColor: Colors.grey.shade500,
+              foregroundColor: Colors.grey.shade800,
               padding: const EdgeInsets.symmetric(vertical: 4),
               minimumSize: Size.zero,
               tapTargetSize: MaterialTapTargetSize.shrinkWrap,

@@ -4,17 +4,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CheckoutStepperHeader extends StatelessWidget {
   final int currentStep;
+  final List<String> steps;
 
   const CheckoutStepperHeader({
     super.key,
     required this.currentStep,
+    required this.steps,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
       decoration: BoxDecoration(
         color: ColorManger.backgroundItem,
         borderRadius: BorderRadius.circular(12.r),
@@ -22,29 +24,16 @@ class CheckoutStepperHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _buildStep(
-            context: context,
-            number: '1',
-            title: 'الاستلام',
-            isActive: currentStep >= 1,
-            isCurrent: currentStep == 1,
-          ),
-          _buildDivider(isActive: currentStep >= 2),
-          _buildStep(
-            context: context,
-            number: '2',
-            title: 'الدفع',
-            isActive: currentStep >= 2,
-            isCurrent: currentStep == 2,
-          ),
-          _buildDivider(isActive: currentStep >= 3),
-          _buildStep(
-            context: context,
-            number: '3',
-            title: 'المراجعة',
-            isActive: currentStep >= 3,
-            isCurrent: currentStep == 3,
-          ),
+          for (int i = 0; i < steps.length; i++) ...[
+            if (i > 0) _buildDivider(isActive: currentStep >= i + 1),
+            _buildStep(
+              context: context,
+              number: '${i + 1}',
+              title: steps[i],
+              isActive: currentStep >= i + 1,
+              isCurrent: currentStep == i + 1,
+            ),
+          ],
         ],
       ),
     );
@@ -64,7 +53,7 @@ class CheckoutStepperHeader extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         CircleAvatar(
-          radius: 12.r,
+          radius: 11.r,
           backgroundColor: isActive ? activeColor : Colors.transparent,
           child: Container(
             decoration: BoxDecoration(
@@ -79,18 +68,18 @@ class CheckoutStepperHeader extends StatelessWidget {
               number,
               style: TextStyle(
                 color: isActive ? Colors.white : inactiveColor,
-                fontSize: 12.sp,
+                fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
         ),
-        SizedBox(width: 6.w),
+        SizedBox(width: 4.w),
         Text(
           title,
           style: TextStyle(
             color: isActive ? activeColor : inactiveColor,
-            fontSize: 13.sp,
+            fontSize: 11.5.sp,
             fontWeight: isCurrent ? FontWeight.bold : FontWeight.w500,
           ),
         ),
@@ -102,7 +91,7 @@ class CheckoutStepperHeader extends StatelessWidget {
     return Expanded(
       child: Container(
         height: 2.h,
-        margin: EdgeInsets.symmetric(horizontal: 8.w),
+        margin: EdgeInsets.symmetric(horizontal: 4.w),
         color: isActive ? ColorManger.primaryLight : Colors.grey.shade300,
       ),
     );

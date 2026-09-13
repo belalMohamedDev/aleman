@@ -9,6 +9,7 @@ class CreateOrderRequest {
   final String? expectedPickupDate;
   final bool saveVehicle;
   final int paymentMethod;
+  final String? paymentReceiptUrl;
   final String? couponCode;
   final String? notes;
 
@@ -23,6 +24,7 @@ class CreateOrderRequest {
     this.expectedPickupDate,
     this.saveVehicle = false,
     required this.paymentMethod,
+    this.paymentReceiptUrl,
     this.couponCode,
     this.notes,
   });
@@ -49,6 +51,9 @@ class CreateOrderRequest {
     }
     if (expectedPickupDate != null) {
       map['expectedPickupDate'] = expectedPickupDate;
+    }
+    if (paymentReceiptUrl != null && paymentReceiptUrl!.trim().isNotEmpty) {
+      map['paymentReceiptUrl'] = paymentReceiptUrl;
     }
     if (couponCode != null && couponCode!.trim().isNotEmpty) {
       map['couponCode'] = couponCode;

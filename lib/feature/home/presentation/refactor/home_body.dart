@@ -13,6 +13,7 @@ import 'package:aleman/feature/notification/presentation/widget/notification_bad
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iconsax/iconsax.dart';
 
 class HomeBody extends StatelessWidget {
   const HomeBody({super.key});
@@ -116,56 +117,59 @@ class HomeBody extends StatelessWidget {
             );
           },
         ),
-        GestureDetector(
-          onTap: () async {
-            final token = await SharedPrefHelper.getSecuredString(
-              PrefKeys.userAccessToken,
-            );
-            if (context.mounted) {
-              if (token.isNotEmpty) {
-                Navigator.of(
-                  context,
-                  rootNavigator: true,
-                ).pushNamed(Routes.profileRoute);
-              } else {
-                Navigator.of(
-                  context,
-                  rootNavigator: true,
-                ).pushNamed(Routes.loginRoute);
-              }
-            }
-          },
-          child: Container(
-            height: responsive.setHeight(6),
-            width: responsive.setWidth(12),
-            decoration: BoxDecoration(
-              color: ColorManger.backgroundItem,
-              borderRadius: BorderRadius.circular(
-                responsive.setBorderRadius(5),
-              ),
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  right: -2,
-                  top: 3,
-                  child: Icon(
-                    Icons.settings,
-                    size: 16.sp,
-                    color: ColorManger.primaryLight,
+        BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
+          buildWhen: (previous, current) =>
+              previous.isLoggedIn != current.isLoggedIn,
+          builder: (context, state) {
+            return GestureDetector(
+              onTap: () async {
+                if (context.mounted) {
+                  if (state.isLoggedIn) {
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushNamed(Routes.profileRoute);
+                  } else {
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushNamed(Routes.loginRoute);
+                  }
+                }
+              },
+              child: Container(
+                height: responsive.setHeight(6),
+                width: responsive.setWidth(12),
+                decoration: BoxDecoration(
+                  color: ColorManger.backgroundItem,
+                  borderRadius: BorderRadius.circular(
+                    responsive.setBorderRadius(5),
                   ),
                 ),
-                Image.asset(
-                  ImageAsset.farmer,
-                  height: responsive.setHeight(6),
-                  width: responsive.setWidth(15),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      right: -2,
+                      top: 3,
+                      child: Icon(
+                        !state.isLoggedIn ? Iconsax.login_14 : Icons.settings,
+                        size: 16.sp,
+                        color: ColorManger.primaryLight,
+                      ),
+                    ),
+                    Image.asset(
+                      ImageAsset.farmer,
+                      height: responsive.setHeight(6),
+                      width: responsive.setWidth(15),
 
-                  // color: ColorManger.primaryLight,
+                      // color: ColorManger.primaryLight,
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            //    Icon(Iconsax.user, color: ColorManger.primaryLight),
-          ),
+                //    Icon(Iconsax.user, color: ColorManger.primaryLight),
+              ),
+            );
+          },
         ),
       ],
     );

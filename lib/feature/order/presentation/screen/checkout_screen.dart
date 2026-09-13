@@ -10,11 +10,8 @@ import 'package:aleman/feature/order/cubit/checkout_state.dart';
 import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:aleman/feature/order/presentation/screen/order_success_screen.dart';
 import 'package:aleman/feature/order/presentation/widget/checkout/checkout_stepper_header.dart';
-import 'package:aleman/feature/order/presentation/widget/checkout/step1/address_selection_widget.dart';
-import 'package:aleman/feature/order/presentation/widget/checkout/step1/factory_pickup_form_widget.dart';
-import 'package:aleman/feature/order/presentation/widget/checkout/step1/order_type_selector.dart';
-// import 'package:aleman/feature/order/presentation/widget/checkout/step1/truck_type_selector_widget.dart';
-// import 'package:aleman/feature/order/presentation/widget/checkout/step2/coupon_input_widget.dart';
+import 'package:aleman/feature/order/presentation/widget/checkout/step1/order_fulfillment_step_widget.dart';
+import 'package:aleman/feature/order/presentation/widget/checkout/step1/truck_type_selector_widget.dart';
 import 'package:aleman/feature/order/presentation/widget/checkout/step2/payment_methods_widget.dart';
 import 'package:aleman/feature/order/presentation/widget/checkout/step3/review_step_widget.dart';
 import 'package:aleman/feature/vehicle/data/repository/vehicle_repo.dart';
@@ -109,7 +106,10 @@ class _CheckoutScreenContent extends StatelessWidget {
             ),
             body: Column(
               children: [
-                CheckoutStepperHeader(currentStep: state.currentStep),
+                CheckoutStepperHeader(
+                  currentStep: state.currentStep,
+                  steps: state.stepTitles,
+                ),
 
                 // Step Content
                 Expanded(
@@ -137,85 +137,151 @@ class _CheckoutScreenContent extends StatelessWidget {
     CheckoutCubit cubit,
     double cartSubtotal,
   ) {
-    switch (state.currentStep) {
-      case 1:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            OrderTypeSelector(
-              selectedType: state.orderType,
-              onTypeChanged: cubit.changeOrderType,
-            ),
-            SizedBox(height: 18.h),
+    if (state.isWesal) {
+      switch (state.currentStep) {
+        case 1:
+          return OrderFulfillmentStepWidget(
+            orderType: state.orderType,
+            onOrderTypeChanged: cubit.changeOrderType,
+            addresses: state.addresses,
+            selectedAddress: state.selectedAddress,
+            onAddressSelected: cubit.selectAddress,
+            onAddNewAddress: () {
+              AddAddressBottomSheet.show(
+                context,
+                onAddressAdded: (address) {
+                  cubit.loadAddresses();
+                  cubit.selectAddress(address);
+                },
+              );
+            },
+            vehicles: state.vehicles,
+            selectedVehicle: state.selectedVehicle,
+            onVehicleSelected: cubit.selectVehicle,
+            expectedPickupDate: state.expectedPickupDate,
+            onDateChanged: (date) => cubit.updateDriverInfo(date: date),
+            onAddNewVehicle: () {
+              AddEditVehicleBottomSheet.show(
+                context,
+                vehicleCubit: VehicleCubit(instance<UserVehicleRepository>()),
+                onVehicleSaved: (newVehicle) {
+                  cubit.loadVehicles();
+                  cubit.selectVehicle(newVehicle);
+                },
+              );
+            },
+          );
 
-            if (state.isWesal) ...[
-              AddressSelectionWidget(
-                addresses: state.addresses,
-                selectedAddress: state.selectedAddress,
-                onAddressSelected: cubit.selectAddress,
-                onAddNewAddress: () {
-                  AddAddressBottomSheet.show(
-                    context,
-                    onAddressAdded: (address) {
-                      cubit.loadAddresses();
-                      cubit.selectAddress(address);
-                    },
-                  );
-                },
+        case 2:
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TruckTypeSelectorWidget(
+                selectedTruck: state.selectedTruckType,
+                onTruckSelected: cubit.selectTruckType,
+                currentShippingFee: state.shippingFee,
+                isCalculating:
+                    state.status == CheckoutStatus.calculatingShipping,
+                estimatedDelivery: state.estimatedDelivery,
+                totalWeightTons: state.totalWeightTons,
               ),
-              // /* _buildAutoAssignedTruckCard(context, state), */
-            ] else ...[
-              FactoryPickupFormWidget(
-                vehicles: state.vehicles,
-                selectedVehicle: state.selectedVehicle,
-                onVehicleSelected: cubit.selectVehicle,
-                expectedPickupDate: state.expectedPickupDate,
-                onDateChanged: (date) => cubit.updateDriverInfo(date: date),
-                onAddNewVehicle: () {
-                  AddEditVehicleBottomSheet.show(
-                    context,
-                    vehicleCubit:
-                        VehicleCubit(instance<UserVehicleRepository>()),
-                    onVehicleSaved: (newVehicle) {
-                      cubit.loadVehicles();
-                      cubit.selectVehicle(newVehicle);
-                    },
-                  );
-                },
-              ),
+              SizedBox(height: 20.h),
             ],
-            SizedBox(height: 20.h),
-          ],
-        );
+          );
 
-      case 2:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PaymentMethodsWidget(
-              selectedMethod: state.paymentMethod,
-              onMethodSelected: cubit.selectPaymentMethod,
-            ),
-            // SizedBox(height: 20.h),
-            // CouponInputWidget(
-            //   appliedCoupon: state.couponCode,
-            //   discountAmount: state.discount,
-            //   isApplying: state.isApplyingCoupon,
-            //   onApplyCoupon: cubit.applyCoupon,
-            // ),
-            SizedBox(height: 20.h),
-          ],
-        );
+        case 3:
+          final shipping = state.shippingFee;
+          final currentTotal = (cartSubtotal - state.discount + shipping)
+              .clamp(0.0, double.infinity);
 
-      case 3:
-        return ReviewStepWidget(
-          state: state,
-          cartSubtotal: cartSubtotal,
-          onNotesChanged: cubit.updateNotes,
-        );
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PaymentMethodsWidget(
+                selectedMethod: state.paymentMethod,
+                onMethodSelected: cubit.selectPaymentMethod,
+                receiptFile: state.receiptFile,
+                paymentReceiptUrl: state.paymentReceiptUrl,
+                isUploadingReceipt: state.isUploadingReceipt,
+                onPickReceipt: cubit.pickAndUploadReceipt,
+                onPickReceiptPdf: cubit.pickAndUploadReceiptPdf,
+                onRemoveReceipt: cubit.removeReceipt,
+                totalAmount: currentTotal,
+              ),
+              SizedBox(height: 20.h),
+            ],
+          );
 
-      default:
-        return const SizedBox.shrink();
+        case 4:
+          return ReviewStepWidget(
+            state: state,
+            cartSubtotal: cartSubtotal,
+            onNotesChanged: cubit.updateNotes,
+          );
+
+        default:
+          return const SizedBox.shrink();
+      }
+    } else {
+      // Factory Pickup Flow (3 steps)
+      switch (state.currentStep) {
+        case 1:
+          return OrderFulfillmentStepWidget(
+            orderType: state.orderType,
+            onOrderTypeChanged: cubit.changeOrderType,
+            addresses: state.addresses,
+            selectedAddress: state.selectedAddress,
+            onAddressSelected: cubit.selectAddress,
+            onAddNewAddress: () {},
+            vehicles: state.vehicles,
+            selectedVehicle: state.selectedVehicle,
+            onVehicleSelected: cubit.selectVehicle,
+            expectedPickupDate: state.expectedPickupDate,
+            onDateChanged: (date) => cubit.updateDriverInfo(date: date),
+            onAddNewVehicle: () {
+              AddEditVehicleBottomSheet.show(
+                context,
+                vehicleCubit: VehicleCubit(instance<UserVehicleRepository>()),
+                onVehicleSaved: (newVehicle) {
+                  cubit.loadVehicles();
+                  cubit.selectVehicle(newVehicle);
+                },
+              );
+            },
+          );
+
+        case 2:
+          final currentTotal = (cartSubtotal - state.discount)
+              .clamp(0.0, double.infinity);
+
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PaymentMethodsWidget(
+                selectedMethod: state.paymentMethod,
+                onMethodSelected: cubit.selectPaymentMethod,
+                receiptFile: state.receiptFile,
+                paymentReceiptUrl: state.paymentReceiptUrl,
+                isUploadingReceipt: state.isUploadingReceipt,
+                onPickReceipt: cubit.pickAndUploadReceipt,
+                onPickReceiptPdf: cubit.pickAndUploadReceiptPdf,
+                onRemoveReceipt: cubit.removeReceipt,
+                totalAmount: currentTotal,
+              ),
+              SizedBox(height: 20.h),
+            ],
+          );
+
+        case 3:
+          return ReviewStepWidget(
+            state: state,
+            cartSubtotal: cartSubtotal,
+            onNotesChanged: cubit.updateNotes,
+          );
+
+        default:
+          return const SizedBox.shrink();
+      }
     }
   }
 
@@ -237,7 +303,7 @@ class _CheckoutScreenContent extends StatelessWidget {
       double.infinity,
     );
 
-    if (state.currentStep == 3) {
+    if (state.isLastStep) {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
@@ -354,7 +420,7 @@ class _CheckoutScreenContent extends StatelessWidget {
             SizedBox(height: 6.h),
 
             state.isFactoryPickup
-                ? SizedBox.shrink()
+                ? const SizedBox.shrink()
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -366,14 +432,18 @@ class _CheckoutScreenContent extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        (state.status == CheckoutStatus.calculatingShipping
-                            ? 'جاري الحساب...'
-                            : '${state.shippingFee} ج.م'),
+                        (state.currentStep == 1
+                            ? 'في الخطوة التالية'
+                            : (state.status == CheckoutStatus.calculatingShipping
+                                ? 'جاري الحساب...'
+                                : (state.selectedTruckType == null
+                                    ? 'اختر سيارة الشحن'
+                                    : '${state.shippingFee} ج.م'))),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.bold,
-                          color: state.isFactoryPickup
-                              ? Colors.green.shade700
+                          color: state.currentStep == 1 || state.selectedTruckType == null
+                              ? Colors.grey.shade600
                               : ColorManger.goldDark,
                         ),
                       ),
@@ -428,21 +498,6 @@ class _CheckoutScreenContent extends StatelessWidget {
 
             Row(
               children: [
-                // if (state.currentStep > 1) ...[
-                //   OutlinedButton(
-                //     onPressed: isSubmitting ? null : cubit.previousStep,
-                //     style: OutlinedButton.styleFrom(
-                //       foregroundColor: ColorManger.primaryLight,
-                //       side: BorderSide(color: ColorManger.primaryLight),
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(12.r),
-                //       ),
-                //       minimumSize: Size(80.w, 48.h),
-                //     ),
-                //     child: const Text('السابق'),
-                //   ),
-                //   SizedBox(width: 12.w),
-                // ],
                 Expanded(
                   child: SizedBox(
                     height: 48.h,
@@ -450,7 +505,7 @@ class _CheckoutScreenContent extends StatelessWidget {
                       onPressed: isSubmitting
                           ? null
                           : () {
-                              if (state.currentStep < 3) {
+                              if (!state.isLastStep) {
                                 cubit.nextStep();
                               } else {
                                 cubit.submitOrder();
@@ -474,7 +529,7 @@ class _CheckoutScreenContent extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              state.currentStep < 3
+                              !state.isLastStep
                                   ? 'احفظ واستمر'
                                   : 'تقديم الطلب',
                               style: TextStyle(
@@ -492,131 +547,4 @@ class _CheckoutScreenContent extends StatelessWidget {
       ),
     );
   }
-
-  /*
-  Widget _buildAutoAssignedTruckCard(BuildContext context, CheckoutState state) {
-    final truck = state.selectedTruckType ?? TruckType.dababa;
-    final primary = ColorManger.primaryLight;
-    final isCalculating = state.status == CheckoutStatus.calculatingShipping;
-
-    IconData truckIcon = Icons.local_shipping_outlined;
-    switch (truck) {
-      case TruckType.dababa:
-        truckIcon = Icons.airport_shuttle_outlined;
-        break;
-      case TruckType.jumbo:
-        truckIcon = Icons.local_shipping_outlined;
-        break;
-      case TruckType.trella:
-        truckIcon = Icons.fire_truck_outlined;
-        break;
-    }
-
-    return Container(
-      padding: EdgeInsets.all(14.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: primary.withValues(alpha: 0.25)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(10.r),
-                decoration: BoxDecoration(
-                  color: primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: Icon(truckIcon, color: primary, size: 26.sp),
-              ),
-              SizedBox(width: 12.w),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          'سيارة الشحن المحددة: ',
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                        Text(
-                          truck.title,
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
-                            color: primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 2.h),
-                    Text(
-                      'تم تحديدها تلقائياً بحسب حمولة السلة (${state.totalWeightTons} طن)',
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: ColorManger.goldDark,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Divider(height: 20.h, color: Colors.grey.shade200),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'تكلفة الشحن المقدرة للمنطقة',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: ColorManger.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  if (state.estimatedDelivery != null) ...[
-                    SizedBox(height: 2.h),
-                    Text(
-                      state.estimatedDelivery!,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-              Text(
-                isCalculating ? '...' : '${state.shippingFee} ج.م',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: ColorManger.goldDark,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-  */
 }

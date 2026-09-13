@@ -34,7 +34,8 @@ enum TruckType {
 
 enum PaymentMethodType {
   cashOnDelivery(1, 'الدفع عند الاستلام / التحميل'),
-  card(2, 'بطاقة ائتمان أو خصم مباشر');
+  card(2, 'بطاقة ائتمان أو خصم مباشر'),
+  bankTransfer(3, 'تحويل بنكي');
 
   final int value;
   final String title;

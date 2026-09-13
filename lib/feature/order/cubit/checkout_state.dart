@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:aleman/feature/address/data/model/user_address_model.dart';
 import 'package:aleman/feature/order/data/model/enums/order_enums.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
@@ -31,6 +32,9 @@ class CheckoutState {
   final bool saveVehicle;
 
   final PaymentMethodType paymentMethod;
+  final File? receiptFile;
+  final String? paymentReceiptUrl;
+  final bool isUploadingReceipt;
   final String? couponCode;
   final double discount;
   final bool isApplyingCoupon;
@@ -48,7 +52,7 @@ class CheckoutState {
     this.orderType = OrderType.delivery,
     this.addresses = const [],
     this.selectedAddress,
-    this.selectedTruckType = TruckType.dababa,
+    this.selectedTruckType,
     this.shippingFee = 0.0,
     this.estimatedDelivery,
     this.totalWeightTons = 0.0,
@@ -60,6 +64,9 @@ class CheckoutState {
     this.expectedPickupDate,
     this.saveVehicle = false,
     this.paymentMethod = PaymentMethodType.cashOnDelivery,
+    this.receiptFile,
+    this.paymentReceiptUrl,
+    this.isUploadingReceipt = false,
     this.couponCode,
     this.discount = 0.0,
     this.isApplyingCoupon = false,
@@ -70,6 +77,13 @@ class CheckoutState {
 
   bool get isWesal => orderType == OrderType.delivery;
   bool get isFactoryPickup => orderType == OrderType.factoryPickup;
+
+  int get totalSteps => isWesal ? 4 : 3;
+  bool get isLastStep => currentStep == totalSteps;
+
+  List<String> get stepTitles => isWesal
+      ? const ['الاستلام', 'الشاحنة', 'الدفع', 'المراجعة']
+      : const ['الاستلام', 'الدفع', 'المراجعة'];
 
   CheckoutState copyWith({
     CheckoutStatus? status,
@@ -89,6 +103,11 @@ class CheckoutState {
     DateTime? expectedPickupDate,
     bool? saveVehicle,
     PaymentMethodType? paymentMethod,
+    File? receiptFile,
+    bool clearReceiptFile = false,
+    String? paymentReceiptUrl,
+    bool clearPaymentReceiptUrl = false,
+    bool? isUploadingReceipt,
     String? couponCode,
     double? discount,
     bool? isApplyingCoupon,
@@ -97,6 +116,7 @@ class CheckoutState {
     OrderResponseModel? createdOrder,
     bool clearSelectedAddress = false,
     bool clearSelectedVehicle = false,
+    bool clearSelectedTruckType = false,
   }) {
     return CheckoutState(
       status: status ?? this.status,
@@ -106,7 +126,9 @@ class CheckoutState {
       selectedAddress: clearSelectedAddress
           ? null
           : (selectedAddress ?? this.selectedAddress),
-      selectedTruckType: selectedTruckType ?? this.selectedTruckType,
+      selectedTruckType: clearSelectedTruckType
+          ? null
+          : (selectedTruckType ?? this.selectedTruckType),
       shippingFee: shippingFee ?? this.shippingFee,
       estimatedDelivery: estimatedDelivery ?? this.estimatedDelivery,
       totalWeightTons: totalWeightTons ?? this.totalWeightTons,
@@ -120,6 +142,11 @@ class CheckoutState {
       expectedPickupDate: expectedPickupDate ?? this.expectedPickupDate,
       saveVehicle: saveVehicle ?? this.saveVehicle,
       paymentMethod: paymentMethod ?? this.paymentMethod,
+      receiptFile: clearReceiptFile ? null : (receiptFile ?? this.receiptFile),
+      paymentReceiptUrl: clearPaymentReceiptUrl
+          ? null
+          : (paymentReceiptUrl ?? this.paymentReceiptUrl),
+      isUploadingReceipt: isUploadingReceipt ?? this.isUploadingReceipt,
       couponCode: couponCode ?? this.couponCode,
       discount: discount ?? this.discount,
       isApplyingCoupon: isApplyingCoupon ?? this.isApplyingCoupon,

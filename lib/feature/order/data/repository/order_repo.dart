@@ -1,10 +1,15 @@
+import 'dart:io';
 import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
+import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/core/network/dio_factory/dio_factory.dart';
 import 'package:aleman/core/network/error_handler/api_error_handler.dart';
+import 'package:aleman/core/network/failure/api_error_model.dart';
 import 'package:aleman/feature/order/data/model/calculate_shipping_model.dart';
 import 'package:aleman/feature/order/data/model/create_order_request.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/order/data/model/small_merchants_orders_response.dart';
+import 'package:dio/dio.dart';
 
 abstract class OrderRepository {
   Future<ApiResult<CalculateShippingResponse>> calculateShipping(
@@ -13,6 +18,7 @@ abstract class OrderRepository {
   Future<ApiResult<OrderResponseModel>> createOrder(
     CreateOrderRequest request,
   );
+  Future<ApiResult<String>> uploadReceipt(File file);
   Future<ApiResult<List<OrderResponseModel>>> getMyOrders({int? status});
   Future<ApiResult<OrderResponseModel>> getOrderDetails(String orderId);
   Future<ApiResult<void>> cancelOrder(String orderId);
@@ -116,6 +122,38 @@ class OrderRepositoryImplement implements OrderRepository {
     try {
       final result = await _apiService.getSmallMerchantsOrders(page, pageSize);
       return ApiResult.success(result);
+    } catch (e) {
+      return ApiResult.failure(ApiErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<String>> uploadReceipt(File file) async {
+    try {
+      final fileName = file.path.split(RegExp(r'[/\\]')).last;
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(
+          file.path,
+          filename: fileName,
+        ),
+      });
+
+      final dio = DioFactory.getDio();
+      final response = await dio.post(
+        ApiConstants.uploadReceipt,
+        data: formData,
+      );
+
+      if (response.data is Map<String, dynamic>) {
+        final data = response.data as Map<String, dynamic>;
+        final receiptUrl = data['receiptUrl'] as String? ?? '';
+        if (receiptUrl.isNotEmpty) {
+          return ApiResult.success(receiptUrl);
+        }
+      }
+      return ApiResult.failure(
+        ApiErrorModel(message: 'فشل في استلام رابط الإيصال من الخادم'),
+      );
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));
     }

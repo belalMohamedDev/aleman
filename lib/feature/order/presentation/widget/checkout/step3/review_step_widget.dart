@@ -2,6 +2,7 @@
 
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/order/cubit/checkout_state.dart';
+import 'package:aleman/feature/order/data/model/enums/order_enums.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
@@ -135,7 +136,11 @@ class ReviewStepWidget extends StatelessWidget {
                 '${state.totalWeightTons} طن',
               ),
             ],
-            // _buildInfoRow('نوع الشاحنة', state.selectedTruckType?.title ?? 'دبابة'),
+            SizedBox(height: 6.h),
+            _buildInfoRow(
+              'نوع سيارة الشحن',
+              state.selectedTruckType?.title ?? 'غير محدد',
+            ),
             SizedBox(height: 6.h),
             _buildInfoRow('تكلفة الشحن', '${state.shippingFee} ج.م'),
           ] else ...[
@@ -186,6 +191,24 @@ class ReviewStepWidget extends StatelessWidget {
           ),
           Divider(height: 20.h, color: Colors.grey.shade200),
           _buildInfoRow('طريقة السداد', state.paymentMethod.title),
+          if (state.paymentMethod == PaymentMethodType.bankTransfer) ...[
+            SizedBox(height: 6.h),
+            _buildInfoRow(
+              'إيصال التحويل',
+              state.paymentReceiptUrl != null
+                  ? (((state.receiptFile?.path.toLowerCase().endsWith('.pdf') ??
+                              false) ||
+                          (state.paymentReceiptUrl
+                                  ?.toLowerCase()
+                                  .split('?')
+                                  .first
+                                  .endsWith('.pdf') ??
+                              false))
+                      ? 'مرفق (مستند PDF)'
+                      : 'مرفق (صورة الإيصال)')
+                  : 'غير مرفق',
+            ),
+          ],
           if (state.couponCode != null && state.couponCode!.isNotEmpty) ...[
             SizedBox(height: 6.h),
             _buildInfoRow(

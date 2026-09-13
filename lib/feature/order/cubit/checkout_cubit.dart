@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/feature/address/data/model/user_address_model.dart';
 import 'package:aleman/feature/address/data/repository/address_repo.dart';
@@ -9,7 +11,9 @@ import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:aleman/feature/vehicle/data/model/user_vehicle_model.dart';
 import 'package:aleman/feature/vehicle/data/repository/vehicle_repo.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class CheckoutCubit extends Cubit<CheckoutState> {
   final OrderRepository _orderRepository;
@@ -23,11 +27,14 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   ) : super(const CheckoutState());
 
   void initFromCart({required double totalWeightTons}) {
-    final autoTruck = TruckType.fromWeight(totalWeightTons);
+    final defaultTruck = totalWeightTons > 0
+        ? TruckType.fromWeight(totalWeightTons)
+        : TruckType.dababa;
+
     emit(
       state.copyWith(
         totalWeightTons: totalWeightTons,
-        selectedTruckType: autoTruck,
+        selectedTruckType: state.selectedTruckType ?? defaultTruck,
       ),
     );
   }
@@ -52,7 +59,9 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           ),
         );
 
-        if (state.isWesal && defaultAddress != null) {
+        if (state.isWesal &&
+            defaultAddress != null &&
+            state.selectedTruckType != null) {
           calculateShipping();
         }
       },
@@ -120,11 +129,23 @@ class CheckoutCubit extends Cubit<CheckoutState> {
         state.copyWith(
           orderType: type,
           shippingFee: 0.0,
+          currentStep: 1,
           estimatedDelivery: 'استلام فوري بمجرد تجهيز الطلب في أرض المصنع',
         ),
       );
     } else {
-      emit(state.copyWith(orderType: type));
+      final recommendedTruck = state.selectedTruckType ??
+          (state.totalWeightTons > 0
+              ? TruckType.fromWeight(state.totalWeightTons)
+              : TruckType.dababa);
+
+      emit(
+        state.copyWith(
+          orderType: type,
+          currentStep: 1,
+          selectedTruckType: recommendedTruck,
+        ),
+      );
       if (state.selectedAddress != null) {
         calculateShipping();
       }
@@ -133,7 +154,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
 
   void selectAddress(UserAddressModel address) {
     emit(state.copyWith(selectedAddress: address));
-    if (state.isWesal) {
+    if (state.isWesal && state.selectedTruckType != null) {
       calculateShipping();
     }
   }
@@ -212,6 +233,88 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     emit(state.copyWith(paymentMethod: method));
   }
 
+  Future<void> _uploadReceipt(File file) async {
+    final fileSize = await file.length();
+    const maxSizeBytes = 10 * 1024 * 1024; // 10MB limit
+
+    if (fileSize > maxSizeBytes) {
+      emit(
+        state.copyWith(
+          errorMessage: 'حجم الملف يتجاوز الحد الأقصى المسموح به (10 ميجابايت)',
+        ),
+      );
+      return;
+    }
+
+    emit(
+      state.copyWith(
+        isUploadingReceipt: true,
+        receiptFile: file,
+        errorMessage: null,
+      ),
+    );
+
+    final result = await _orderRepository.uploadReceipt(file);
+
+    result.when(
+      success: (url) {
+        emit(
+          state.copyWith(isUploadingReceipt: false, paymentReceiptUrl: url),
+        );
+      },
+      failure: (error) {
+        emit(
+          state.copyWith(
+            isUploadingReceipt: false,
+            clearReceiptFile: true,
+            clearPaymentReceiptUrl: true,
+            errorMessage: error.message ?? 'فشل رفع إيصال التحويل',
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> pickAndUploadReceipt(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: source, imageQuality: 85);
+
+      if (picked == null) return;
+      await _uploadReceipt(File(picked.path));
+    } catch (_) {
+      emit(
+        state.copyWith(
+          isUploadingReceipt: false,
+          errorMessage: 'حدث خطأ أثناء اختيار أو رفع الصورة',
+        ),
+      );
+    }
+  }
+
+  Future<void> pickAndUploadReceiptPdf() async {
+    try {
+      final pickedFile = await FilePicker.pickFile(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+
+      if (pickedFile == null || pickedFile.path == null) return;
+      await _uploadReceipt(File(pickedFile.path!));
+    } catch (_) {
+      emit(
+        state.copyWith(
+          isUploadingReceipt: false,
+          errorMessage: 'حدث خطأ أثناء اختيار أو رفع ملف الـ PDF',
+        ),
+      );
+    }
+  }
+
+  void removeReceipt() {
+    emit(state.copyWith(clearReceiptFile: true, clearPaymentReceiptUrl: true));
+  }
+
   void applyCoupon(String code) {
     if (code.trim().isEmpty) return;
     emit(state.copyWith(isApplyingCoupon: true));
@@ -242,19 +345,51 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   }
 
   bool nextStep() {
-    if (state.currentStep == 1) {
-      if (state.isWesal) {
+    if (state.isWesal) {
+      if (state.currentStep == 1) {
         if (state.selectedAddress == null) {
           emit(state.copyWith(errorMessage: 'يرجى اختيار عنوان التوصيل أولاً'));
           return false;
         }
         if (state.selectedTruckType == null) {
+          final recommendedTruck = state.totalWeightTons > 0
+              ? TruckType.fromWeight(state.totalWeightTons)
+              : TruckType.dababa;
+          emit(state.copyWith(selectedTruckType: recommendedTruck));
+          calculateShipping();
+        }
+      } else if (state.currentStep == 2) {
+        if (state.selectedTruckType == null) {
           emit(
-            state.copyWith(errorMessage: 'يرجى اختيار نوع الشاحنة المطلوبة'),
+            state.copyWith(
+              errorMessage: 'يرجى اختيار نوع سيارة الشحن للمتابعة',
+            ),
           );
           return false;
         }
-      } else {
+      } else if (state.currentStep == 3) {
+        if (state.paymentMethod == PaymentMethodType.bankTransfer) {
+          if (state.isUploadingReceipt) {
+            emit(
+              state.copyWith(
+                errorMessage: 'جاري رفع إيصال التحويل، يرجى الانتظار',
+              ),
+            );
+            return false;
+          }
+          if (state.paymentReceiptUrl == null ||
+              state.paymentReceiptUrl!.trim().isEmpty) {
+            emit(
+              state.copyWith(
+                errorMessage: 'يرجى إرفاق إيصال التحويل البنكي للمتابعة',
+              ),
+            );
+            return false;
+          }
+        }
+      }
+    } else {
+      if (state.currentStep == 1) {
         if (state.selectedVehicle == null) {
           emit(
             state.copyWith(
@@ -271,10 +406,30 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           );
           return false;
         }
+      } else if (state.currentStep == 2) {
+        if (state.paymentMethod == PaymentMethodType.bankTransfer) {
+          if (state.isUploadingReceipt) {
+            emit(
+              state.copyWith(
+                errorMessage: 'جاري رفع إيصال التحويل، يرجى الانتظار',
+              ),
+            );
+            return false;
+          }
+          if (state.paymentReceiptUrl == null ||
+              state.paymentReceiptUrl!.trim().isEmpty) {
+            emit(
+              state.copyWith(
+                errorMessage: 'يرجى إرفاق إيصال التحويل البنكي للمتابعة',
+              ),
+            );
+            return false;
+          }
+        }
       }
     }
 
-    if (state.currentStep < 3) {
+    if (state.currentStep < state.totalSteps) {
       emit(
         state.copyWith(currentStep: state.currentStep + 1, errorMessage: null),
       );
@@ -311,6 +466,9 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           : null,
       saveVehicle: state.isFactoryPickup ? state.saveVehicle : false,
       paymentMethod: state.paymentMethod.value,
+      paymentReceiptUrl: state.paymentMethod == PaymentMethodType.bankTransfer
+          ? state.paymentReceiptUrl
+          : null,
       couponCode: state.couponCode,
       notes: state.notes,
     );
