@@ -2,6 +2,7 @@ import 'package:aleman/app.dart';
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/services/app_logger.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
+import 'package:aleman/core/services/user_role_helper.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,7 @@ void main() async {
   );
 
   await SharedPrefHelper.getInstancePreferences();
+  await UserRoleHelper.getUserRole();
   appLogger.info('Shared Preferences initialized');
 
   await initAppModule();

@@ -4,6 +4,7 @@ import 'package:aleman/core/services/notification_service.dart';
 import 'package:aleman/core/utils/app_regex.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
+import 'package:aleman/core/services/user_role_helper.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
 import 'package:aleman/feature/Authentication/data/repository/authentication_repository.dart';
 import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
@@ -59,6 +60,13 @@ class LoginCubit extends Cubit<LoginState> {
           PrefKeys.userRefreshToken,
           authEntity.refreshToken,
         );
+
+        // Cache user role directly from login response or token
+        if (authEntity.role.isNotEmpty) {
+          UserRoleHelper.setRole(authEntity.role);
+        } else {
+          await UserRoleHelper.getUserRole();
+        }
 
         if (instance.isRegistered<NotificationService>()) {
           instance<NotificationService>().syncTokenWithBackend();

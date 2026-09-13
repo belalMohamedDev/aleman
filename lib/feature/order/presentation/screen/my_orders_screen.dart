@@ -468,26 +468,56 @@ class _MyOrdersView extends StatelessWidget {
                   ],
                 ),
 
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'الإجمالي',
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        color: Colors.grey.shade500,
+                if (!order.shouldHidePricing())
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'الإجمالي',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: Colors.grey.shade500,
+                        ),
                       ),
-                    ),
-                    Text(
-                      '${order.total} ج.م',
-                      style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.bold,
-                        color: ColorManger.primary,
+                      Text(
+                        '${order.total} ج.م',
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          fontWeight: FontWeight.bold,
+                          color: ColorManger.primary,
+                        ),
                       ),
+                    ],
+                  )
+                else
+                  Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0FDF4),
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: const Color(0xFFBBF7D0)),
                     ),
-                  ],
-                ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Iconsax.shield_tick,
+                          size: 13.sp,
+                          color: const Color(0xFF16A34A),
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'معتمد من الإدارة',
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(0xFF15803D),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
               ],
             ),
             SizedBox(height: 12.h),

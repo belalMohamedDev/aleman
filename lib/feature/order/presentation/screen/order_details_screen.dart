@@ -1,4 +1,5 @@
 import 'package:aleman/core/application/di.dart';
+import 'package:aleman/core/services/user_role_helper.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/order/cubit/order_details_cubit.dart';
 import 'package:aleman/feature/order/cubit/order_details_state.dart';
@@ -12,8 +13,13 @@ import 'package:iconsax/iconsax.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
   final OrderResponseModel order;
+  final bool isParentMerchantView;
 
-  const OrderDetailsScreen({super.key, required this.order});
+  const OrderDetailsScreen({
+    super.key,
+    required this.order,
+    this.isParentMerchantView = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +27,15 @@ class OrderDetailsScreen extends StatelessWidget {
       create: (_) =>
           OrderDetailsCubit(instance<OrderRepository>(), initialOrder: order)
             ..fetchOrderDetails(),
-      child: const _OrderDetailsView(),
+      child: _OrderDetailsView(isParentMerchantView: isParentMerchantView),
     );
   }
 }
 
 class _OrderDetailsView extends StatelessWidget {
-  const _OrderDetailsView();
+  final bool isParentMerchantView;
+
+  const _OrderDetailsView({this.isParentMerchantView = false});
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +61,9 @@ class _OrderDetailsView extends StatelessWidget {
       builder: (context, state) {
         final order = state.order;
         final cubit = context.read<OrderDetailsCubit>();
+        final bool isSmallMerchant = UserRoleHelper.isSmallMerchantSync();
+        final bool isParent = !isSmallMerchant &&
+            (isParentMerchantView || UserRoleHelper.isParentMerchantSync());
 
         return PopScope(
           canPop: false,
@@ -153,10 +164,13 @@ class _OrderDetailsView extends StatelessWidget {
                   _buildFulfillmentDetailsCard(order),
                   SizedBox(height: 14.h),
 
-                  _buildInvoicePricingCard(order),
+                  _buildInvoicePricingCard(order, isParent: isParent),
                   SizedBox(height: 20.h),
 
-                  if (order.isPending) ...[
+                  if (isSmallMerchant &&
+                      (order.isPending ||
+                          order.isPendingMerchantApproval ||
+                          order.isPendingAdminApproval)) ...[
                     _buildCancelOrderSection(
                       context,
                       order,
@@ -168,7 +182,7 @@ class _OrderDetailsView extends StatelessWidget {
                 ],
               ),
             ),
-            bottomNavigationBar: order.isPendingMerchantApproval
+            bottomNavigationBar: (isParent && order.isPendingMerchantApproval)
                 ? _buildMerchantApprovalBottomBar(
                     context,
                     order,
@@ -742,7 +756,14 @@ class _OrderDetailsView extends StatelessWidget {
     );
   }
 
-  Widget _buildInvoicePricingCard(OrderResponseModel order) {
+  Widget _buildInvoicePricingCard(
+    OrderResponseModel order, {
+    bool isParent = false,
+  }) {
+    final hidePrices = order.shouldHidePricing(
+      isParentView: isParent || isParentMerchantView,
+    );
+
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -769,7 +790,7 @@ class _OrderDetailsView extends StatelessWidget {
               ),
               SizedBox(width: 10.w),
               Text(
-                'ملخص الفاتورة والأوزان',
+                hidePrices ? 'ملخص الطلب والأوزان' : 'ملخص الفاتورة والأوزان',
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
@@ -784,46 +805,80 @@ class _OrderDetailsView extends StatelessWidget {
             _buildDetailRow('إجمالي وزن الطلب', '${order.totalWeightTons} طن'),
             SizedBox(height: 8.h),
           ],
-          _buildDetailRow('إجمالي سعر المنتجات', '${order.subTotal} ج.م'),
-          if (order.discount > 0) ...[
-            SizedBox(height: 8.h),
-            _buildDetailRow(
-              'قيمة الخصم',
-              '- ${order.discount} ج.م',
-              isDiscount: true,
-            ),
-          ],
-          SizedBox(height: 8.h),
-          order.shippingFee > 0
-              ? _buildDetailRow(
-                  'تكلفة الشحن والتوصيل',
-                  '${order.shippingFee} ج.م',
-                )
-              : const SizedBox.shrink(),
-          SizedBox(height: 8.h),
-          _buildDetailRow('طريقة السداد', order.paymentMethodName),
-          Divider(height: 22.h, color: Colors.grey.shade200),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'الإجمالي النهائي للطلب',
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
-                  color: ColorManger.primary,
-                ),
-              ),
-              Text(
-                '${order.total} ج.م',
-                style: TextStyle(
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.bold,
-                  color: ColorManger.goldDark,
-                ),
+          if (!hidePrices) ...[
+            _buildDetailRow('إجمالي سعر المنتجات', '${order.subTotal} ج.م'),
+            if (order.discount > 0) ...[
+              SizedBox(height: 8.h),
+              _buildDetailRow(
+                'قيمة الخصم',
+                '- ${order.discount} ج.م',
+                isDiscount: true,
               ),
             ],
-          ),
+            SizedBox(height: 8.h),
+            order.shippingFee > 0
+                ? _buildDetailRow(
+                    'تكلفة الشحن والتوصيل',
+                    '${order.shippingFee} ج.م',
+                  )
+                : const SizedBox.shrink(),
+            SizedBox(height: 8.h),
+          ],
+          _buildDetailRow('طريقة السداد', order.paymentMethodName),
+          if (!hidePrices) ...[
+            Divider(height: 22.h, color: Colors.grey.shade200),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'الإجمالي النهائي للطلب',
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.bold,
+                    color: ColorManger.primary,
+                  ),
+                ),
+                Text(
+                  '${order.total} ج.م',
+                  style: TextStyle(
+                    fontSize: 17.sp,
+                    fontWeight: FontWeight.bold,
+                    color: ColorManger.goldDark,
+                  ),
+                ),
+              ],
+            ),
+          ] else ...[
+            SizedBox(height: 12.h),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8FAFC),
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: const Color(0xFFE2E8F0)),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Iconsax.info_circle,
+                    size: 16.sp,
+                    color: const Color(0xFF64748B),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      'تم اعتماد ومحاسبة هذا الطلب عبر التاجر الرئيسي والإدارة.',
+                      style: TextStyle(
+                        fontSize: 11.5.sp,
+                        color: const Color(0xFF475569),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );

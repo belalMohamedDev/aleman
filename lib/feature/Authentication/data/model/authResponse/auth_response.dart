@@ -5,10 +5,12 @@ part 'auth_response.g.dart';
 class AuthResponse {
   String? accessToken;
   String? refreshToken;
+  String? role;
 
   AuthResponse({
     this.accessToken,
     this.refreshToken,
+    this.role,
   });
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) =>

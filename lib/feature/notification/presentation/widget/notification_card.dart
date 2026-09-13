@@ -1,4 +1,5 @@
 import 'package:aleman/core/routing/notification_router.dart';
+import 'package:aleman/core/services/user_role_helper.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/fonts/styles_manger.dart';
 import 'package:aleman/feature/notification/domain/entity/notification_item_entity.dart';
@@ -46,6 +47,17 @@ class NotificationCard extends StatelessWidget {
 
     final title = notification.title.toLowerCase();
     final body = notification.body.toLowerCase();
+
+    // العميل الفرعي لا يوافق ولا يعتمد الطلبات
+    if (UserRoleHelper.isSmallMerchantSync()) return false;
+
+    // إذا كان الإشعار موجهاً لصاحب الطلب نفسه لإخباره بحالة طلبه
+    if (title.contains('طلبك') ||
+        body.contains('طلبك') ||
+        body.contains('بانتظار موافقة التاجر') ||
+        body.contains('قيد موافقة التاجر')) {
+      return false;
+    }
 
     final isAlreadyDecided = title.contains('تم اعتماد') ||
         title.contains('تم قبول') ||

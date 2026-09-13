@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/services/app_logger.dart';
+import 'package:aleman/core/services/user_role_helper.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/order/presentation/screen/my_orders_screen.dart';
 import 'package:aleman/feature/order/presentation/screen/order_details_screen.dart';
@@ -57,6 +58,7 @@ class NotificationRouter {
           MaterialPageRoute(
             builder: (_) => OrderDetailsScreen(
               order: OrderResponseModel.fromId(orderId),
+              isParentMerchantView: UserRoleHelper.isParentMerchantSync(),
             ),
           ),
         );

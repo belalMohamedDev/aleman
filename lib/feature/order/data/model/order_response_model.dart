@@ -74,6 +74,7 @@ class OrderResponseModel {
   final String? adminRejectionReason;
   final String? parentMerchantName;
   final bool isSmallMerchantOrder;
+  final bool hidePrices;
 
   const OrderResponseModel({
     required this.id,
@@ -107,6 +108,7 @@ class OrderResponseModel {
     this.adminRejectionReason,
     this.parentMerchantName,
     this.isSmallMerchantOrder = false,
+    this.hidePrices = false,
   });
 
   factory OrderResponseModel.fromId(String id) => OrderResponseModel(
@@ -135,6 +137,23 @@ class OrderResponseModel {
   bool get isRejectedByMerchant => statusCode == 10;
   bool get isRejectedByAdmin => statusCode == 11;
   bool get isActive => (statusCode >= 1 && statusCode <= 5) || statusCode == 8 || statusCode == 9;
+
+  /// تحقق مما إذا كان يجب حجب الأسعار عن العميل الفرعي
+  /// للتاجر الرئيسي: لا يتم حجب الأسعار أبداً (isParentView == true)
+  /// للعميل الفرعي: تُحجب الأسعار بمجرد موافقة الإدارة على طلبه أو إذا حجبها الباك إند
+  bool shouldHidePricing({bool isParentView = false}) {
+    if (isParentView) return false;
+    if (hidePrices) return true;
+    if (isSmallMerchantOrder) {
+      if (adminApprovedAt != null ||
+          statusCode == 2 ||
+          (statusCode >= 2 && statusCode <= 6) ||
+          total == 0) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   factory OrderResponseModel.fromJson(Map<String, dynamic> json) {
     int parsedStatusCode = 1;
@@ -284,8 +303,10 @@ class OrderResponseModel {
       parentMerchantName: cleanStr(json['parentMerchantName']),
       isSmallMerchantOrder: json['isSmallMerchantOrder'] == true ||
           cleanStr(json['parentMerchantName']) != null ||
+          json['parentMerchantId'] != null ||
           parsedStatusCode == 8 ||
           parsedStatusCode == 10,
+      hidePrices: json['hidePrices'] == true,
     );
   }
 }

@@ -560,7 +560,12 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => OrderDetailsScreen(order: order)),
+          MaterialPageRoute(
+            builder: (_) => OrderDetailsScreen(
+              order: order,
+              isParentMerchantView: true,
+            ),
+          ),
         );
       },
       borderRadius: BorderRadius.circular(16.r),
