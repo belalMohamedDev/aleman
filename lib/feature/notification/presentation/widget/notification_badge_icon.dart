@@ -52,7 +52,7 @@ class NotificationBadgeIcon extends StatelessWidget {
                     Navigator.of(context).pushNamed(Routes.notificationsRoute);
                   },
               child: Image.asset(
-                ImageAsset.notification,
+                ImageAsset.notificationIcon,
                 // color: ColorManger.primaryLight,
                 height: responsive.setHeight(6),
                 width: responsive.setWidth(13),

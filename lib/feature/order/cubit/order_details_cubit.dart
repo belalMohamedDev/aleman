@@ -79,4 +79,29 @@ class OrderDetailsCubit extends Cubit<OrderDetailsState> {
       },
     );
   }
+
+  Future<bool> reviewOrder({
+    required bool isApproved,
+    String? rejectionReason,
+  }) async {
+    emit(state.copyWith(isCancelling: true, errorMessage: null));
+    final result = await _orderRepository.reviewOrderByMerchant(
+      orderId: state.order.id,
+      isApproved: isApproved,
+      rejectionReason: rejectionReason,
+    );
+    return result.when(
+      success: (_) {
+        fetchOrderDetails();
+        return true;
+      },
+      failure: (error) {
+        emit(state.copyWith(
+          isCancelling: false,
+          errorMessage: error.message ?? 'فشل في تحديث حالة الطلب',
+        ));
+        return false;
+      },
+    );
+  }
 }

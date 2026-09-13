@@ -1,13 +1,16 @@
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
+import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,6 +30,18 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  Future<void> _openWhatsApp() async {
+    const String phoneNumber = "201069225923";
+    final Uri url = Uri.parse("https://wa.me/$phoneNumber");
+    try {
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      debugPrint("Error launching WhatsApp: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -40,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final showLoginPrompt = state.showLoginPrompt;
 
           return Scaffold(
-            extendBody: true,
+            // extendBody: true,
             body: Stack(
               children: [
                 RefreshIndicator(
@@ -81,15 +96,77 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
 
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {},
-              backgroundColor: ColorManger.primaryLight,
-              child: Image.asset(
-                ImageAsset.whatsapp,
-                color: ColorManger.white,
-                width: 35.w,
-                height: 35.h,
-              ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            floatingActionButton: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                BlocBuilder<CartCubit, CartState>(
+                  buildWhen: (previous, current) =>
+                      previous.totalItemsCount != current.totalItemsCount,
+                  builder: (context, cartState) {
+                    final count = cartState.totalItemsCount;
+                    return Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        FloatingActionButton(
+                          key: CartAnimationHelper.cartKey,
+                          heroTag: 'fab_cart',
+                          onPressed: () {
+                            Navigator.pushNamed(context, Routes.cartRoute);
+                          },
+                          backgroundColor: ColorManger.unselectedButton
+                              .withValues(alpha: 0.7),
+                          child: Image.asset(
+                            ImageAsset.cart,
+                            width: 60.w,
+                            height: 55.h,
+                          ),
+                        ),
+                        if (count > 0)
+                          PositionedDirectional(
+                            top: 2,
+                            start: 0,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6.w,
+                                vertical: 2.5.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorManger.chipProtein,
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              constraints: BoxConstraints(
+                                minWidth: 18.w,
+                                minHeight: 18.h,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                '$count',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10.sp,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+                SizedBox(height: 10.h),
+                FloatingActionButton(
+                  heroTag: 'fab_whatsapp',
+                  onPressed: _openWhatsApp,
+                  backgroundColor: ColorManger.primaryLight,
+                  child: Image.asset(
+                    ImageAsset.whatsapp,
+                    color: ColorManger.white,
+                    width: 30.w,
+                    height: 35.h,
+                  ),
+                ),
+              ],
             ),
           );
         },

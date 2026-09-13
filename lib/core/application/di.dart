@@ -188,6 +188,7 @@ Future<void> _initNotification() async {
       instance<GetUnreadCountUseCase>(),
       instance<MarkNotificationReadUseCase>(),
       instance<MarkAllNotificationsReadUseCase>(),
+      instance<OrderRepository>(),
     ),
   );
 }

@@ -41,15 +41,17 @@ class SmallMerchantsOrdersState {
     var result = _scopedOrders;
 
     if (selectedStatus != null) {
-      if (selectedStatus == 1) {
-        result = result.where((o) => o.statusCode == 1).toList();
+      if (selectedStatus == 8) {
+        result = result.where((o) => o.statusCode == 8).toList();
+      } else if (selectedStatus == 1) {
+        result = result.where((o) => o.statusCode == 1 || o.statusCode == 9).toList();
       } else if (selectedStatus == 2) {
         // قيد التجهيز / النقل (2, 3, 4, 5)
         result = result.where((o) => o.statusCode >= 2 && o.statusCode <= 5).toList();
       } else if (selectedStatus == 6) {
         result = result.where((o) => o.statusCode == 6).toList();
       } else if (selectedStatus == 7) {
-        result = result.where((o) => o.statusCode == 7).toList();
+        result = result.where((o) => o.statusCode == 7 || o.statusCode == 10 || o.statusCode == 11).toList();
       }
     }
 
@@ -57,11 +59,15 @@ class SmallMerchantsOrdersState {
   }
 
   int get totalFilteredCount => _scopedOrders.length;
-  int get pendingCount => _scopedOrders.where((o) => o.statusCode == 1).length;
+  int get pendingMerchantApprovalCount =>
+      _scopedOrders.where((o) => o.statusCode == 8).length;
+  int get pendingCount =>
+      _scopedOrders.where((o) => o.statusCode == 1 || o.statusCode == 9).length;
   int get inProgressCount =>
       _scopedOrders.where((o) => o.statusCode >= 2 && o.statusCode <= 5).length;
   int get completedCount => _scopedOrders.where((o) => o.statusCode == 6).length;
-  int get cancelledCount => _scopedOrders.where((o) => o.statusCode == 7).length;
+  int get cancelledCount =>
+      _scopedOrders.where((o) => o.statusCode == 7 || o.statusCode == 10 || o.statusCode == 11).length;
 
   SmallMerchantsOrdersState copyWith({
     SmallMerchantsOrdersStatus? status,

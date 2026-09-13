@@ -592,6 +592,10 @@ class _MyOrdersView extends StatelessWidget {
 
   Color _getStatusColor(int statusCode) {
     switch (statusCode) {
+      case 8:
+        return const Color(0xFFD97706); // قيد موافقة التاجر الرئيسي
+      case 9:
+        return const Color(0xFF0284C7); // قيد موافقة الإدارة والمبيعات
       case 1:
         return const Color(0xFFD97706); // قيد الانتظار (أصفر كهرماني)
       case 2:
@@ -606,7 +610,9 @@ class _MyOrdersView extends StatelessWidget {
       case 6:
         return const Color(0xFF16A34A); // مكتمل (أخضر)
       case 7:
-        return const Color(0xFFDC2626); // ملغي (أحمر)
+      case 10:
+      case 11:
+        return const Color(0xFFDC2626); // ملغي / مرفوض (أحمر)
       default:
         return Colors.grey.shade700;
     }

@@ -102,4 +102,27 @@ class SmallMerchantsOrdersCubit extends Cubit<SmallMerchantsOrdersState> {
   void search(String query) {
     emit(state.copyWith(searchQuery: query));
   }
+
+  Future<bool> reviewOrder({
+    required String orderId,
+    required bool isApproved,
+    String? rejectionReason,
+  }) async {
+    final result = await _orderRepository.reviewOrderByMerchant(
+      orderId: orderId,
+      isApproved: isApproved,
+      rejectionReason: rejectionReason,
+    );
+
+    return result.when(
+      success: (_) {
+        loadOrders(refresh: true);
+        return true;
+      },
+      failure: (errorHandler) {
+        emit(state.copyWith(errorMessage: errorHandler.getMessage));
+        return false;
+      },
+    );
+  }
 }

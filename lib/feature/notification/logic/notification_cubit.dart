@@ -5,6 +5,7 @@ import 'package:aleman/feature/notification/domain/usecase/get_unread_count_use_
 import 'package:aleman/feature/notification/domain/usecase/mark_all_notifications_read_use_case.dart';
 import 'package:aleman/feature/notification/domain/usecase/mark_notification_read_use_case.dart';
 import 'package:aleman/feature/notification/logic/notification_state.dart';
+import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NotificationCubit extends Cubit<NotificationState> {
@@ -12,12 +13,14 @@ class NotificationCubit extends Cubit<NotificationState> {
   final GetUnreadCountUseCase _getUnreadCountUseCase;
   final MarkNotificationReadUseCase _markNotificationReadUseCase;
   final MarkAllNotificationsReadUseCase _markAllNotificationsReadUseCase;
+  final OrderRepository _orderRepository;
 
   NotificationCubit(
     this._getNotificationsUseCase,
     this._getUnreadCountUseCase,
     this._markNotificationReadUseCase,
     this._markAllNotificationsReadUseCase,
+    this._orderRepository,
   ) : super(const NotificationState());
 
   Future<void> getNotifications({bool refresh = false}) async {
@@ -115,6 +118,49 @@ class NotificationCubit extends Cubit<NotificationState> {
       },
       failure: (error) {
         emit(state.copyWith(errorMessage: error.message));
+      },
+    );
+  }
+
+  Future<bool> reviewOrder({
+    required String orderId,
+    required int notificationId,
+    required bool isApproved,
+    String? rejectionReason,
+  }) async {
+    final newProcessing = Set<String>.from(state.processingOrderIds)..add(orderId);
+    emit(state.copyWith(processingOrderIds: newProcessing, errorMessage: null));
+
+    final result = await _orderRepository.reviewOrderByMerchant(
+      orderId: orderId,
+      isApproved: isApproved,
+      rejectionReason: rejectionReason,
+    );
+
+    return result.when(
+      success: (_) {
+        markAsRead(notificationId);
+
+        final updatedProcessing = Set<String>.from(state.processingOrderIds)..remove(orderId);
+        final updatedStatuses = Map<String, String>.from(state.orderReviewStatuses)
+          ..[orderId] = isApproved ? 'approved' : 'rejected';
+
+        emit(state.copyWith(
+          processingOrderIds: updatedProcessing,
+          orderReviewStatuses: updatedStatuses,
+          successMessage: isApproved
+              ? 'تم اعتماد الطلب بنجاح وإرساله لإدارة المبيعات'
+              : 'تم رفض الطلب بنجاح',
+        ));
+        return true;
+      },
+      failure: (error) {
+        final updatedProcessing = Set<String>.from(state.processingOrderIds)..remove(orderId);
+        emit(state.copyWith(
+          processingOrderIds: updatedProcessing,
+          errorMessage: error.message ?? 'فشل تنفيذ الإجراء على الطلب',
+        ));
+        return false;
       },
     );
   }

@@ -12,6 +12,8 @@ class NotificationState {
   final bool hasMore;
   final String? errorMessage;
   final String? successMessage;
+  final Set<String> processingOrderIds;
+  final Map<String, String> orderReviewStatuses;
 
   const NotificationState({
     this.status = NotificationStatus.initial,
@@ -23,6 +25,8 @@ class NotificationState {
     this.hasMore = false,
     this.errorMessage,
     this.successMessage,
+    this.processingOrderIds = const {},
+    this.orderReviewStatuses = const {},
   });
 
   NotificationState copyWith({
@@ -35,6 +39,8 @@ class NotificationState {
     bool? hasMore,
     String? errorMessage,
     String? successMessage,
+    Set<String>? processingOrderIds,
+    Map<String, String>? orderReviewStatuses,
   }) {
     return NotificationState(
       status: status ?? this.status,
@@ -46,6 +52,8 @@ class NotificationState {
       hasMore: hasMore ?? this.hasMore,
       errorMessage: errorMessage,
       successMessage: successMessage,
+      processingOrderIds: processingOrderIds ?? this.processingOrderIds,
+      orderReviewStatuses: orderReviewStatuses ?? this.orderReviewStatuses,
     );
   }
 }

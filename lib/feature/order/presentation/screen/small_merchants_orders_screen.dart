@@ -173,11 +173,18 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
                       ),
                       SizedBox(width: 8.w),
                       _buildFilterChip(
+                        label: 'بانتظار موافقتك',
+                        icon: Iconsax.timer_1,
+                        count: state.pendingMerchantApprovalCount,
+                        isSelected: state.selectedStatus == 8,
+                        onTap: () => cubit.filterByStatus(8),
+                      ),
+                      SizedBox(width: 8.w),
+                      _buildFilterChip(
                         label: 'جديدة',
                         icon: Iconsax.clock,
                         count: state.pendingCount,
                         isSelected: state.selectedStatus == 1,
-
                         onTap: () => cubit.filterByStatus(1),
                       ),
                       SizedBox(width: 8.w),
@@ -742,8 +749,150 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
                 ),
               ],
             ),
+            if (order.isPendingMerchantApproval) ...[
+              Divider(height: 20.h, color: Colors.grey.shade200),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _confirmApproval(order),
+                      icon: Icon(Icons.check_circle_outline, size: 16.sp),
+                      label: Text(
+                        'اعتماد الطلب',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF059669),
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _showRejectDialog(order),
+                      icon: Icon(Icons.highlight_off, size: 16.sp),
+                      label: Text(
+                        'رفض الطلب',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFFDC2626),
+                        side: const BorderSide(color: Color(0xFFDC2626)),
+                        padding: EdgeInsets.symmetric(vertical: 8.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  void _confirmApproval(OrderResponseModel order) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        title: const Text('اعتماد الطلب', style: TextStyle(fontWeight: FontWeight.bold)),
+        content: Text('هل أنت متأكد من اعتماد طلب العميل الفرعي #${order.orderNumber}؟\nسيتم إرسال الطلب تلقائياً لإدارة ومبيعات المصنع لتأكيده وتجهيزه.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final cubit = context.read<SmallMerchantsOrdersCubit>();
+              final success = await cubit.reviewOrder(
+                orderId: order.id,
+                isApproved: true,
+              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(success ? 'تم اعتماد الطلب بنجاح وإرساله للمبيعات' : 'حدث خطأ أثناء اعتماد الطلب'),
+                    backgroundColor: success ? const Color(0xFF059669) : Colors.red,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF059669)),
+            child: const Text('تأكيد الاعتماد', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRejectDialog(OrderResponseModel order) {
+    final reasonController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        title: const Text('رفض طلب العميل الفرعي', style: TextStyle(fontWeight: FontWeight.bold)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('الرجاء إدخال سبب الرفض للطلب #${order.orderNumber}:'),
+            SizedBox(height: 10.h),
+            TextField(
+              controller: reasonController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'سبب الرفض (اختياري)...',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final cubit = context.read<SmallMerchantsOrdersCubit>();
+              final success = await cubit.reviewOrder(
+                orderId: order.id,
+                isApproved: false,
+                rejectionReason: reasonController.text.trim().isEmpty ? null : reasonController.text.trim(),
+              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(success ? 'تم رفض الطلب بنجاح' : 'حدث خطأ أثناء رفض الطلب'),
+                    backgroundColor: success ? Colors.orange : Colors.red,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626)),
+            child: const Text('تأكيد الرفض', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }
@@ -780,6 +929,10 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
 
   Color _getStatusColor(int statusCode) {
     switch (statusCode) {
+      case 8:
+        return const Color(0xFFD97706); // قيد موافقة التاجر الرئيسي
+      case 9:
+        return const Color(0xFF0284C7); // قيد موافقة الإدارة والمبيعات
       case 1:
         return const Color(0xFFD97706);
       case 2:
@@ -790,6 +943,8 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
       case 6:
         return const Color(0xFF059669);
       case 7:
+      case 10:
+      case 11:
         return const Color(0xFFDC2626);
       default:
         return Colors.grey.shade700;
@@ -798,6 +953,10 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
 
   Color _getStatusBgColor(int statusCode) {
     switch (statusCode) {
+      case 8:
+        return const Color(0xFFFEF3C7);
+      case 9:
+        return const Color(0xFFE0F2FE);
       case 1:
         return const Color(0xFFFEF3C7);
       case 2:
@@ -808,6 +967,8 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
       case 6:
         return const Color(0xFFECFDF5);
       case 7:
+      case 10:
+      case 11:
         return const Color(0xFFFEE2E2);
       default:
         return Colors.grey.shade100;

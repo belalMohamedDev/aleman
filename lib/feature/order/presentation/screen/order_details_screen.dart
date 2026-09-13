@@ -18,10 +18,9 @@ class OrderDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => OrderDetailsCubit(
-        instance<OrderRepository>(),
-        initialOrder: order,
-      )..fetchOrderDetails(),
+      create: (_) =>
+          OrderDetailsCubit(instance<OrderRepository>(), initialOrder: order)
+            ..fetchOrderDetails(),
       child: const _OrderDetailsView(),
     );
   }
@@ -72,13 +71,20 @@ class _OrderDetailsView extends StatelessWidget {
               backgroundColor: Colors.white,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
-                onPressed: () => Navigator.pop(context, state.isCancelledSuccessfully),
+                icon: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.black87,
+                ),
+                onPressed: () =>
+                    Navigator.pop(context, state.isCancelledSuccessfully),
               ),
               actions: [
                 if (order.isPending)
                   Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 10.h,
+                    ),
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
@@ -151,12 +157,25 @@ class _OrderDetailsView extends StatelessWidget {
                   SizedBox(height: 20.h),
 
                   if (order.isPending) ...[
-                    _buildCancelOrderSection(context, order, cubit, state.isCancelling),
+                    _buildCancelOrderSection(
+                      context,
+                      order,
+                      cubit,
+                      state.isCancelling,
+                    ),
                     SizedBox(height: 16.h),
                   ],
                 ],
               ),
             ),
+            bottomNavigationBar: order.isPendingMerchantApproval
+                ? _buildMerchantApprovalBottomBar(
+                    context,
+                    order,
+                    cubit,
+                    state.isCancelling,
+                  )
+                : null,
           ),
         );
       },
@@ -164,7 +183,9 @@ class _OrderDetailsView extends StatelessWidget {
   }
 
   Widget _buildOrderHeaderCard(BuildContext context, OrderResponseModel order) {
-    final orderCode = order.orderNumber.isNotEmpty ? order.orderNumber : order.id;
+    final orderCode = order.orderNumber.isNotEmpty
+        ? order.orderNumber
+        : order.id;
 
     return Container(
       padding: EdgeInsets.all(16.w),
@@ -247,27 +268,91 @@ class _OrderDetailsView extends StatelessWidget {
   }
 
   Widget _buildTimelineCard(OrderResponseModel order) {
-    final steps = order.isWesal
-        ? [
-            const _TimelineStepData(title: 'تم تقديم الطلب للمصنع', stepIndex: 1),
-            const _TimelineStepData(title: 'تم تأكيد الطلب واعتماده', stepIndex: 2),
-            const _TimelineStepData(title: 'جاري تعبئة وتجهيز الأعلاف', stepIndex: 3),
-            const _TimelineStepData(title: 'خرج للتوصيل بشاحنة المصنع', stepIndex: 4),
-            const _TimelineStepData(title: 'تم تسليم الطلب للعميل', stepIndex: 6),
-          ]
-        : [
-            const _TimelineStepData(title: 'تم تقديم طلب التحميل', stepIndex: 1),
-            const _TimelineStepData(title: 'تم تأكيد الطلب واعتماده', stepIndex: 2),
-            const _TimelineStepData(
-              title: 'جاري التجهيز والوزن على الميزان',
-              stepIndex: 3,
-            ),
-            const _TimelineStepData(title: 'جاهز لتحميل سيارات العميل', stepIndex: 5),
-            const _TimelineStepData(
-              title: 'تم الاستلام والتحميل بنجاح',
-              stepIndex: 6,
-            ),
-          ];
+    final isSmallMerchant =
+        order.isSmallMerchantOrder ||
+        order.statusCode == 8 ||
+        order.statusCode == 10 ||
+        order.merchantApprovedAt != null ||
+        order.merchantRejectionReason != null;
+
+    final List<_TimelineStepData> steps;
+    if (isSmallMerchant) {
+      steps = [
+        const _TimelineStepData(
+          title: 'تم تقديم طلب العميل الفرعي',
+          stepIndex: 1,
+        ),
+        _TimelineStepData(
+          title: 'موافقة واعتماد التاجر الرئيسي',
+          stepIndex: 8,
+          subtitle: order.merchantApprovedAt != null
+              ? 'تم الاعتماد بنجاح'
+              : (order.isRejectedByMerchant
+                    ? 'مرفوض من التاجر'
+                    : 'بانتظار موافقة التاجر'),
+        ),
+        _TimelineStepData(
+          title: 'اعتماد وتأكيد الإدارة بالمصنع',
+          stepIndex: 9,
+          subtitle: (order.adminApprovedAt != null || order.statusCode == 2)
+              ? 'تم التأكيد والاعتماد'
+              : (order.isRejectedByAdmin
+                    ? 'مرفوض من الإدارة'
+                    : (order.statusCode == 8 ? 'بعد موافقة التاجر' : 'بانتظار تأكيد الإدارة')),
+        ),
+        // [خطة مستقبلية - جاري التجهيز والتحميل]
+        // _TimelineStepData(
+        //   title: order.isWesal
+        //       ? 'جاري تعبئة وتجهيز الأعلاف'
+        //       : 'جاري التجهيز والوزن على الميزان',
+        //   stepIndex: 3,
+        // ),
+        // _TimelineStepData(
+        //   title: order.isWesal
+        //       ? 'خرج للتوصيل بشاحنة المصنع'
+        //       : 'جاهز لتحميل سيارات العميل',
+        //   stepIndex: order.isWesal ? 4 : 5,
+        // ),
+        // _TimelineStepData(
+        //   title: order.isWesal
+        //       ? 'تم تسليم الطلب للعميل'
+        //       : 'تم الاستلام والتحميل بنجاح',
+        //   stepIndex: 6,
+        // ),
+      ];
+    } else {
+      steps = [
+        _TimelineStepData(
+          title: order.isWesal
+              ? 'تم تقديم الطلب للمصنع'
+              : 'تم تقديم طلب التحميل',
+          stepIndex: 1,
+        ),
+        const _TimelineStepData(
+          title: 'تم تأكيد واعتماد الطلب',
+          stepIndex: 2,
+        ),
+        // [خطة مستقبلية - جاري التجهيز والتحميل]
+        // _TimelineStepData(
+        //   title: order.isWesal
+        //       ? 'جاري تعبئة وتجهيز الأعلاف'
+        //       : 'جاري التجهيز والوزن على الميزان',
+        //   stepIndex: 3,
+        // ),
+        // _TimelineStepData(
+        //   title: order.isWesal
+        //       ? 'خرج للتوصيل بشاحنة المصنع'
+        //       : 'جاهز لتحميل سيارات العميل',
+        //   stepIndex: order.isWesal ? 4 : 5,
+        // ),
+        // _TimelineStepData(
+        //   title: order.isWesal
+        //       ? 'تم تسليم الطلب للعميل'
+        //       : 'تم الاستلام والتحميل بنجاح',
+        //   stepIndex: 6,
+        // ),
+      ];
+    }
 
     final currentStep = order.statusCode;
     final isCancelled = order.isCancelled;
@@ -337,6 +422,7 @@ class _OrderDetailsView extends StatelessWidget {
                 border: Border.all(color: Colors.red.shade100),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.cancel_outlined,
@@ -345,12 +431,44 @@ class _OrderDetailsView extends StatelessWidget {
                   ),
                   SizedBox(width: 10.w),
                   Expanded(
-                    child: Text(
-                      'تم إلغاء هذا الطلب ولا يمكن متابعة إجراءات تجهيزه أو تسليمه.',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Colors.red.shade700,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          order.isRejectedByMerchant
+                              ? 'تم رفض الطلب من قِبل التاجر الرئيسي'
+                              : (order.isRejectedByAdmin
+                                    ? 'تم رفض الطلب من قِبل إدارة ومبيعات المصنع'
+                                    : 'تم إلغاء هذا الطلب'),
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red.shade800,
+                          ),
+                        ),
+                        if (order.merchantRejectionReason != null &&
+                            order.merchantRejectionReason!.isNotEmpty) ...[
+                          SizedBox(height: 4.h),
+                          Text(
+                            'سبب الرفض: ${order.merchantRejectionReason}',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.red.shade700,
+                            ),
+                          ),
+                        ],
+                        if (order.adminRejectionReason != null &&
+                            order.adminRejectionReason!.isNotEmpty) ...[
+                          SizedBox(height: 4.h),
+                          Text(
+                            'سبب الرفض: ${order.adminRejectionReason}',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.red.shade700,
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
                   ),
                 ],
@@ -360,8 +478,16 @@ class _OrderDetailsView extends StatelessWidget {
             Column(
               children: List.generate(steps.length, (index) {
                 final step = steps[index];
-                final isPassed = currentStep >= step.stepIndex;
-                final isCurrent = currentStep == step.stepIndex;
+                final stepProgress = _getStepProgress(
+                  step.stepIndex,
+                  isSmallMerchant,
+                );
+                final currentProgress = _getOrderProgress(
+                  currentStep,
+                  isSmallMerchant,
+                );
+                final isPassed = currentProgress >= stepProgress;
+                final isCurrent = currentProgress == stepProgress;
                 final isLast = index == steps.length - 1;
 
                 return Row(
@@ -395,7 +521,7 @@ class _OrderDetailsView extends StatelessWidget {
                         if (!isLast)
                           Container(
                             width: 2.w,
-                            height: 28.h,
+                            height: (step.subtitle != null) ? 38.h : 28.h,
                             color: isPassed
                                 ? ColorManger.primaryLight
                                 : Colors.grey.shade300,
@@ -406,21 +532,40 @@ class _OrderDetailsView extends StatelessWidget {
                     Expanded(
                       child: Padding(
                         padding: EdgeInsets.only(top: 2.h),
-                        child: Text(
-                          step.title,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            fontWeight: isCurrent
-                                ? FontWeight.bold
-                                : (isPassed
-                                      ? FontWeight.w600
-                                      : FontWeight.normal),
-                            color: isCurrent
-                                ? ColorManger.primary
-                                : (isPassed
-                                      ? Colors.black87
-                                      : Colors.grey.shade400),
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              step.title,
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                fontWeight: isCurrent
+                                    ? FontWeight.bold
+                                    : (isPassed
+                                          ? FontWeight.w600
+                                          : FontWeight.normal),
+                                color: isCurrent
+                                    ? ColorManger.primary
+                                    : (isPassed
+                                          ? Colors.black87
+                                          : Colors.grey.shade400),
+                              ),
+                            ),
+                            if (step.subtitle != null &&
+                                step.subtitle!.isNotEmpty) ...[
+                              SizedBox(height: 2.h),
+                              Text(
+                                step.subtitle!,
+                                style: TextStyle(
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: isPassed
+                                      ? ColorManger.primaryLight
+                                      : Colors.grey.shade500,
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                     ),
@@ -431,6 +576,74 @@ class _OrderDetailsView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  int _getOrderProgress(int statusCode, bool isSmall) {
+    if (isSmall) {
+      switch (statusCode) {
+        case 8:
+          return 1; // Step 1 is passed, Step 8 is current
+        case 9:
+          return 2; // Step 8 is passed, Step 9 is current
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+          return 3; // All active steps completed (Confirmed)
+        default:
+          return 1;
+      }
+    } else {
+      switch (statusCode) {
+        case 1:
+        case 9:
+        case 8:
+          return 1; // Step 1 is passed, Step 2 is current
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+          return 2; // Confirmed
+        default:
+          return 1;
+      }
+    }
+  }
+
+  int _getStepProgress(int stepIndex, bool isSmall) {
+    if (isSmall) {
+      switch (stepIndex) {
+        case 1:
+          return 1;
+        case 8:
+          return 2;
+        case 9:
+          return 3;
+        // [خطة مستقبلية]
+        // case 3: return 4;
+        // case 4:
+        // case 5: return 5;
+        // case 6: return 6;
+        default:
+          return 1;
+      }
+    } else {
+      switch (stepIndex) {
+        case 1:
+          return 1;
+        case 2:
+          return 2;
+        // [خطة مستقبلية]
+        // case 3: return 3;
+        // case 4:
+        // case 5: return 4;
+        // case 6: return 5;
+        default:
+          return 1;
+      }
+    }
   }
 
   Widget _buildFulfillmentDetailsCard(OrderResponseModel order) {
@@ -485,8 +698,7 @@ class _OrderDetailsView extends StatelessWidget {
                   ? order.truckName!
                   : _getAssignedTruckFromWeight(order.totalWeightTons),
             ),
-            if (order.addressText != null &&
-                order.addressText!.isNotEmpty) ...[
+            if (order.addressText != null && order.addressText!.isNotEmpty) ...[
               SizedBox(height: 8.h),
               _buildDetailRow('عنوان التسليم', order.addressText!),
             ],
@@ -729,7 +941,9 @@ class _OrderDetailsView extends StatelessWidget {
           Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: isCancelling ? null : () => _confirmCancelOrder(context, order, cubit),
+              onTap: isCancelling
+                  ? null
+                  : () => _confirmCancelOrder(context, order, cubit),
               borderRadius: BorderRadius.circular(12.r),
               child: Container(
                 width: double.infinity,
@@ -737,10 +951,7 @@ class _OrderDetailsView extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFFFFF1F2),
                   borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(
-                    color: const Color(0xFFFCA5A5),
-                    width: 1,
-                  ),
+                  border: Border.all(color: const Color(0xFFFCA5A5), width: 1),
                 ),
                 child: isCancelling
                     ? Center(
@@ -950,11 +1161,321 @@ class _OrderDetailsView extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildMerchantApprovalBottomBar(
+    BuildContext context,
+    OrderResponseModel order,
+    OrderDetailsCubit cubit,
+    bool isProcessing,
+  ) {
+    final orderCode = order.orderNumber.isNotEmpty
+        ? order.orderNumber
+        : order.id;
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(20),
+            blurRadius: 10,
+            offset: const Offset(0, -3),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Iconsax.info_circle,
+                  color: const Color(0xFFD97706),
+                  size: 18.sp,
+                ),
+                SizedBox(width: 8.w),
+                Expanded(
+                  child: Text(
+                    'هذا الطلب من عميل فرعي وبانتظار موافقتك كتاجر رئيسي',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: const Color(0xFF92400E),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 10.h),
+            if (isProcessing)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      Color(0xFF059669),
+                    ),
+                  ),
+                ),
+              )
+            else
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () =>
+                          _confirmApprovalInDetails(context, orderCode, cubit),
+                      icon: const Icon(
+                        Icons.check_circle_outline,
+                        color: Colors.white,
+                        size: 18,
+                      ),
+                      label: Text(
+                        'اعتماد الطلب',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF059669),
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        elevation: 0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 10.w),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () =>
+                          _showRejectDialogInDetails(context, orderCode, cubit),
+                      icon: const Icon(
+                        Icons.cancel_outlined,
+                        color: Color(0xFFDC2626),
+                        size: 18,
+                      ),
+                      label: Text(
+                        'رفض الطلب',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFFDC2626),
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(
+                          color: Color(0xFFDC2626),
+                          width: 1.2,
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmApprovalInDetails(
+    BuildContext context,
+    String orderCode,
+    OrderDetailsCubit cubit,
+  ) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.check_circle_outline,
+              color: const Color(0xFF059669),
+              size: 24.sp,
+            ),
+            SizedBox(width: 8.w),
+            Text(
+              'اعتماد الطلب',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'هل أنت متأكد من اعتماد طلب العميل الفرعي رقم #$orderCode؟\nسيتم إرسال الطلب تلقائياً لإدارة ومبيعات المصنع لتأكيده وتجهيزه.',
+          style: TextStyle(fontSize: 13.sp, height: 1.5, color: Colors.black87),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final success = await cubit.reviewOrder(isApproved: true);
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? 'تم اعتماد الطلب بنجاح وإرساله للمبيعات'
+                          : 'حدث خطأ أثناء اعتماد الطلب',
+                    ),
+                    backgroundColor: success
+                        ? const Color(0xFF059669)
+                        : Colors.red,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF059669),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: const Text(
+              'تأكيد الاعتماد',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showRejectDialogInDetails(
+    BuildContext context,
+    String orderCode,
+    OrderDetailsCubit cubit,
+  ) {
+    final reasonController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: Row(
+          children: [
+            Icon(Icons.cancel_outlined, color: Colors.red, size: 24.sp),
+            SizedBox(width: 8.w),
+            Text(
+              'رفض الطلب',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.sp,
+                color: Colors.black,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'الرجاء إدخال سبب الرفض للطلب رقم #$orderCode:',
+              style: TextStyle(fontSize: 13.sp, color: Colors.black87),
+            ),
+            SizedBox(height: 10.h),
+            TextField(
+              controller: reasonController,
+              maxLines: 3,
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'سبب الرفض (اختياري)...',
+                hintStyle: TextStyle(fontSize: 12.sp, color: Colors.grey),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                  borderSide: const BorderSide(color: Color(0xFFDC2626)),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(ctx);
+              final reason = reasonController.text.trim();
+              final success = await cubit.reviewOrder(
+                isApproved: false,
+                rejectionReason: reason.isEmpty ? null : reason,
+              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? 'تم رفض الطلب بنجاح'
+                          : 'حدث خطأ أثناء رفض الطلب',
+                    ),
+                    backgroundColor: success ? Colors.orange : Colors.red,
+                  ),
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+            ),
+            child: const Text(
+              'تأكيد الرفض',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _TimelineStepData {
   final String title;
   final int stepIndex;
+  final String? subtitle;
 
-  const _TimelineStepData({required this.title, required this.stepIndex});
+  const _TimelineStepData({
+    required this.title,
+    required this.stepIndex,
+    this.subtitle,
+  });
 }

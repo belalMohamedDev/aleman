@@ -26,6 +26,11 @@ abstract class OrderRepository {
     int page = 1,
     int pageSize = 10,
   });
+  Future<ApiResult<void>> reviewOrderByMerchant({
+    required String orderId,
+    required bool isApproved,
+    String? rejectionReason,
+  });
 }
 
 class OrderRepositoryImplement implements OrderRepository {
@@ -154,6 +159,27 @@ class OrderRepositoryImplement implements OrderRepository {
       return ApiResult.failure(
         ApiErrorModel(message: 'فشل في استلام رابط الإيصال من الخادم'),
       );
+    } catch (e) {
+      return ApiResult.failure(ApiErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<void>> reviewOrderByMerchant({
+    required String orderId,
+    required bool isApproved,
+    String? rejectionReason,
+  }) async {
+    try {
+      final dio = DioFactory.getDio();
+      await dio.post(
+        '${ApiConstants.orders}/$orderId/merchant-approval',
+        data: {
+          'isApproved': isApproved,
+          'rejectionReason': rejectionReason,
+        },
+      );
+      return const ApiResult.success(null);
     } catch (e) {
       return ApiResult.failure(ApiErrorHandler.handle(e));
     }

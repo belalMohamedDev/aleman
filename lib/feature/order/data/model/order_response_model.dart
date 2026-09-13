@@ -67,6 +67,14 @@ class OrderResponseModel {
   final String? notes;
   final List<OrderItemModel> items;
 
+  // حقول دورة موافقات العميل الفرعي
+  final DateTime? merchantApprovedAt;
+  final String? merchantRejectionReason;
+  final DateTime? adminApprovedAt;
+  final String? adminRejectionReason;
+  final String? parentMerchantName;
+  final bool isSmallMerchantOrder;
+
   const OrderResponseModel({
     required this.id,
     required this.orderNumber,
@@ -93,6 +101,12 @@ class OrderResponseModel {
     this.addressText,
     this.notes,
     this.items = const [],
+    this.merchantApprovedAt,
+    this.merchantRejectionReason,
+    this.adminApprovedAt,
+    this.adminRejectionReason,
+    this.parentMerchantName,
+    this.isSmallMerchantOrder = false,
   });
 
   factory OrderResponseModel.fromId(String id) => OrderResponseModel(
@@ -115,8 +129,12 @@ class OrderResponseModel {
   bool get isOutForDelivery => statusCode == 4;
   bool get isReadyForPickup => statusCode == 5;
   bool get isCompleted => statusCode == 6;
-  bool get isCancelled => statusCode == 7;
-  bool get isActive => statusCode >= 1 && statusCode <= 5;
+  bool get isCancelled => statusCode == 7 || statusCode == 10 || statusCode == 11;
+  bool get isPendingMerchantApproval => statusCode == 8;
+  bool get isPendingAdminApproval => statusCode == 9;
+  bool get isRejectedByMerchant => statusCode == 10;
+  bool get isRejectedByAdmin => statusCode == 11;
+  bool get isActive => (statusCode >= 1 && statusCode <= 5) || statusCode == 8 || statusCode == 9;
 
   factory OrderResponseModel.fromJson(Map<String, dynamic> json) {
     int parsedStatusCode = 1;
@@ -152,6 +170,18 @@ class OrderResponseModel {
           break;
         case 7:
           statusText = 'ملغي';
+          break;
+        case 8:
+          statusText = 'قيد موافقة التاجر الرئيسي';
+          break;
+        case 9:
+          statusText = 'قيد موافقة الإدارة والمبيعات';
+          break;
+        case 10:
+          statusText = 'مرفوض من التاجر الرئيسي';
+          break;
+        case 11:
+          statusText = 'مرفوض من الإدارة';
           break;
         default:
           statusText = 'قيد الانتظار';
@@ -243,6 +273,19 @@ class OrderResponseModel {
       addressText: addressText,
       notes: cleanStr(json['notes']),
       items: parsedItems,
+      merchantApprovedAt: json['merchantApprovedAt'] != null
+          ? DateTime.tryParse(json['merchantApprovedAt'] as String)
+          : null,
+      merchantRejectionReason: cleanStr(json['merchantRejectionReason']),
+      adminApprovedAt: json['adminApprovedAt'] != null
+          ? DateTime.tryParse(json['adminApprovedAt'] as String)
+          : null,
+      adminRejectionReason: cleanStr(json['adminRejectionReason']),
+      parentMerchantName: cleanStr(json['parentMerchantName']),
+      isSmallMerchantOrder: json['isSmallMerchantOrder'] == true ||
+          cleanStr(json['parentMerchantName']) != null ||
+          parsedStatusCode == 8 ||
+          parsedStatusCode == 10,
     );
   }
 }
