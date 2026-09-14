@@ -1,3 +1,5 @@
+import 'package:aleman/core/network/api_constant/api_constant.dart';
+
 class OrderItemModel {
   final int id;
   final String productName;
@@ -76,6 +78,13 @@ class OrderResponseModel {
   final bool isSmallMerchantOrder;
   final bool hidePrices;
 
+  // حقول السداد بالتحويل البنكي
+  final String? paymentReceiptUrl;
+  final DateTime? paymentReceiptUploadedAt;
+  final DateTime? paymentApprovedAt;
+  final String? paymentRejectionReason;
+  final int paymentStatus; // 1: Pending, 2: AwaitingReceipt, 3: ReceiptUploaded, 4: Approved, 5: Rejected
+
   const OrderResponseModel({
     required this.id,
     required this.orderNumber,
@@ -109,7 +118,92 @@ class OrderResponseModel {
     this.parentMerchantName,
     this.isSmallMerchantOrder = false,
     this.hidePrices = false,
+    this.paymentReceiptUrl,
+    this.paymentReceiptUploadedAt,
+    this.paymentApprovedAt,
+    this.paymentRejectionReason,
+    this.paymentStatus = 1,
   });
+
+  OrderResponseModel copyWith({
+    String? id,
+    String? orderNumber,
+    int? orderType,
+    String? orderTypeName,
+    double? subTotal,
+    double? shippingFee,
+    double? discount,
+    double? total,
+    int? paymentMethod,
+    String? paymentMethodName,
+    int? statusCode,
+    String? status,
+    double? totalWeightTons,
+    int? totalItemsCount,
+    DateTime? createdAt,
+    String? truckName,
+    String? driverName,
+    String? vehiclePlateNumber,
+    String? driverLicenseNumber,
+    DateTime? expectedPickupDate,
+    String? customerName,
+    String? userId,
+    String? addressText,
+    String? notes,
+    List<OrderItemModel>? items,
+    DateTime? merchantApprovedAt,
+    String? merchantRejectionReason,
+    DateTime? adminApprovedAt,
+    String? adminRejectionReason,
+    String? parentMerchantName,
+    bool? isSmallMerchantOrder,
+    bool? hidePrices,
+    String? paymentReceiptUrl,
+    DateTime? paymentReceiptUploadedAt,
+    DateTime? paymentApprovedAt,
+    String? paymentRejectionReason,
+    int? paymentStatus,
+  }) {
+    return OrderResponseModel(
+      id: id ?? this.id,
+      orderNumber: orderNumber ?? this.orderNumber,
+      orderType: orderType ?? this.orderType,
+      orderTypeName: orderTypeName ?? this.orderTypeName,
+      subTotal: subTotal ?? this.subTotal,
+      shippingFee: shippingFee ?? this.shippingFee,
+      discount: discount ?? this.discount,
+      total: total ?? this.total,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      paymentMethodName: paymentMethodName ?? this.paymentMethodName,
+      statusCode: statusCode ?? this.statusCode,
+      status: status ?? this.status,
+      totalWeightTons: totalWeightTons ?? this.totalWeightTons,
+      totalItemsCount: totalItemsCount ?? this.totalItemsCount,
+      createdAt: createdAt ?? this.createdAt,
+      truckName: truckName ?? this.truckName,
+      driverName: driverName ?? this.driverName,
+      vehiclePlateNumber: vehiclePlateNumber ?? this.vehiclePlateNumber,
+      driverLicenseNumber: driverLicenseNumber ?? this.driverLicenseNumber,
+      expectedPickupDate: expectedPickupDate ?? this.expectedPickupDate,
+      customerName: customerName ?? this.customerName,
+      userId: userId ?? this.userId,
+      addressText: addressText ?? this.addressText,
+      notes: notes ?? this.notes,
+      items: items ?? this.items,
+      merchantApprovedAt: merchantApprovedAt ?? this.merchantApprovedAt,
+      merchantRejectionReason: merchantRejectionReason ?? this.merchantRejectionReason,
+      adminApprovedAt: adminApprovedAt ?? this.adminApprovedAt,
+      adminRejectionReason: adminRejectionReason ?? this.adminRejectionReason,
+      parentMerchantName: parentMerchantName ?? this.parentMerchantName,
+      isSmallMerchantOrder: isSmallMerchantOrder ?? this.isSmallMerchantOrder,
+      hidePrices: hidePrices ?? this.hidePrices,
+      paymentReceiptUrl: paymentReceiptUrl ?? this.paymentReceiptUrl,
+      paymentReceiptUploadedAt: paymentReceiptUploadedAt ?? this.paymentReceiptUploadedAt,
+      paymentApprovedAt: paymentApprovedAt ?? this.paymentApprovedAt,
+      paymentRejectionReason: paymentRejectionReason ?? this.paymentRejectionReason,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+    );
+  }
 
   factory OrderResponseModel.fromId(String id) => OrderResponseModel(
     id: id,
@@ -125,6 +219,7 @@ class OrderResponseModel {
 
   bool get isWesal => orderType == 1;
   bool get isFactoryPickup => orderType == 2;
+  bool get isBankTransfer => paymentMethod == 3;
   bool get isPending => statusCode == 1;
   bool get isConfirmed => statusCode == 2;
   bool get isPreparing => statusCode == 3;
@@ -136,7 +231,67 @@ class OrderResponseModel {
   bool get isPendingAdminApproval => statusCode == 9;
   bool get isRejectedByMerchant => statusCode == 10;
   bool get isRejectedByAdmin => statusCode == 11;
-  bool get isActive => (statusCode >= 1 && statusCode <= 5) || statusCode == 8 || statusCode == 9;
+  bool get isPendingPaymentApproval =>
+      isBankTransfer &&
+      !isCancelled &&
+      (statusCode == 12 ||
+          paymentStatus == 3 ||
+          ((paymentReceiptUrl != null && paymentReceiptUrl!.isNotEmpty) &&
+              paymentApprovedAt == null &&
+              statusCode != 3 &&
+              statusCode != 4 &&
+              statusCode != 5 &&
+              statusCode != 6));
+
+  bool get isAwaitingPaymentReceipt =>
+      isBankTransfer &&
+      !isCancelled &&
+      !isPendingMerchantApproval &&
+      !isPendingAdminApproval &&
+      !isPendingPaymentApproval &&
+      (statusCode == 2 ||
+          paymentStatus == 2 ||
+          (adminApprovedAt != null &&
+              (paymentReceiptUrl == null || paymentReceiptUrl!.isEmpty) &&
+              statusCode != 3 &&
+              statusCode != 4 &&
+              statusCode != 5 &&
+              statusCode != 6));
+
+  bool get isPaymentApproved =>
+      isBankTransfer &&
+      (paymentStatus == 4 ||
+          paymentApprovedAt != null ||
+          statusCode == 3 ||
+          statusCode == 4 ||
+          statusCode == 5 ||
+          statusCode == 6);
+
+  bool get isPaymentReceiptRejected =>
+      isBankTransfer &&
+      (paymentStatus == 5 ||
+          (paymentRejectionReason != null &&
+              paymentRejectionReason!.isNotEmpty &&
+              paymentApprovedAt == null));
+
+  /// رابط الإيصال البنكي الكامل مدمجاً بعنوان السيرفر الأساسي (Base URL)
+  String? get fullPaymentReceiptUrl {
+    if (paymentReceiptUrl == null || paymentReceiptUrl!.trim().isEmpty) {
+      return null;
+    }
+    final trimmed = paymentReceiptUrl!.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      return trimmed;
+    }
+    final cleanPath = trimmed.startsWith('/') ? trimmed : '/$trimmed';
+    return '${ApiConstants.baseUrl}$cleanPath';
+  }
+
+  bool get isActive =>
+      (statusCode >= 1 && statusCode <= 5) ||
+      statusCode == 8 ||
+      statusCode == 9 ||
+      statusCode == 12;
 
   /// تحقق مما إذا كان يجب حجب الأسعار عن العميل الفرعي
   /// للتاجر الرئيسي: لا يتم حجب الأسعار أبداً (isParentView == true)
@@ -202,6 +357,9 @@ class OrderResponseModel {
         case 11:
           statusText = 'مرفوض من الإدارة';
           break;
+        case 12:
+          statusText = 'قيد مراجعة التحويل البنكي';
+          break;
         default:
           statusText = 'قيد الانتظار';
       }
@@ -233,7 +391,9 @@ class OrderResponseModel {
     final rawPayName = cleanStr(json['paymentMethodName']);
     final paymentMethodName =
         rawPayName ??
-        ((json['paymentMethod'] == 2) ? 'بطاقة دفع' : 'كاش عند الاستلام');
+        ((json['paymentMethod'] == 2)
+            ? 'بطاقة دفع'
+            : (json['paymentMethod'] == 3 ? 'تحويل بنكي' : 'كاش عند الاستلام'));
 
     String? addressText;
     if (json['deliveryAddress'] is Map) {
@@ -252,24 +412,42 @@ class OrderResponseModel {
       addressText = cleanStr(json['addressText']);
     }
 
+    final parsedSubTotal =
+        (json['subtotal'] as num?)?.toDouble() ??
+        (json['subTotal'] as num?)?.toDouble() ??
+        0.0;
+    final parsedShipping = (json['shippingFee'] as num?)?.toDouble() ?? 0.0;
+    final parsedDiscount =
+        (json['discountAmount'] as num?)?.toDouble() ??
+        (json['discount'] as num?)?.toDouble() ??
+        0.0;
+    var parsedTotal =
+        (json['totalAmount'] as num?)?.toDouble() ??
+        (json['total'] as num?)?.toDouble() ??
+        0.0;
+
+    if (parsedTotal <= 0 && parsedSubTotal > 0) {
+      parsedTotal = parsedSubTotal + parsedShipping - parsedDiscount;
+    }
+    if (parsedTotal <= 0 && parsedItems.isNotEmpty) {
+      final itemsSum = parsedItems.fold<double>(
+        0.0,
+        (sum, item) => sum + item.totalPrice,
+      );
+      if (itemsSum > 0) {
+        parsedTotal = itemsSum + parsedShipping - parsedDiscount;
+      }
+    }
+
     return OrderResponseModel(
       id: rawId,
       orderNumber: orderNumber,
       orderType: (json['orderType'] as num?)?.toInt() ?? 1,
       orderTypeName: orderTypeName,
-      subTotal:
-          (json['subtotal'] as num?)?.toDouble() ??
-          (json['subTotal'] as num?)?.toDouble() ??
-          0.0,
-      shippingFee: (json['shippingFee'] as num?)?.toDouble() ?? 0.0,
-      discount:
-          (json['discountAmount'] as num?)?.toDouble() ??
-          (json['discount'] as num?)?.toDouble() ??
-          0.0,
-      total:
-          (json['totalAmount'] as num?)?.toDouble() ??
-          (json['total'] as num?)?.toDouble() ??
-          0.0,
+      subTotal: parsedSubTotal,
+      shippingFee: parsedShipping,
+      discount: parsedDiscount,
+      total: parsedTotal,
       paymentMethod: (json['paymentMethod'] as num?)?.toInt() ?? 1,
       paymentMethodName: paymentMethodName,
       statusCode: parsedStatusCode,
@@ -307,6 +485,18 @@ class OrderResponseModel {
           parsedStatusCode == 8 ||
           parsedStatusCode == 10,
       hidePrices: json['hidePrices'] == true,
+      paymentReceiptUrl:
+          cleanStr(json['paymentReceiptUrl'] ?? json['receiptUrl']),
+      paymentReceiptUploadedAt: json['paymentReceiptUploadedAt'] != null
+          ? DateTime.tryParse(json['paymentReceiptUploadedAt'] as String)
+          : null,
+      paymentApprovedAt: json['paymentApprovedAt'] != null
+          ? DateTime.tryParse(json['paymentApprovedAt'] as String)
+          : null,
+      paymentRejectionReason: cleanStr(
+        json['paymentRejectionReason'] ?? json['paymentRejectReason'],
+      ),
+      paymentStatus: (json['paymentStatus'] as num?)?.toInt() ?? 1,
     );
   }
 }

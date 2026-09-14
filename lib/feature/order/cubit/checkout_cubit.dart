@@ -367,26 +367,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           );
           return false;
         }
-      } else if (state.currentStep == 3) {
-        if (state.paymentMethod == PaymentMethodType.bankTransfer) {
-          if (state.isUploadingReceipt) {
-            emit(
-              state.copyWith(
-                errorMessage: 'جاري رفع إيصال التحويل، يرجى الانتظار',
-              ),
-            );
-            return false;
-          }
-          if (state.paymentReceiptUrl == null ||
-              state.paymentReceiptUrl!.trim().isEmpty) {
-            emit(
-              state.copyWith(
-                errorMessage: 'يرجى إرفاق إيصال التحويل البنكي للمتابعة',
-              ),
-            );
-            return false;
-          }
-        }
+        // التحويل البنكي لا يتطلب رفع إيصال أثناء إتمام الشراء، بل سيتم بعد اعتماد الطلب
       }
     } else {
       if (state.currentStep == 1) {
@@ -407,25 +388,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           return false;
         }
       } else if (state.currentStep == 2) {
-        if (state.paymentMethod == PaymentMethodType.bankTransfer) {
-          if (state.isUploadingReceipt) {
-            emit(
-              state.copyWith(
-                errorMessage: 'جاري رفع إيصال التحويل، يرجى الانتظار',
-              ),
-            );
-            return false;
-          }
-          if (state.paymentReceiptUrl == null ||
-              state.paymentReceiptUrl!.trim().isEmpty) {
-            emit(
-              state.copyWith(
-                errorMessage: 'يرجى إرفاق إيصال التحويل البنكي للمتابعة',
-              ),
-            );
-            return false;
-          }
-        }
+        // التحويل البنكي لا يتطلب رفع إيصال أثناء إتمام الشراء، بل سيتم بعد اعتماد الطلب
       }
     }
 

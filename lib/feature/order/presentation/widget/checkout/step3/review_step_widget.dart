@@ -194,19 +194,8 @@ class ReviewStepWidget extends StatelessWidget {
           if (state.paymentMethod == PaymentMethodType.bankTransfer) ...[
             SizedBox(height: 6.h),
             _buildInfoRow(
-              'إيصال التحويل',
-              state.paymentReceiptUrl != null
-                  ? (((state.receiptFile?.path.toLowerCase().endsWith('.pdf') ??
-                              false) ||
-                          (state.paymentReceiptUrl
-                                  ?.toLowerCase()
-                                  .split('?')
-                                  .first
-                                  .endsWith('.pdf') ??
-                              false))
-                      ? 'مرفق (مستند PDF)'
-                      : 'مرفق (صورة الإيصال)')
-                  : 'غير مرفق',
+              'حالة السداد',
+              'سداد بالتحويل بعد موافقة واعتماد إدارة المصنع',
             ),
           ],
           if (state.couponCode != null && state.couponCode!.isNotEmpty) ...[
