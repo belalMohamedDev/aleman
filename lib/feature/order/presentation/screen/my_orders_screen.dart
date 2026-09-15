@@ -522,7 +522,6 @@ class _MyOrdersView extends StatelessWidget {
             ),
             SizedBox(height: 12.h),
 
-            // Footer: شارة الحالة + زر السهم للتفاصيل
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -623,26 +622,26 @@ class _MyOrdersView extends StatelessWidget {
   Color _getStatusColor(int statusCode) {
     switch (statusCode) {
       case 8:
-        return const Color(0xFFD97706); // قيد موافقة التاجر الرئيسي
+        return const Color(0xFFD97706);
       case 9:
-        return const Color(0xFF0284C7); // قيد موافقة الإدارة والمبيعات
+        return const Color(0xFF0284C7);
       case 1:
-        return const Color(0xFFD97706); // قيد الانتظار (أصفر كهرماني)
+        return const Color(0xFFD97706);
       case 2:
-        return const Color(0xFF2563EB); // تم التأكيد (أزرق)
+        return const Color(0xFF2563EB);
       case 3:
-        return const Color(0xFF7C3AED); // قيد التجهيز (بنفسجي)
+        return const Color(0xFF7C3AED);
       case 4:
       case 5:
         return const Color(
           0xFF0D9488,
-        ); // خرج للتوصيل / جاهز للتحميل (سماوي مائل للأخضر)
+        );
       case 6:
-        return const Color(0xFF16A34A); // مكتمل (أخضر)
+        return const Color(0xFF16A34A);
       case 7:
       case 10:
       case 11:
-        return const Color(0xFFDC2626); // ملغي / مرفوض (أحمر)
+        return const Color(0xFFDC2626);
       default:
         return Colors.grey.shade700;
     }

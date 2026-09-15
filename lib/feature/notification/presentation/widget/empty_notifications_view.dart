@@ -55,7 +55,6 @@ class EmptyNotificationsView extends StatelessWidget {
               //   ),
               //   icon: const Icon(Icons.refresh),
               //   label: Text(
-              //     'تحديث',
               //     style: getBoldStyle(
               //       fontSize: 14.sp,
               //       color: ColorManger.white,

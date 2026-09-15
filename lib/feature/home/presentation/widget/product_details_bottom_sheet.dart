@@ -861,8 +861,6 @@ class _ActionBar extends StatelessWidget {
 
                   // 5. User feedback toast
                   // final unitLabel = isTonMode
-                  //     ? 'طن'
-                  //     : 'شكارة (${packageWeight > 0 ? packageWeight.toStringAsFixed(0) : ''} كجم)';
                   // final qtyLabel = quantity == quantity.truncateToDouble()
                   //     ? quantity.toInt().toString()
                   //     : quantity.toStringAsFixed(1);
@@ -871,13 +869,10 @@ class _ActionBar extends StatelessWidget {
                   //   isTonMode: isTonMode,
                   //   packageWeightKg: packageWeight,
                   // );
-                  // final detailNote = isTonMode ? ' ($bagsCount شكارة)' : '';
 
                   // AppToast.showSuccess(
                   //   context,
-                  //   title: 'أضيف للسلة 🌾',
                   //   message:
-                  //       'تمت إضافة $qtyLabel $unitLabel$detailNote من ${product.name} للسلة',
                   // );
 
                   // 6. Pop the bottom sheet immediately

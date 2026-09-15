@@ -62,10 +62,8 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
     final title = notification.title.toLowerCase();
     final body = notification.body.toLowerCase();
 
-    // العميل الفرعي لا يوافق ولا يعتمد الطلبات
     if (UserRoleHelper.isSmallMerchantSync()) return false;
 
-    // إذا كان الإشعار موجهاً لصاحب الطلب نفسه لإخباره بحالة طلبه
     if (title.contains('طلبك') ||
         body.contains('طلبك') ||
         body.contains('بانتظار موافقة التاجر') ||

@@ -37,7 +37,6 @@ class ReviewStepWidget extends StatelessWidget {
         ),
         SizedBox(height: 12.h),
 
-        // Fulfillment Card (وصال أو أرض المصنع)
         _buildFulfillmentCard(),
         SizedBox(height: 12.h),
 
@@ -139,10 +138,19 @@ class ReviewStepWidget extends StatelessWidget {
             SizedBox(height: 6.h),
             _buildInfoRow(
               'نوع سيارة الشحن',
-              state.selectedTruckType?.title ?? 'غير محدد',
+              state.selectedTruckType != null
+                  ? (state.requiredTrucksCount > 1
+                      ? '${state.selectedTruckType!.title} (${state.requiredTrucksCount} سيارات مطلوبة)'
+                      : state.selectedTruckType!.title)
+                  : 'غير محدد',
             ),
             SizedBox(height: 6.h),
-            _buildInfoRow('تكلفة الشحن', '${state.shippingFee} ج.م'),
+            _buildInfoRow(
+              state.requiredTrucksCount > 1
+                  ? 'تكلفة الشحن الإجمالية'
+                  : 'تكلفة الشحن',
+              '${state.shippingFee} ج.م',
+            ),
           ] else ...[
             _buildInfoRow('اسم السائق', state.driverName),
             SizedBox(height: 6.h),
@@ -157,7 +165,6 @@ class ReviewStepWidget extends StatelessWidget {
               ),
             ],
             // SizedBox(height: 6.h),
-            // _buildInfoRow('تكلفة الشحن', 'شحن مجاني (0 ج.م)'),
           ],
         ],
       ),
@@ -231,7 +238,6 @@ class ReviewStepWidget extends StatelessWidget {
           ),
           SizedBox(height: 12.h),
 
-          // إجمالي وزن الطلب
           if (state.totalWeightTons > 0) ...[
             _buildSummaryRow(
               'إجمالي وزن الطلبات',
@@ -254,9 +260,19 @@ class ReviewStepWidget extends StatelessWidget {
           if (state.isWesal && state.shippingFee > 0) ...[
             SizedBox(height: 8.h),
             _buildSummaryRow(
-              'تكلفة الشحن والتوصيل',
+              state.requiredTrucksCount > 1
+                  ? 'تكلفة الشحن والتوصيل (${state.requiredTrucksCount} سيارات)'
+                  : 'تكلفة الشحن والتوصيل',
               '${state.shippingFee} ج.م',
             ),
+            if (state.shippingDiscountAmount > 0) ...[
+              SizedBox(height: 6.h),
+              _buildSummaryRow(
+                'خصم عرض الشحن (${state.shippingPromotion?.title ?? "عرض خاص"})',
+                '- ${state.shippingDiscountAmount.toInt()} ج.م',
+                isDiscount: true,
+              ),
+            ],
           ],
 
           Divider(height: 24.h, color: Colors.grey.shade300),

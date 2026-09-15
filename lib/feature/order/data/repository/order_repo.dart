@@ -203,7 +203,6 @@ class OrderRepositoryImplement implements OrderRepository {
       }
       return ApiResult.success(response.data?.toString() ?? 'uploaded');
     } catch (e) {
-      // Fallback: جلب رابط الرفع الافتراضي إذا كان الـ endpoint القديم هو النشط
       try {
         final fallback = await uploadReceipt(file);
         return fallback;
@@ -237,7 +236,6 @@ class OrderRepositoryImplement implements OrderRepository {
       }
       return ApiResult.success(_getDefaultBankAccounts());
     } catch (e) {
-      // إرجاع حسابات المصنع الافتراضية كـ Fallback آمن لضمان عدم توقف واجهة العميل
       return ApiResult.success(_getDefaultBankAccounts());
     }
   }

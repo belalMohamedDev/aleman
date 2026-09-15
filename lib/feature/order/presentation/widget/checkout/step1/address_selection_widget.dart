@@ -194,7 +194,6 @@ class AddressSelectionWidget extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // مؤشر الاختيار (Custom Radio)
             Container(
               margin: EdgeInsets.only(top: 2.h),
               width: 20.w,
@@ -213,7 +212,6 @@ class AddressSelectionWidget extends StatelessWidget {
             ),
             SizedBox(width: 10.w),
 
-            // تفاصيل العنوان
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -284,7 +282,6 @@ class AddressSelectionWidget extends StatelessWidget {
               ),
             ),
 
-            // أيقونة الموقع
             Container(
               padding: EdgeInsets.all(7.r),
               decoration: BoxDecoration(

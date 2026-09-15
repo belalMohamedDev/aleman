@@ -33,7 +33,6 @@ class LoginView extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               // Text(
-              //   "تواصل معنا",
               //   style: Theme.of(context).textTheme.titleLarge
               //       ?.copyWith(fontWeight: FontWeight.bold),
               // ),

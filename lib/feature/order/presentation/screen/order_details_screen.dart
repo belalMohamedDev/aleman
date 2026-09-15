@@ -702,7 +702,6 @@ class _OrderDetailsView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // مقبض السحب
             Container(
               width: 40.w,
               height: 4.h,
@@ -713,7 +712,6 @@ class _OrderDetailsView extends StatelessWidget {
             ),
             SizedBox(height: 20.h),
 
-            // أيقونة التحذير
             Container(
               padding: EdgeInsets.all(16.r),
               decoration: BoxDecoration(
@@ -756,7 +754,6 @@ class _OrderDetailsView extends StatelessWidget {
             ),
             SizedBox(height: 14.h),
 
-            // لافتة تنبيه
             Container(
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
@@ -787,7 +784,6 @@ class _OrderDetailsView extends StatelessWidget {
             ),
             SizedBox(height: 24.h),
 
-            // أزرار التحكم
             Row(
               children: [
                 Expanded(

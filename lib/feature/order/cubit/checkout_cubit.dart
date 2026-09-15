@@ -166,6 +166,13 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     }
   }
 
+  void applyRecommendedTruck(TruckType truck) {
+    emit(state.copyWith(selectedTruckType: truck));
+    if (state.selectedAddress != null) {
+      calculateShipping();
+    }
+  }
+
   Future<void> calculateShipping() async {
     if (state.selectedAddress == null || state.selectedTruckType == null) {
       return;
@@ -176,36 +183,67 @@ class CheckoutCubit extends Cubit<CheckoutState> {
     final request = CalculateShippingRequest(
       addressId: state.selectedAddress!.id,
       truckType: state.selectedTruckType!.value,
+      totalWeightTons: state.totalWeightTons > 0 ? state.totalWeightTons : null,
     );
 
     final result = await _orderRepository.calculateShipping(request);
     result.when(
       success: (response) {
+        final singleFee = response.singleTruckFeeAfterDiscount > 0
+            ? response.singleTruckFeeAfterDiscount
+            : (response.requiredTrucksCount > 0
+                ? (response.shippingFee / response.requiredTrucksCount)
+                : response.shippingFee);
+
         emit(
           state.copyWith(
             status: CheckoutStatus.initial,
             shippingFee: response.shippingFee,
             estimatedDelivery: response.estimatedDelivery ?? 'خلال 24-48 ساعة',
+            requiredTrucksCount: response.requiredTrucksCount,
+            singleTruckFee: singleFee,
+            totalOriginalShippingFee: response.totalOriginalShippingFee,
+            shippingDiscountAmount: response.totalDiscountAmount,
+            shippingPromotion: response.promotion,
+            clearShippingPromotion: response.promotion == null,
+            shippingRecommendation: response.recommendation,
+            clearShippingRecommendation: response.recommendation == null,
           ),
         );
       },
       failure: (_) {
-        double fallbackFee = 250.0;
+        final capacity = state.selectedTruckType!.maxCapacityTons;
+        final int calculatedCount =
+            (state.totalWeightTons > 0 && capacity > 0)
+                ? (state.totalWeightTons / capacity).ceil()
+                : 1;
+        final int trucksCount = calculatedCount > 0 ? calculatedCount : 1;
+
+        double baseFeePerTruck = 250.0;
         switch (state.selectedTruckType!) {
           case TruckType.dababa:
-            fallbackFee = 250.0;
+            baseFeePerTruck = 250.0;
             break;
           case TruckType.jumbo:
-            fallbackFee = 500.0;
+            baseFeePerTruck = 500.0;
             break;
           case TruckType.trella:
-            fallbackFee = 1200.0;
+            baseFeePerTruck = 1200.0;
             break;
         }
+
+        final double totalFee = baseFeePerTruck * trucksCount;
+
         emit(
           state.copyWith(
             status: CheckoutStatus.initial,
-            shippingFee: fallbackFee,
+            shippingFee: totalFee,
+            singleTruckFee: baseFeePerTruck,
+            totalOriginalShippingFee: totalFee,
+            shippingDiscountAmount: 0.0,
+            requiredTrucksCount: trucksCount,
+            clearShippingPromotion: true,
+            clearShippingRecommendation: true,
             estimatedDelivery: 'خلال 24-48 ساعة (تقديري)',
           ),
         );
@@ -367,7 +405,6 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           );
           return false;
         }
-        // التحويل البنكي لا يتطلب رفع إيصال أثناء إتمام الشراء، بل سيتم بعد اعتماد الطلب
       }
     } else {
       if (state.currentStep == 1) {
@@ -388,7 +425,6 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           return false;
         }
       } else if (state.currentStep == 2) {
-        // التحويل البنكي لا يتطلب رفع إيصال أثناء إتمام الشراء، بل سيتم بعد اعتماد الطلب
       }
     }
 
@@ -416,6 +452,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
       orderType: state.orderType.value,
       addressId: state.isWesal ? state.selectedAddress?.id : null,
       truckType: state.isWesal ? state.selectedTruckType?.value : null,
+      truckCount: state.isWesal ? state.requiredTrucksCount : null,
       vehicleId: state.isFactoryPickup ? state.selectedVehicle?.id : null,
       driverName: state.isFactoryPickup ? state.driverName : null,
       vehiclePlateNumber: state.isFactoryPickup

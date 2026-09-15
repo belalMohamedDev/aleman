@@ -229,7 +229,6 @@ class MapCubit extends Cubit<MapState> {
       // Perform the location search
       final ApiResponse<List<MapBoxPlace>> response = await geoCoding.getPlaces(
         query.trim(),
-        // proximity اختياري عشان تُعطي أفضل نتائج حوالين نقطة:
         // proximity: Location(lat: targetPosition.latitude, long: targetPosition.longitude),
       );
 
@@ -242,11 +241,7 @@ class MapCubit extends Cubit<MapState> {
       response.fold(
         (placesList) {
           // placesList: List<MapBoxPlace>
-          // **مهم**: MapState.searchResults لازم تتقبّل نوع اللي هتبعته هنا.
-          // لو MapState حالياً متوقع Google Predictions هتحتاج:
-          //  - تحول MapBoxPlace -> نموذج موحد (مثلاً SearchSuggestion)
-          //  - أو تضيف حالة جديدة في MapState
-          emit(MapState.searchResults(placesList)); // عدّل حسب تعريفك
+          emit(MapState.searchResults(placesList));
         },
         (failure) {
           emit(MapState.error(failure.toString()));

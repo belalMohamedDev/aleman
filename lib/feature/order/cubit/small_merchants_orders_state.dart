@@ -46,7 +46,6 @@ class SmallMerchantsOrdersState {
       } else if (selectedStatus == 1) {
         result = result.where((o) => o.statusCode == 1 || o.statusCode == 9).toList();
       } else if (selectedStatus == 2) {
-        // قيد التجهيز / النقل (2, 3, 4, 5)
         result = result.where((o) => o.statusCode >= 2 && o.statusCode <= 5).toList();
       } else if (selectedStatus == 6) {
         result = result.where((o) => o.statusCode == 6).toList();

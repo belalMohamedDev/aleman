@@ -215,7 +215,6 @@ class FactoryPickupFormWidget extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // مؤشر الاختيار (Custom Radio)
             Container(
               margin: EdgeInsets.only(top: 2.h),
               width: 20.w,
@@ -234,7 +233,6 @@ class FactoryPickupFormWidget extends StatelessWidget {
             ),
             SizedBox(width: 10.w),
 
-            // تفاصيل السيارة والسائق
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,7 +293,6 @@ class FactoryPickupFormWidget extends StatelessWidget {
                   ),
                   SizedBox(height: 6.h),
 
-                  // رقم اللوحة
                   Row(
                     children: [
                       Container(

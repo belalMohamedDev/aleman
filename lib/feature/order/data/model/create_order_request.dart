@@ -1,5 +1,5 @@
 class CreateOrderRequest {
-  final int orderType; // 1: وصال, 2: أرض المصنع
+  final int orderType;
   final String? addressId;
   final int? truckType;
   final String? vehicleId;
@@ -12,11 +12,13 @@ class CreateOrderRequest {
   final String? paymentReceiptUrl;
   final String? couponCode;
   final String? notes;
+  final int? truckCount;
 
   const CreateOrderRequest({
     required this.orderType,
     this.addressId,
     this.truckType,
+    this.truckCount,
     this.vehicleId,
     this.driverName,
     this.vehiclePlateNumber,
@@ -37,6 +39,7 @@ class CreateOrderRequest {
     };
     if (addressId != null) map['addressId'] = addressId;
     if (truckType != null) map['truckType'] = truckType;
+    if (truckCount != null && truckCount! > 0) map['truckCount'] = truckCount;
     if (vehicleId != null && vehicleId!.trim().isNotEmpty) {
       map['vehicleId'] = vehicleId;
     }

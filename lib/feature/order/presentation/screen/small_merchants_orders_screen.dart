@@ -245,7 +245,6 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
               //           SizedBox(width: 8.w),
               //           Expanded(
               //             child: Text(
-              //               'تصفية طلبات: ${widget.merchantName}',
               //               style: TextStyle(
               //                 fontSize: 12.sp,
               //                 fontWeight: FontWeight.bold,
@@ -280,7 +279,6 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
               //                   ),
               //                   SizedBox(width: 3.w),
               //                   Text(
-              //                     'عرض الكل',
               //                     style: TextStyle(
               //                       fontSize: 11.sp,
               //                       fontWeight: FontWeight.bold,
@@ -493,7 +491,6 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
               //       cubit.filterByStatus(null);
               //     },
               //     icon: const Icon(Icons.refresh_rounded, size: 16),
-              //     label: const Text('عرض جميع أوردرات التجار'),
               //     style: OutlinedButton.styleFrom(
               //       foregroundColor: ColorManger.primaryLight,
               //       side: BorderSide(color: ColorManger.primaryLight),
@@ -935,9 +932,9 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
   Color _getStatusColor(int statusCode) {
     switch (statusCode) {
       case 8:
-        return const Color(0xFFD97706); // قيد موافقة التاجر الرئيسي
+        return const Color(0xFFD97706);
       case 9:
-        return const Color(0xFF0284C7); // قيد موافقة الإدارة والمبيعات
+        return const Color(0xFF0284C7);
       case 1:
         return const Color(0xFFD97706);
       case 2:

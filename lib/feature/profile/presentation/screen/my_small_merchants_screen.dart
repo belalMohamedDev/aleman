@@ -119,7 +119,6 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
               //           crossAxisAlignment: CrossAxisAlignment.start,
               //           children: [
               //             Text(
-              //               'شبكة الموزعين المعتمدين',
               //               style: TextStyle(
               //                 fontSize: 15.sp,
               //                 fontWeight: FontWeight.bold,
@@ -128,7 +127,6 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
               //             ),
               //             SizedBox(height: 3.h),
               //             Text(
-              //               'إدارة التجار الصغار ومتابعة طلباتهم بسهولة',
               //               style: TextStyle(
               //                 fontSize: 11.5.sp,
               //                 color: Colors.white.withValues(alpha: 0.85),
@@ -166,7 +164,6 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
               //               ),
               //             ),
               //             Text(
-              //               'تاجر',
               //               style: TextStyle(
               //                 fontSize: 10.sp,
               //                 fontWeight: FontWeight.w600,
@@ -180,7 +177,6 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
               //   ),
               // ),
 
-              // شريط البحث الأنيق (Floating Search Bar)
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
                 child: Container(

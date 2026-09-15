@@ -90,7 +90,6 @@ class _UserVehiclesView extends StatelessWidget {
           //   backgroundColor: ColorManger.buttonColor,
           //   icon: const Icon(Icons.add, color: Colors.white),
           //   label: const Text(
-          //     'إضافة سيارة / سائق',
           //     style: TextStyle(
           //       fontWeight: FontWeight.bold,
           //       color: Colors.white,

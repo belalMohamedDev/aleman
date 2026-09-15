@@ -128,7 +128,6 @@ class ProductCard extends StatelessWidget {
                     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     //   children: [
                     //     Text(
-                    //       '${product.price} ج.م',
                     //       style: Theme.of(context).textTheme.bodyLarge!
                     //           .copyWith(
                     //             color: ColorManger.goldDark,

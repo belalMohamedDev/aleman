@@ -70,7 +70,6 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         //             color: ColorManger.buttonColor,
         //           ),
         //           label: Text(
-        //             'قراءة الكل',
         //             style: getBoldStyle(
         //               fontSize: 12.sp,
         //               color: ColorManger.buttonColor,

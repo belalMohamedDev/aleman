@@ -43,7 +43,7 @@ class OrderItemModel {
 class OrderResponseModel {
   final String id;
   final String orderNumber;
-  final int orderType; // 1: وصال, 2: أرض المصنع
+  final int orderType;
   final String orderTypeName;
   final double subTotal;
   final double shippingFee;
@@ -57,7 +57,6 @@ class OrderResponseModel {
   final int totalItemsCount;
   final DateTime? createdAt;
 
-  // تفاصيل إضافية للشاحنة والسائق والاستلام
   final String? truckName;
   final String? driverName;
   final String? vehiclePlateNumber;
@@ -69,7 +68,6 @@ class OrderResponseModel {
   final String? notes;
   final List<OrderItemModel> items;
 
-  // حقول دورة موافقات العميل الفرعي
   final DateTime? merchantApprovedAt;
   final String? merchantRejectionReason;
   final DateTime? adminApprovedAt;
@@ -78,7 +76,6 @@ class OrderResponseModel {
   final bool isSmallMerchantOrder;
   final bool hidePrices;
 
-  // حقول السداد بالتحويل البنكي
   final String? paymentReceiptUrl;
   final DateTime? paymentReceiptUploadedAt;
   final DateTime? paymentApprovedAt;
@@ -274,7 +271,6 @@ class OrderResponseModel {
               paymentRejectionReason!.isNotEmpty &&
               paymentApprovedAt == null));
 
-  /// رابط الإيصال البنكي الكامل مدمجاً بعنوان السيرفر الأساسي (Base URL)
   String? get fullPaymentReceiptUrl {
     if (paymentReceiptUrl == null || paymentReceiptUrl!.trim().isEmpty) {
       return null;
@@ -293,9 +289,6 @@ class OrderResponseModel {
       statusCode == 9 ||
       statusCode == 12;
 
-  /// تحقق مما إذا كان يجب حجب الأسعار عن العميل الفرعي
-  /// للتاجر الرئيسي: لا يتم حجب الأسعار أبداً (isParentView == true)
-  /// للعميل الفرعي: تُحجب الأسعار بمجرد موافقة الإدارة على طلبه أو إذا حجبها الباك إند
   bool shouldHidePricing({bool isParentView = false}) {
     if (isParentView) return false;
     if (hidePrices) return true;

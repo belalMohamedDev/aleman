@@ -26,12 +26,10 @@ class OrderBankTransferFlowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // إذا لم تكن وسيلة الدفع تحويل بنكي، لا يتم عرض هذا المسار
     if (!order.isBankTransfer) {
       return const SizedBox.shrink();
     }
 
-    // إذا كان الطلب ملغياً بالكامل
     if (order.isCancelled) {
       return const SizedBox.shrink();
     }
@@ -60,21 +58,18 @@ class _BankTransferFlowContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<OrderPaymentCubit, OrderPaymentState>(
       builder: (context, paymentState) {
-        // 1. في حال كان الطلب قيد موافقة التاجر الرئيسي (للعميل الفرعي)
         if (order.isPendingMerchantApproval) {
           return OrderAwaitingMerchantCard(
             parentMerchantName: order.parentMerchantName,
           );
         }
 
-        // 2. في حال كان الطلب قيد مراجعة واعتماد إدارة المصنع
         if (order.isPendingAdminApproval) {
           return OrderAwaitingAdminCard(
             isAfterMerchantApproval: order.merchantApprovedAt != null,
           );
         }
 
-        // 3. في حال تم اعتماد وتأكيد السداد البنكي بنجاح
         if (order.isPaymentApproved) {
           return PaymentApprovedCard(
             approvedAt: order.paymentApprovedAt,
@@ -83,7 +78,6 @@ class _BankTransferFlowContent extends StatelessWidget {
           );
         }
 
-        // 4. في حال تم رفع الإيصال وبانتظار تدقيق ومراجعة الإدارة المالية
         final effectiveReceiptUrl =
             paymentState.uploadedReceiptUrl ?? order.paymentReceiptUrl;
         if (effectiveReceiptUrl != null &&
@@ -123,7 +117,6 @@ class _BankTransferFlowContent extends StatelessWidget {
           );
         }
 
-        // 6. في حال كان الطلب معتمداً وبانتظار سداد وتحويل العميل ورفع الإيصال
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

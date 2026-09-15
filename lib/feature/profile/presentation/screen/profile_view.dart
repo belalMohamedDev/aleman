@@ -302,7 +302,6 @@ class ProfileView extends StatelessWidget {
                   ),
                   SizedBox(height: 24.h),
 
-                  // أزرار التأكيد والإلغاء
                   Row(
                     children: [
                       Expanded(

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:aleman/feature/address/data/model/user_address_model.dart';
+import 'package:aleman/feature/order/data/model/calculate_shipping_model.dart';
 import 'package:aleman/feature/order/data/model/enums/order_enums.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/vehicle/data/model/user_vehicle_model.dart';
@@ -15,13 +16,21 @@ enum CheckoutStatus {
 
 class CheckoutState {
   final CheckoutStatus status;
-  final int currentStep; // 1: استلام وشحن, 2: دفع, 3: مراجعة
+  final int currentStep;
   final OrderType orderType;
   final List<UserAddressModel> addresses;
   final UserAddressModel? selectedAddress;
   final TruckType? selectedTruckType;
   final double shippingFee;
   final String? estimatedDelivery;
+
+  // New shipping details
+  final int requiredTrucksCount;
+  final double singleTruckFee;
+  final double totalOriginalShippingFee;
+  final double shippingDiscountAmount;
+  final ShippingPromotionInfo? shippingPromotion;
+  final ShippingRecommendationModel? shippingRecommendation;
 
   final List<UserVehicleModel> vehicles;
   final UserVehicleModel? selectedVehicle;
@@ -55,6 +64,12 @@ class CheckoutState {
     this.selectedTruckType,
     this.shippingFee = 0.0,
     this.estimatedDelivery,
+    this.requiredTrucksCount = 1,
+    this.singleTruckFee = 0.0,
+    this.totalOriginalShippingFee = 0.0,
+    this.shippingDiscountAmount = 0.0,
+    this.shippingPromotion,
+    this.shippingRecommendation,
     this.totalWeightTons = 0.0,
     this.vehicles = const [],
     this.selectedVehicle,
@@ -78,6 +93,9 @@ class CheckoutState {
   bool get isWesal => orderType == OrderType.delivery;
   bool get isFactoryPickup => orderType == OrderType.factoryPickup;
 
+  bool get hasTruckPromotion =>
+      shippingPromotion != null || shippingDiscountAmount > 0;
+
   int get totalSteps => isWesal ? 4 : 3;
   bool get isLastStep => currentStep == totalSteps;
 
@@ -94,6 +112,14 @@ class CheckoutState {
     TruckType? selectedTruckType,
     double? shippingFee,
     String? estimatedDelivery,
+    int? requiredTrucksCount,
+    double? singleTruckFee,
+    double? totalOriginalShippingFee,
+    double? shippingDiscountAmount,
+    ShippingPromotionInfo? shippingPromotion,
+    bool clearShippingPromotion = false,
+    ShippingRecommendationModel? shippingRecommendation,
+    bool clearShippingRecommendation = false,
     double? totalWeightTons,
     List<UserVehicleModel>? vehicles,
     UserVehicleModel? selectedVehicle,
@@ -131,6 +157,18 @@ class CheckoutState {
           : (selectedTruckType ?? this.selectedTruckType),
       shippingFee: shippingFee ?? this.shippingFee,
       estimatedDelivery: estimatedDelivery ?? this.estimatedDelivery,
+      requiredTrucksCount: requiredTrucksCount ?? this.requiredTrucksCount,
+      singleTruckFee: singleTruckFee ?? this.singleTruckFee,
+      totalOriginalShippingFee:
+          totalOriginalShippingFee ?? this.totalOriginalShippingFee,
+      shippingDiscountAmount:
+          shippingDiscountAmount ?? this.shippingDiscountAmount,
+      shippingPromotion: clearShippingPromotion
+          ? null
+          : (shippingPromotion ?? this.shippingPromotion),
+      shippingRecommendation: clearShippingRecommendation
+          ? null
+          : (shippingRecommendation ?? this.shippingRecommendation),
       totalWeightTons: totalWeightTons ?? this.totalWeightTons,
       vehicles: vehicles ?? this.vehicles,
       selectedVehicle: clearSelectedVehicle

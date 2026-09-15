@@ -6,7 +6,7 @@ class OrdersState {
   final OrdersStatus status;
   final List<OrderResponseModel> orders;
   final String? errorMessage;
-  final int selectedTab; // 0: الطلبات الحالية, 1: الطلبات السابقة
+  final int selectedTab;
   final bool isCancelling;
   final String? actionMessage;
 

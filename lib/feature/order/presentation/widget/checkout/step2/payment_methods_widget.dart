@@ -58,8 +58,6 @@ class PaymentMethodsWidget extends StatelessWidget {
         // // Card
         // _buildMethodCard(
         //   method: PaymentMethodType.card,
-        //   title: 'بطاقة دفع إلكتروني (قريباً)',
-        //   subtitle: 'الدفع بالفيزا أو ماستركارد عبر بوابة الدفع الإلكتروني',
         //   icon: Iconsax.card_pos,
         //   isAvailable: false,
         // ),
