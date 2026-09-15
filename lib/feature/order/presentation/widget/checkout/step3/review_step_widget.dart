@@ -268,7 +268,9 @@ class ReviewStepWidget extends StatelessWidget {
             if (state.shippingDiscountAmount > 0) ...[
               SizedBox(height: 6.h),
               _buildSummaryRow(
-                'خصم عرض الشحن (${state.shippingPromotion?.title ?? "عرض خاص"})',
+                state.shippingPromotion?.discountPercentage != null
+                    ? 'خصم عرض الشحن (${state.shippingPromotion!.discountPercentage!.toInt()}%)'
+                    : 'خصم عرض الشحن الترويجي',
                 '- ${state.shippingDiscountAmount.toInt()} ج.م',
                 isDiscount: true,
               ),
@@ -280,14 +282,17 @@ class ReviewStepWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'إجمالي سعر الطلب النهائي',
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
-                  color: ColorManger.primary,
+              Expanded(
+                child: Text(
+                  'إجمالي سعر الطلب النهائي',
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.bold,
+                    color: ColorManger.primary,
+                  ),
                 ),
               ),
+              SizedBox(width: 8.w),
               Text(
                 '$finalTotal ج.م',
                 style: TextStyle(
@@ -334,10 +339,13 @@ class ReviewStepWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          title,
-          style: TextStyle(fontSize: 13.sp, color: Colors.black54),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(fontSize: 13.sp, color: Colors.black54),
+          ),
         ),
+        SizedBox(width: 8.w),
         Text(
           value,
           style: TextStyle(

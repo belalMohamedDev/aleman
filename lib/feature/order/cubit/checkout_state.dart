@@ -30,6 +30,7 @@ class CheckoutState {
   final double totalOriginalShippingFee;
   final double shippingDiscountAmount;
   final ShippingPromotionInfo? shippingPromotion;
+  final Map<int, ShippingPromotionInfo> truckPromotions;
   final ShippingRecommendationModel? shippingRecommendation;
 
   final List<UserVehicleModel> vehicles;
@@ -69,6 +70,7 @@ class CheckoutState {
     this.totalOriginalShippingFee = 0.0,
     this.shippingDiscountAmount = 0.0,
     this.shippingPromotion,
+    this.truckPromotions = const {},
     this.shippingRecommendation,
     this.totalWeightTons = 0.0,
     this.vehicles = const [],
@@ -94,7 +96,9 @@ class CheckoutState {
   bool get isFactoryPickup => orderType == OrderType.factoryPickup;
 
   bool get hasTruckPromotion =>
-      shippingPromotion != null || shippingDiscountAmount > 0;
+      shippingPromotion != null ||
+      shippingDiscountAmount > 0 ||
+      truckPromotions.isNotEmpty;
 
   int get totalSteps => isWesal ? 4 : 3;
   bool get isLastStep => currentStep == totalSteps;
@@ -118,6 +122,7 @@ class CheckoutState {
     double? shippingDiscountAmount,
     ShippingPromotionInfo? shippingPromotion,
     bool clearShippingPromotion = false,
+    Map<int, ShippingPromotionInfo>? truckPromotions,
     ShippingRecommendationModel? shippingRecommendation,
     bool clearShippingRecommendation = false,
     double? totalWeightTons,
@@ -166,6 +171,7 @@ class CheckoutState {
       shippingPromotion: clearShippingPromotion
           ? null
           : (shippingPromotion ?? this.shippingPromotion),
+      truckPromotions: truckPromotions ?? this.truckPromotions,
       shippingRecommendation: clearShippingRecommendation
           ? null
           : (shippingRecommendation ?? this.shippingRecommendation),

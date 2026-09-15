@@ -19,6 +19,7 @@ class TruckTypeSelectorWidget extends StatelessWidget {
   final double totalOriginalShippingFee;
   final double shippingDiscountAmount;
   final ShippingPromotionInfo? shippingPromotion;
+  final Map<int, ShippingPromotionInfo> truckPromotions;
   final ShippingRecommendationModel? shippingRecommendation;
   final ValueChanged<TruckType>? onApplyRecommendation;
 
@@ -35,6 +36,7 @@ class TruckTypeSelectorWidget extends StatelessWidget {
     this.totalOriginalShippingFee = 0.0,
     this.shippingDiscountAmount = 0.0,
     this.shippingPromotion,
+    this.truckPromotions = const {},
     this.shippingRecommendation,
     this.onApplyRecommendation,
   });
@@ -91,10 +93,7 @@ class TruckTypeSelectorWidget extends StatelessWidget {
         SizedBox(height: 4.h),
         Text(
           'اختر سيارة الشحن المناسبة لحجم حمولتك',
-          style: TextStyle(
-            fontSize: 12.sp,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
         ),
         SizedBox(height: 12.h),
 
@@ -109,7 +108,8 @@ class TruckTypeSelectorWidget extends StatelessWidget {
         ...TruckType.values.map((truck) => _buildTruckCard(truck)),
 
         // Summary Card
-        if (selectedTruck != null && (currentShippingFee > 0 || isCalculating)) ...[
+        if (selectedTruck != null &&
+            (currentShippingFee > 0 || isCalculating)) ...[
           SizedBox(height: 10.h),
           _buildShippingSummaryCard(),
         ],
@@ -245,18 +245,26 @@ class TruckTypeSelectorWidget extends StatelessWidget {
         break;
     }
 
-    final isRecommended = totalWeightTons > 0 &&
-        truck == TruckType.fromWeight(totalWeightTons);
+    final isRecommended =
+        totalWeightTons > 0 && truck == TruckType.fromWeight(totalWeightTons);
     final isOverCapacity = totalWeightTons > truck.maxCapacityTons;
 
     // Calculate how many trucks needed for this truck type
-    final int calculatedTrucks = (totalWeightTons > 0 && truck.maxCapacityTons > 0)
+    final int calculatedTrucks =
+        (totalWeightTons > 0 && truck.maxCapacityTons > 0)
         ? (totalWeightTons / truck.maxCapacityTons).ceil()
         : 1;
     final int truckCount = calculatedTrucks > 0 ? calculatedTrucks : 1;
 
-    final hasPromo = isSelected &&
-        (shippingPromotion != null || shippingDiscountAmount > 0);
+    final promo = truckPromotions[truck.value] ??
+        (shippingPromotion != null &&
+                shippingPromotion!.truckType == truck.value
+            ? shippingPromotion
+            : (isSelected && (shippingDiscountAmount > 0 || shippingPromotion != null)
+                ? shippingPromotion
+                : null));
+    final bool hasPromo = promo != null ||
+        (isSelected && shippingDiscountAmount > 0);
 
     return InkWell(
       onTap: () => onTruckSelected(truck),
@@ -266,9 +274,7 @@ class TruckTypeSelectorWidget extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 10.h),
         padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
         decoration: BoxDecoration(
-          color: isSelected
-              ? primary.withValues(alpha: 0.04)
-              : Colors.white,
+          color: isSelected ? primary.withValues(alpha: 0.04) : Colors.white,
           borderRadius: BorderRadius.circular(14.r),
           border: Border.all(
             color: isSelected ? primary : Colors.grey.shade300,
@@ -312,7 +318,10 @@ class TruckTypeSelectorWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 6.w,
+                    runSpacing: 4.h,
                     children: [
                       Text(
                         truck.title,
@@ -322,7 +331,6 @@ class TruckTypeSelectorWidget extends StatelessWidget {
                           color: isSelected ? primary : Colors.black87,
                         ),
                       ),
-                      SizedBox(width: 8.w),
                       Container(
                         padding: EdgeInsets.symmetric(
                           horizontal: 8.w,
@@ -343,8 +351,7 @@ class TruckTypeSelectorWidget extends StatelessWidget {
                           ),
                         ),
                       ),
-                      if (isRecommended) ...[
-                        SizedBox(width: 6.w),
+                      if (isRecommended)
                         Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 6.w,
@@ -364,7 +371,7 @@ class TruckTypeSelectorWidget extends StatelessWidget {
                             ),
                           ),
                         ),
-                      ],
+                      if (hasPromo) _buildPromoBadge(promo, isSelected),
                     ],
                   ),
                   SizedBox(height: 3.h),
@@ -376,44 +383,6 @@ class TruckTypeSelectorWidget extends StatelessWidget {
                     ),
                   ),
 
-                  // Promotional discount badge if active
-                  if (hasPromo) ...[
-                    SizedBox(height: 6.h),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 8.w,
-                        vertical: 3.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade50,
-                        borderRadius: BorderRadius.circular(6.r),
-                        border: Border.all(color: Colors.red.shade200),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Iconsax.discount_circle,
-                            size: 13.sp,
-                            color: Colors.red.shade700,
-                          ),
-                          SizedBox(width: 4.w),
-                          Text(
-                            shippingPromotion?.title ??
-                                (shippingPromotion?.discountPercentage != null
-                                    ? 'عرض خاص: خصم ${shippingPromotion!.discountPercentage!.toInt()}% لفترة محدودة 🔥'
-                                    : 'عرض شحن مخفض لفترة محدودة 🔥'),
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red.shade700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-
                   if (isRecommended) ...[
                     SizedBox(height: 4.h),
                     Row(
@@ -424,12 +393,16 @@ class TruckTypeSelectorWidget extends StatelessWidget {
                           color: Colors.green.shade700,
                         ),
                         SizedBox(width: 4.w),
-                        Text(
-                          'مناسبة لحمولة سلتك ($totalWeightTons طن)',
-                          style: TextStyle(
-                            fontSize: 10.sp,
-                            color: Colors.green.shade700,
-                            fontWeight: FontWeight.bold,
+                        Flexible(
+                          child: Text(
+                            'مناسبة لحمولة سلتك ($totalWeightTons طن)',
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              color: Colors.green.shade700,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -457,26 +430,30 @@ class TruckTypeSelectorWidget extends StatelessWidget {
                                 color: Colors.orange.shade900,
                               ),
                               SizedBox(width: 4.w),
-                              Text(
-                                'حمولة طلبك ($totalWeightTons طن) تحتاج $truckCount سيارات',
-                                style: TextStyle(
-                                  fontSize: 10.5.sp,
-                                  color: Colors.orange.shade900,
-                                  fontWeight: FontWeight.bold,
+                              Flexible(
+                                child: Text(
+                                  'حمولة طلبك ($totalWeightTons طن) تحتاج $truckCount سيارات',
+                                  style: TextStyle(
+                                    fontSize: 10.5.sp,
+                                    color: Colors.orange.shade900,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ],
                           ),
-                          if (isSelected && truckCount > 1) ...[
-                            SizedBox(height: 2.h),
-                            Text(
-                              'سعر الشحن سيحسب لـ $truckCount سيارات (الضعف ${truckCount}x)',
-                              style: TextStyle(
-                                fontSize: 9.5.sp,
-                                color: Colors.orange.shade800,
-                              ),
-                            ),
-                          ],
+                          // if (isSelected && truckCount > 1) ...[
+                          //   SizedBox(height: 2.h),
+                          //   Text(
+                          //     'سعر الشحن سيحسب لـ $truckCount سيارات (الضعف ${truckCount}x)',
+                          //     style: TextStyle(
+                          //       fontSize: 9.5.sp,
+                          //       color: Colors.orange.shade800,
+                          //     ),
+                          //   ),
+                          // ],
                         ],
                       ),
                     ),
@@ -536,10 +513,7 @@ class TruckTypeSelectorWidget extends StatelessWidget {
                     SizedBox(height: 2.h),
                     Text(
                       estimatedDelivery!,
-                      style: TextStyle(
-                        fontSize: 11.sp,
-                        color: Colors.black54,
-                      ),
+                      style: TextStyle(fontSize: 11.sp, color: Colors.black54),
                     ),
                   ],
                 ],
@@ -547,7 +521,8 @@ class TruckTypeSelectorWidget extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  if (hasDiscount && totalOriginalShippingFee > currentShippingFee) ...[
+                  if (hasDiscount &&
+                      totalOriginalShippingFee > currentShippingFee) ...[
                     Text(
                       '${totalOriginalShippingFee.toInt()} ج.م',
                       style: TextStyle(
@@ -601,7 +576,10 @@ class TruckTypeSelectorWidget extends StatelessWidget {
               children: [
                 Text(
                   'وفرت مع عرض الشحن:',
-                  style: TextStyle(fontSize: 11.sp, color: Colors.green.shade700),
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: Colors.green.shade700,
+                  ),
                 ),
                 Text(
                   '- ${shippingDiscountAmount.toInt()} ج.م',
@@ -614,6 +592,60 @@ class TruckTypeSelectorWidget extends StatelessWidget {
               ],
             ),
           ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPromoBadge(ShippingPromotionInfo? promo, bool isSelected) {
+    String badgeText = 'عرض خاص';
+    if (promo?.discountPercentage != null && promo!.discountPercentage! > 0) {
+      badgeText = 'خصم ${promo.discountPercentage!.toInt()}%';
+    } else if (promo?.discountValue != null && promo!.discountValue! > 0) {
+      badgeText = 'خصم ${promo.discountValue!.toInt()} ج.م';
+    } else if (isSelected &&
+        shippingPromotion?.discountPercentage != null &&
+        shippingPromotion!.discountPercentage! > 0) {
+      badgeText = 'خصم ${shippingPromotion!.discountPercentage!.toInt()}%';
+    } else if (isSelected && shippingDiscountAmount > 0) {
+      badgeText = 'خصم ${shippingDiscountAmount.toInt()} ج.م';
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.5.h),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFFE53935), Color(0xFFFF7043)],
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+        ),
+        borderRadius: BorderRadius.circular(20.r),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFFE53935).withValues(alpha: 0.25),
+            blurRadius: 4,
+            offset: const Offset(0, 1.5),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Iconsax.flash_15,
+            size: 11.sp,
+            color: Colors.white,
+          ),
+          SizedBox(width: 3.w),
+          Text(
+            badgeText,
+            style: TextStyle(
+              fontSize: 9.5.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+              height: 1.1,
+            ),
+          ),
         ],
       ),
     );

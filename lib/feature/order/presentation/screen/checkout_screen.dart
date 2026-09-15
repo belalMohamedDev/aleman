@@ -189,6 +189,7 @@ class _CheckoutScreenContent extends StatelessWidget {
                 totalOriginalShippingFee: state.totalOriginalShippingFee,
                 shippingDiscountAmount: state.shippingDiscountAmount,
                 shippingPromotion: state.shippingPromotion,
+                truckPromotions: state.truckPromotions,
                 shippingRecommendation: state.shippingRecommendation,
                 onApplyRecommendation: cubit.applyRecommendedTruck,
               ),

@@ -23,6 +23,7 @@ class CalculateShippingRequest {
 
 class ShippingPromotionInfo {
   final String? id;
+  final int? truckType;
   final String title;
   final double? discountPercentage;
   final double? discountValue;
@@ -30,15 +31,20 @@ class ShippingPromotionInfo {
 
   const ShippingPromotionInfo({
     this.id,
+    this.truckType,
     required this.title,
     this.discountPercentage,
     this.discountValue,
     this.endDate,
   });
 
-  factory ShippingPromotionInfo.fromJson(Map<String, dynamic> json) =>
+  factory ShippingPromotionInfo.fromJson(
+    Map<String, dynamic> json, {
+    int? defaultTruckType,
+  }) =>
       ShippingPromotionInfo(
         id: json['id'] as String?,
+        truckType: (json['truckType'] as num?)?.toInt() ?? defaultTruckType,
         title: json['title'] as String? ?? 'عرض ترويجي',
         discountPercentage: (json['discountPercentage'] as num?)?.toDouble(),
         discountValue: (json['discountValue'] as num?)?.toDouble(),
@@ -84,13 +90,13 @@ class CalculateShippingResponse {
   final bool isWeightExceeded;
   final String? warningMessage;
 
-  // New fields for multi-truck and promotion calculation
   final int requiredTrucksCount;
   final double singleTruckBaseFee;
   final double singleTruckFeeAfterDiscount;
   final double totalOriginalShippingFee;
   final double totalDiscountAmount;
   final ShippingPromotionInfo? promotion;
+  final List<ShippingPromotionInfo> activePromotions;
   final ShippingRecommendationModel? recommendation;
 
   const CalculateShippingResponse({
@@ -106,11 +112,12 @@ class CalculateShippingResponse {
     this.totalOriginalShippingFee = 0.0,
     this.totalDiscountAmount = 0.0,
     this.promotion,
+    this.activePromotions = const [],
     this.recommendation,
   });
 
   bool get hasPromotion =>
-      promotion != null || totalDiscountAmount > 0;
+      promotion != null || totalDiscountAmount > 0 || activePromotions.isNotEmpty;
 
   factory CalculateShippingResponse.fromJson(Map<String, dynamic> json) {
     final fee = (json['shippingFee'] as num?)?.toDouble() ??
@@ -129,6 +136,25 @@ class CalculateShippingResponse {
     final discountAmount =
         (json['totalDiscountAmount'] as num?)?.toDouble() ?? 0.0;
 
+    final rawPromos = json['activePromotions'] as List<dynamic>?;
+    final List<ShippingPromotionInfo> activePromosList = rawPromos != null
+        ? rawPromos
+            .map((p) => ShippingPromotionInfo.fromJson(p as Map<String, dynamic>))
+            .toList()
+        : [];
+
+    final singlePromo = json['promotion'] != null
+        ? ShippingPromotionInfo.fromJson(
+            json['promotion'] as Map<String, dynamic>,
+            defaultTruckType: (json['truckType'] as num?)?.toInt(),
+          )
+        : null;
+
+    if (singlePromo != null &&
+        !activePromosList.any((p) => p.truckType == singlePromo.truckType)) {
+      activePromosList.add(singlePromo);
+    }
+
     return CalculateShippingResponse(
       shippingFee: fee,
       estimatedDelivery: json['estimatedDelivery'] as String?,
@@ -141,9 +167,8 @@ class CalculateShippingResponse {
       singleTruckFeeAfterDiscount: singleDiscounted,
       totalOriginalShippingFee: origFee > 0 ? origFee : fee,
       totalDiscountAmount: discountAmount,
-      promotion: json['promotion'] != null
-          ? ShippingPromotionInfo.fromJson(json['promotion'] as Map<String, dynamic>)
-          : null,
+      promotion: singlePromo,
+      activePromotions: activePromosList,
       recommendation: json['recommendation'] != null
           ? ShippingRecommendationModel.fromJson(
               json['recommendation'] as Map<String, dynamic>)

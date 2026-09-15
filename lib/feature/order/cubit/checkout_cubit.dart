@@ -195,6 +195,21 @@ class CheckoutCubit extends Cubit<CheckoutState> {
                 ? (response.shippingFee / response.requiredTrucksCount)
                 : response.shippingFee);
 
+        final updatedPromos =
+            Map<int, ShippingPromotionInfo>.from(state.truckPromotions);
+
+        for (final p in response.activePromotions) {
+          if (p.truckType != null) {
+            updatedPromos[p.truckType!] = p;
+          }
+        }
+
+        final currentTruckType =
+            response.promotion?.truckType ?? state.selectedTruckType?.value;
+        if (response.promotion != null && currentTruckType != null) {
+          updatedPromos[currentTruckType] = response.promotion!;
+        }
+
         emit(
           state.copyWith(
             status: CheckoutStatus.initial,
@@ -206,6 +221,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
             shippingDiscountAmount: response.totalDiscountAmount,
             shippingPromotion: response.promotion,
             clearShippingPromotion: response.promotion == null,
+            truckPromotions: updatedPromos,
             shippingRecommendation: response.recommendation,
             clearShippingRecommendation: response.recommendation == null,
           ),
