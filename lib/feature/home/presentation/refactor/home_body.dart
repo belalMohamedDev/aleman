@@ -119,53 +119,56 @@ class HomeBody extends StatelessWidget {
           buildWhen: (previous, current) =>
               previous.isLoggedIn != current.isLoggedIn,
           builder: (context, state) {
-            return GestureDetector(
-              onTap: () async {
-                if (context.mounted) {
-                  if (state.isLoggedIn) {
-                    Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).pushNamed(Routes.profileRoute);
-                  } else {
-                    Navigator.of(
-                      context,
-                      rootNavigator: true,
-                    ).pushNamed(Routes.loginRoute);
-                  }
-                }
-              },
-              child: Container(
-                height: responsive.setHeight(6),
-                width: responsive.setWidth(12),
-                decoration: BoxDecoration(
-                  color: ColorManger.backgroundItem,
-                  borderRadius: BorderRadius.circular(
-                    responsive.setBorderRadius(5),
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      right: -2,
-                      top: 3,
-                      child: Icon(
-                        !state.isLoggedIn ? Iconsax.login_14 : Icons.settings,
-                        size: 16.sp,
-                        color: ColorManger.primaryLight,
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    if (context.mounted) {
+                      if (state.isLoggedIn) {
+                        Navigator.of(
+                          context,
+                          rootNavigator: true,
+                        ).pushNamed(Routes.profileRoute);
+                      } else {
+                        Navigator.of(
+                          context,
+                          rootNavigator: true,
+                        ).pushNamed(Routes.loginRoute);
+                      }
+                    }
+                  },
+                  child: Container(
+                    height: responsive.setHeight(6),
+                    width: responsive.setWidth(12),
+                    decoration: BoxDecoration(
+                      color: ColorManger.backgroundItem,
+                      borderRadius: BorderRadius.circular(
+                        responsive.setBorderRadius(5),
                       ),
                     ),
-                    Image.asset(
-                      ImageAsset.farmer,
+                    child: Image.asset(
+                      state.isLoggedIn
+                          ? ImageAsset.farmer
+                          : ImageAsset.loginFarmer,
                       height: responsive.setHeight(6),
                       width: responsive.setWidth(15),
 
                       // color: ColorManger.primaryLight,
                     ),
-                  ],
+                    //    Icon(Iconsax.user, color: ColorManger.primaryLight),
+                  ),
                 ),
-                //    Icon(Iconsax.user, color: ColorManger.primaryLight),
-              ),
+                PositionedDirectional(
+                  top: -2,
+                  start: -4,
+                  child: Icon(
+                    !state.isLoggedIn ? Iconsax.login_14 : Icons.settings,
+                    size: 20.sp,
+                    color: ColorManger.primaryLight,
+                  ),
+                ),
+              ],
             );
           },
         ),

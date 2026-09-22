@@ -5,6 +5,7 @@ import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 import 'falling_eggs_animation.dart';
 
@@ -55,13 +56,17 @@ class _SearchRowState extends State<SearchRow> {
                   hintText: context.translate(
                     AppStrings.findYourProducts,
                   ), // Placeholder text
-                  prefixIcon: Image.asset(
-                    ImageAsset.searchIcon,
-                    // height: responsive.setIconSize(2),
-                    width: responsive.setWidth(18),
-                    // color:
-                    //     ColorManger.primaryLight, // Icon color for the search
+                  prefixIcon: Icon(
+                    Iconsax.scan,
+                    color: ColorManger.primaryLight,
                   ),
+                  // Image.asset(
+                  //   ImageAsset.searchIcon,
+                  // height: responsive.setIconSize(2),
+                  //   width: responsive.setWidth(18),
+                  //   // color:
+                  //   //     ColorManger.primaryLight, // Icon color for the search
+                  // ),
 
                   hintStyle: Theme.of(context).textTheme.titleMedium!
                       .copyWith(fontSize: responsive.setTextSize(3.5)),

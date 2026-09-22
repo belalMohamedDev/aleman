@@ -6,6 +6,8 @@ import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_pass
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_password/reset_password_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_password/verify_reset_code_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
+import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/send_login_otp_request_body.dart';
+import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/verify_login_otp_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/logout/logout_body_request.dart';
 import 'package:aleman/feature/Authentication/data/repository/authentication_repository.dart';
 
@@ -18,6 +20,36 @@ class AuthenticationRepositoryImplement implements AuthenticationRepository {
   Future<ApiResult<AuthEntity>> login(LoginRequestBody loginRequestBody) async {
     try {
       final response = await _apiService.loginService(loginRequestBody);
+      return ApiResult.success(response.toDomain());
+    } catch (error) {
+      return ApiResult.failure(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<String>> sendLoginOtp(
+    SendLoginOtpRequestBody sendLoginOtpRequestBody,
+  ) async {
+    try {
+      final response = await _apiService.sendLoginOtpService(
+        sendLoginOtpRequestBody,
+      );
+      return ApiResult.success(
+        response.message ?? 'تم إرسال كود التحقق بنجاح',
+      );
+    } catch (error) {
+      return ApiResult.failure(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<AuthEntity>> verifyLoginOtp(
+    VerifyLoginOtpRequestBody verifyLoginOtpRequestBody,
+  ) async {
+    try {
+      final response = await _apiService.verifyLoginOtpService(
+        verifyLoginOtpRequestBody,
+      );
       return ApiResult.success(response.toDomain());
     } catch (error) {
       return ApiResult.failure(ApiErrorHandler.handle(error));

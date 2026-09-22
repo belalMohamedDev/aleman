@@ -5,6 +5,8 @@ import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_pass
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_password/reset_password_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_password/verify_reset_code_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
+import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/send_login_otp_request_body.dart';
+import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/verify_login_otp_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/logout/logout_body_request.dart';
 import 'package:aleman/feature/home/data/model/banner_model.dart';
 import 'package:aleman/feature/home/data/model/category_model.dart';
@@ -47,6 +49,16 @@ abstract class AppServiceClient {
 
   @POST(ApiConstants.login)
   Future<AuthResponse> loginService(@Body() LoginRequestBody body);
+
+  @POST(ApiConstants.sendLoginOtp)
+  Future<MessageResponse> sendLoginOtpService(
+    @Body() SendLoginOtpRequestBody body,
+  );
+
+  @POST(ApiConstants.verifyLoginOtp)
+  Future<AuthResponse> verifyLoginOtpService(
+    @Body() VerifyLoginOtpRequestBody body,
+  );
 
   @POST(ApiConstants.forgotPassword)
   Future<MessageResponse> forgotPasswordService(

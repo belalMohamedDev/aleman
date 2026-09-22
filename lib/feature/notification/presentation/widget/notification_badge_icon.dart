@@ -1,13 +1,12 @@
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/fonts/styles_manger.dart';
-import 'package:aleman/core/style/images/asset_manger.dart' show ImageAsset;
-import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:aleman/feature/notification/logic/notification_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iconsax/iconsax.dart';
 
 class NotificationBadgeIcon extends StatelessWidget {
   final Color? iconColor;
@@ -23,7 +22,6 @@ class NotificationBadgeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveUtils(context);
     return BlocBuilder<NotificationCubit, NotificationState>(
       buildWhen: (previous, current) =>
           previous.unreadCount != current.unreadCount,
@@ -45,26 +43,34 @@ class NotificationBadgeIcon extends StatelessWidget {
             //         Navigator.of(context).pushNamed(Routes.notificationsRoute);
             //       },
             // ),
-            GestureDetector(
-              onTap:
-                  onTap ??
-                  () {
-                    Navigator.of(context).pushNamed(Routes.notificationsRoute);
-                  },
-              child: Image.asset(
-                ImageAsset.notificationIcon,
-                // color: ColorManger.primaryLight,
-                height: responsive.setHeight(6),
-                width: responsive.setWidth(13),
+            Center(
+              child: GestureDetector(
+                onTap:
+                    onTap ??
+                    () {
+                      Navigator.of(context)
+                          .pushNamed(Routes.notificationsRoute);
+                    },
+                child: Icon(
+                  Iconsax.notification5,
+                  color: ColorManger.primaryLight,
+                  size: 30,
+                ),
+                // Image.asset(
+                //   ImageAsset.notificationIcon,
+                //   // color: ColorManger.primaryLight,
+                //   height: responsive.setHeight(6),
+                //   width: responsive.setWidth(13),
+                // ),
               ),
             ),
 
             if (unreadCount > 0)
               Positioned(
-                top: -5.h,
-                right: 5.w,
+                top: -2.h,
+                right: 2.w,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
                   decoration: BoxDecoration(
                     color: ColorManger.chipProtein,
                     shape: unreadCount > 9

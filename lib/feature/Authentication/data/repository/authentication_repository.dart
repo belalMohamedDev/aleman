@@ -4,10 +4,20 @@ import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_pass
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_password/reset_password_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/forgot_password/verify_reset_code_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/login_body_request.dart';
+import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/send_login_otp_request_body.dart';
+import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/verify_login_otp_request_body.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/logout/logout_body_request.dart';
 
 abstract class AuthenticationRepository {
   Future<ApiResult<AuthEntity>> login(LoginRequestBody loginRequestBody);
+
+  Future<ApiResult<String>> sendLoginOtp(
+    SendLoginOtpRequestBody sendLoginOtpRequestBody,
+  );
+
+  Future<ApiResult<AuthEntity>> verifyLoginOtp(
+    VerifyLoginOtpRequestBody verifyLoginOtpRequestBody,
+  );
 
   Future<ApiResult<String>> forgotPassword(
     ForgotPasswordRequestBody forgotPasswordRequestBody,

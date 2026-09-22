@@ -8,6 +8,7 @@ class ImageAsset {
   static const String noRoute = '$iconPath/noRoute.svg';
   static const String alemanLogo = '$imagePath/logoAleman.png';
   static const String farmer = '$iconPath/farmer.png';
+  static const String loginFarmer = '$iconPath/loginFarmer.png';
   static const String whatsapp = '$iconPath/whatsapp.png';
   static const String feedBag = '$iconPath/bag.png';
   static const String cow = '$imagePath/cow.png';

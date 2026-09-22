@@ -24,10 +24,14 @@ class EmailLoginTextFormField extends StatelessWidget {
           onChanged: (value) => context.read<LoginCubit>().validateFields(),
           autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
-            if (value == null ||
-                value.isEmpty ||
-                !AppRegex.isEmailValid(value)) {
+            if (value == null || value.trim().isEmpty) {
+              return 'يرجى إدخال البريد الإلكتروني أو اسم المستخدم';
+            }
+            if (value.contains('@') && !AppRegex.isEmailValid(value.trim())) {
               return context.translate(AppStrings.pleaseEnterValidEmail);
+            }
+            if (!value.contains('@') && value.trim().length < 3) {
+              return 'اسم المستخدم يجب ألا يقل عن 3 أحرف';
             }
             return null;
           },
@@ -39,19 +43,17 @@ class EmailLoginTextFormField extends StatelessWidget {
               .read<LoginCubit>()
               .userLoginEmailAddress, // Email controller from the bloc
           // Enable autofill hints for better UX
-          autofillHints: const [AutofillHints.email],
+          autofillHints: const [AutofillHints.email, AutofillHints.username],
 
           // Input decoration including the prefix icon and error handling
           decoration: InputDecoration(
             prefixIcon: Icon(
-              Iconsax.message, // Email icon
+              Iconsax.user, // User / Email icon
               size: responsive.setIconSize(
                 5.5,
               ), // Adjust icon size responsively
             ),
-            hintText: context.translate(
-              AppStrings.emailExample,
-            ), // Placeholder text for the email field
+            hintText: 'البريد الإلكتروني أو اسم المستخدم',
           ),
         );
       },
