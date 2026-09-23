@@ -1,101 +1,20 @@
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart';
 import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
 import 'package:aleman/feature/Authentication/presentation/refactors/signIn/auth_mode_tab_switch.dart';
 import 'package:aleman/feature/Authentication/presentation/refactors/signIn/auth_visual_header.dart';
 import 'package:aleman/feature/Authentication/presentation/refactors/signIn/email_password_form_view.dart';
 import 'package:aleman/feature/Authentication/presentation/refactors/signIn/phone_otp_form_view.dart';
+import 'package:aleman/feature/Authentication/presentation/sharedWidgetBetweenScreen/auth_contact_support_link.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
-
-  void _showContactOptions(BuildContext context) {
-    const String phoneNumber = "201110767100";
-    showModalBottomSheet(
-      backgroundColor: Colors.white,
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(vertical: 25.0, horizontal: 16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 45,
-                height: 3,
-                margin: const EdgeInsets.only(bottom: 16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFCBD5E1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              ListTile(
-                leading: Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.rotationY(3.14159),
-                  child: const Icon(
-                    Iconsax.call_received5,
-                    color: Colors.green,
-                  ),
-                ),
-                title: const Text("اتصال مباشر"),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final Uri url = Uri(scheme: 'tel', path: phoneNumber);
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url);
-                  }
-                },
-              ),
-              ListTile(
-                leading: Image.asset(
-                  ImageAsset.whatsapp,
-                  width: 24,
-                  height: 24,
-                ),
-                title: const Text("واتساب"),
-                onTap: () async {
-                  Navigator.pop(context);
-                  final Uri url = Uri.parse("https://wa.me/$phoneNumber");
-                  if (await canLaunchUrl(url)) {
-                    await launchUrl(url, mode: LaunchMode.externalApplication);
-                  }
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.copy, color: ColorManger.goldDark),
-                title: const Text("نسخ الرقم"),
-                onTap: () {
-                  Navigator.pop(context);
-                  Clipboard.setData(const ClipboardData(text: phoneNumber))
-                      .then((_) {
-                        if (context.mounted) {
-                          AppToast.showSuccess(
-                            context,
-                            message: "تم نسخ رقم التواصل بنجاح 🌾",
-                          );
-                        }
-                      });
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +66,7 @@ class LoginView extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            SizedBox(height: 10.h),
+                            SizedBox(height: 30.h),
 
                             // Title (Noon Style)
                             Text(
@@ -156,7 +75,7 @@ class LoginView extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 22.sp,
                                 fontWeight: FontWeight.w900,
-                                color: const Color(0xFF1E293B),
+                                color: ColorManger.authTitleDark,
                                 letterSpacing: -0.3,
                               ),
                             ),
@@ -166,7 +85,7 @@ class LoginView extends StatelessWidget {
                               textAlign: TextAlign.start,
                               style: TextStyle(
                                 fontSize: 12.sp,
-                                color: const Color(0xFF64748B),
+                                color: ColorManger.authSubtitleGrey,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -184,48 +103,38 @@ class LoginView extends StatelessWidget {
                                   previous.authMode != current.authMode,
                               builder: (context, state) {
                                 return AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 200),
+                                  duration: const Duration(milliseconds: 280),
+                                  switchInCurve: Curves.easeOutCubic,
+                                  switchOutCurve: Curves.easeInCubic,
+                                  transitionBuilder: (child, animation) {
+                                    return FadeTransition(
+                                      opacity: animation,
+                                      child: SlideTransition(
+                                        position: Tween<Offset>(
+                                          begin: const Offset(0.0, 0.03),
+                                          end: Offset.zero,
+                                        ).animate(animation),
+                                        child: child,
+                                      ),
+                                    );
+                                  },
                                   child: state.authMode == AuthMode.phone
-                                      ? const PhoneOtpFormView()
-                                      : const EmailPasswordFormView(),
+                                      ? const KeyedSubtree(
+                                          key: ValueKey('phone_form_view'),
+                                          child: PhoneOtpFormView(),
+                                        )
+                                      : const KeyedSubtree(
+                                          key: ValueKey('email_form_view'),
+                                          child: EmailPasswordFormView(),
+                                        ),
                                 );
                               },
                             ),
 
-                            SizedBox(height: 30.h),
+                            SizedBox(height: 20.h),
 
                             // Contact / Help Link (clean & subtle at bottom)
-                            Center(
-                              child: InkWell(
-                                onTap: () => _showContactOptions(context),
-                                borderRadius: BorderRadius.circular(20.r),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 12.w,
-                                    vertical: 6.h,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Iconsax.headphone,
-                                        size: 16.sp,
-                                        color: const Color(0xFF64748B),
-                                      ),
-                                      SizedBox(width: 6.w),
-                                      Text(
-                                        'تحتاج مساعدة؟ تواصل مع خدمة العملاء',
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF64748B),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                            const AuthContactSupportLink(),
 
                             SizedBox(height: 20.h),
                           ],
@@ -245,14 +154,14 @@ class LoginView extends StatelessWidget {
                     child: Container(
                       width: 36.w,
                       height: 36.h,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFFF1F5F9),
+                      decoration: BoxDecoration(
+                        color: ColorManger.authBackBtnBg,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.close,
                         size: 20,
-                        color: Color(0xFF334155),
+                        color: ColorManger.authBackBtnIcon,
                       ),
                     ),
                   ),

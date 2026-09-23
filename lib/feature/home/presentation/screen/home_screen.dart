@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.pushNamed(context, Routes.loginRoute);
                         }
                       },
-                      backgroundColor: ColorManger.white.withValues(alpha: 0.8),
+                      backgroundColor: Colors.amber,
                       child: RotatedBox(
                         quarterTurns: 4,
                         child: Image.asset(

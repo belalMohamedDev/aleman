@@ -46,4 +46,14 @@ class ColorManger {
   static const Color chipWeight = Color(0xFFE65100);
   static const Color chipWeightBg = Color(0xFFFFF3E0);
   static const Color chipWeightBorder = Color(0xFFFFE0B2);
+
+  // Modern Auth Colors
+  static const Color authFieldBg = Color(0xFFEFF4FA);
+  static const Color authFieldBorder = Color(0xFFDFE7F3);
+  static const Color authIconColor = Color(0xFF8C9DAE);
+  static const Color authTitleDark = Color(0xFF1E293B);
+  static const Color authSubtitleGrey = Color(0xFF64748B);
+  static const Color authHintGrey = Color(0xFF94A3B8);
+  static const Color authBackBtnBg = Color(0xFFF1F5F9);
+  static const Color authBackBtnIcon = Color(0xFF334155);
 }

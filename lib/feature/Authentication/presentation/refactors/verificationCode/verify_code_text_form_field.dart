@@ -1,9 +1,9 @@
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class VerifyCodeTextFormField extends StatelessWidget {
   const VerifyCodeTextFormField({super.key});
@@ -12,7 +12,6 @@ class VerifyCodeTextFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveUtils(context);
     final cubit = context.read<ForgotPasswordCubit>();
 
     return AutofillGroup(
@@ -23,15 +22,14 @@ class VerifyCodeTextFormField extends StatelessWidget {
 
           return LayoutBuilder(
             builder: (context, constraints) {
-              // Ensure zero overflow on any screen size
               final double maxRowWidth = constraints.maxWidth.clamp(0.0, 360.0);
-              const double minGap = 6.0;
+              const double minGap = 8.0;
               final double calculatedBoxWidth =
                   ((maxRowWidth - (minGap * (otpLength - 1))) / otpLength)
-                      .clamp(34.0, 48.0);
+                      .clamp(36.0, 50.0);
               final double boxHeight = (calculatedBoxWidth * 1.25).clamp(
-                46.0,
-                60.0,
+                48.0,
+                62.0,
               );
 
               return Center(
@@ -64,7 +62,7 @@ class VerifyCodeTextFormField extends StatelessWidget {
                           ),
                         ),
 
-                        // Beautiful discrete OTP boxes with spaceBetween
+                        // Beautiful discrete OTP boxes
                         Directionality(
                           textDirection: TextDirection.ltr,
                           child: Row(
@@ -78,38 +76,25 @@ class VerifyCodeTextFormField extends StatelessWidget {
                               Color backgroundColor;
                               List<BoxShadow> shadows = [];
 
-                              if (isFilled) {
-                                borderColor = ColorManger.iconsBackgroundColor
-                                    .withValues(alpha: 0.8);
-                                backgroundColor = ColorManger
-                                    .iconsBackgroundColor
-                                    .withValues(alpha: 0.35);
-                                shadows = [
-                                  BoxShadow(
-                                    color: ColorManger.primary.withValues(
-                                      alpha: 0.01,
-                                    ),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ];
-                              } else if (isCurrent) {
+                              if (isCurrent) {
                                 borderColor = ColorManger.primaryLight;
-                                backgroundColor = ColorManger.primaryLight
-                                    .withValues(alpha: 0.06);
+                                backgroundColor = Colors.white;
                                 shadows = [
                                   BoxShadow(
                                     color: ColorManger.primaryLight.withValues(
-                                      alpha: 0.18,
+                                      alpha: 0.15,
                                     ),
                                     blurRadius: 8,
                                     offset: const Offset(0, 2),
                                   ),
                                 ];
-                              } else {
+                              } else if (isFilled) {
                                 borderColor = ColorManger.primaryLight
-                                    .withValues(alpha: 0.2);
-                                backgroundColor = ColorManger.lightWhite;
+                                    .withValues(alpha: 0.6);
+                                backgroundColor = Colors.white;
+                              } else {
+                                borderColor = ColorManger.authFieldBorder;
+                                backgroundColor = ColorManger.authFieldBg;
                               }
 
                               return Container(
@@ -117,10 +102,10 @@ class VerifyCodeTextFormField extends StatelessWidget {
                                 height: boxHeight,
                                 decoration: BoxDecoration(
                                   color: backgroundColor,
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(14.r),
                                   border: Border.all(
                                     color: borderColor,
-                                    width: isCurrent || isFilled ? 1.8 : 1.2,
+                                    width: isCurrent ? 1.8 : 1.2,
                                   ),
                                   boxShadow: shadows,
                                 ),
@@ -128,11 +113,9 @@ class VerifyCodeTextFormField extends StatelessWidget {
                                 child: Text(
                                   char,
                                   style: TextStyle(
-                                    fontSize: responsive
-                                        .setTextSize(5.2)
-                                        .clamp(18.0, 24.0),
-                                    fontWeight: FontWeight.bold,
-                                    color: ColorManger.primary,
+                                    fontSize: 20.sp,
+                                    fontWeight: FontWeight.w900,
+                                    color: ColorManger.authTitleDark,
                                   ),
                                 ),
                               );

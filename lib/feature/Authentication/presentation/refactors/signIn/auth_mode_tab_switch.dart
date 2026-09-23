@@ -1,3 +1,4 @@
+import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart';
 import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
 import 'package:flutter/material.dart';
@@ -7,10 +8,6 @@ import 'package:iconsax/iconsax.dart';
 
 class AuthModeTabSwitch extends StatelessWidget {
   const AuthModeTabSwitch({super.key});
-
-  // Soft light blue-grey tones from the app's design
-  static const Color containerBg = Color(0xFFEFF4FA);
-  static const Color containerBorder = Color(0xFFDFE7F3);
 
   @override
   Widget build(BuildContext context) {
@@ -24,35 +21,85 @@ class AuthModeTabSwitch extends StatelessWidget {
           height: 52.h,
           padding: EdgeInsets.all(4.r),
           decoration: BoxDecoration(
-            color: containerBg,
+            color: ColorManger.authFieldBg,
             borderRadius: BorderRadius.circular(18.r),
-            border: Border.all(
-              color: containerBorder,
-              width: 1.2,
-            ),
+            border: Border.all(color: ColorManger.authFieldBorder, width: 1.2),
           ),
-          child: Row(
+          child: Stack(
+            fit: StackFit.expand,
             children: [
-              // Phone Tab (OTP)
-              Expanded(
-                child: _AppTabButton(
-                  title: 'رقم الهاتف (OTP)',
-                  icon: Iconsax.mobile,
-                  isSelected: isPhone,
-                  onTap: () => cubit.changeAuthMode(AuthMode.phone),
+              // Smooth sliding capsule pill
+              AnimatedAlign(
+                alignment: isPhone
+                    ? AlignmentDirectional.centerStart
+                    : AlignmentDirectional.centerEnd,
+                duration: const Duration(milliseconds: 280),
+                curve: Curves.fastOutSlowIn,
+                child: FractionallySizedBox(
+                  widthFactor: 0.5,
+                  heightFactor: 1.0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14.r),
+                      border: Border.all(
+                        color: ColorManger.authFieldBorder,
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0F172A)
+                              .withValues(alpha: 0.07),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
 
-              SizedBox(width: 4.w),
+              // Interactive tab labels
+              Row(
+                children: [
+                  // Phone Tab (OTP)
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        if (!isPhone) {
+                          cubit.changeAuthMode(AuthMode.phone);
+                        }
+                      },
+                      child: Center(
+                        child: _TabContent(
+                          title: 'رقم الهاتف (OTP)',
+                          icon: Iconsax.mobile,
+                          isSelected: isPhone,
+                        ),
+                      ),
+                    ),
+                  ),
 
-              // Email / Username Tab
-              Expanded(
-                child: _AppTabButton(
-                  title: 'البريد الإلكتروني',
-                  icon: Iconsax.sms,
-                  isSelected: !isPhone,
-                  onTap: () => cubit.changeAuthMode(AuthMode.email),
-                ),
+                  // Email / Username Tab
+                  Expanded(
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        if (isPhone) {
+                          cubit.changeAuthMode(AuthMode.email);
+                        }
+                      },
+                      child: Center(
+                        child: _TabContent(
+                          title: 'البريد الإلكتروني',
+                          icon: Iconsax.sms,
+                          isSelected: !isPhone,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -62,70 +109,46 @@ class AuthModeTabSwitch extends StatelessWidget {
   }
 }
 
-class _AppTabButton extends StatelessWidget {
-  const _AppTabButton({
+class _TabContent extends StatelessWidget {
+  const _TabContent({
     required this.title,
     required this.icon,
     required this.isSelected,
-    required this.onTap,
   });
 
   final String title;
   final IconData icon;
   final bool isSelected;
-  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(14.r),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white : Colors.transparent,
-          borderRadius: BorderRadius.circular(14.r),
-          border: isSelected
-              ? Border.all(
-                  color: const Color(0xFFDFE7F3),
-                  width: 1,
-                )
-              : null,
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: const Color(0xFF0F172A).withValues(alpha: 0.04),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ]
-              : null,
-        ),
-        child: Row(
+    final selectedColor = ColorManger.authTitleDark;
+    final unselectedColor = ColorManger.authSubtitleGrey;
+
+    return TweenAnimationBuilder<Color?>(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeInOut,
+      tween: ColorTween(end: isSelected ? selectedColor : unselectedColor),
+      builder: (context, color, _) {
+        final activeColor =
+            color ?? (isSelected ? selectedColor : unselectedColor);
+        return Row(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               title,
               style: TextStyle(
                 fontSize: 13.sp,
-                fontWeight: isSelected ? FontWeight.w900 : FontWeight.w600,
-                color: isSelected
-                    ? const Color(0xFF112D1C)
-                    : const Color(0xFF5A6E85),
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                color: activeColor,
               ),
             ),
             SizedBox(width: 6.w),
-            Icon(
-              icon,
-              size: 17.sp,
-              color: isSelected
-                  ? const Color(0xFF112D1C)
-                  : const Color(0xFF5A6E85),
-            ),
+            Icon(icon, size: 17.sp, color: activeColor),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

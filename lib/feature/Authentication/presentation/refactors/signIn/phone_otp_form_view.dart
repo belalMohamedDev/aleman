@@ -10,11 +10,6 @@ import 'package:iconsax/iconsax.dart';
 class PhoneOtpFormView extends StatelessWidget {
   const PhoneOtpFormView({super.key});
 
-  // Soft light blue-grey tones from the user's reference
-  static const Color fieldBg = Color(0xFFEFF4FA);
-  static const Color fieldBorder = Color(0xFFDFE7F3);
-  static const Color iconColor = Color(0xFF8C9DAE);
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
@@ -49,19 +44,19 @@ class PhoneOtpFormView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: const Color(0xFF1E293B),
+                    color: ColorManger.authTitleDark,
                   ),
                   decoration: InputDecoration(
                     hintText: 'مثال: 01012345678',
                     hintStyle: TextStyle(
                       fontSize: 13.sp,
-                      color: const Color(0xFF94A3B8),
+                      color: ColorManger.authHintGrey,
                     ),
                     filled: true,
-                    fillColor: fieldBg,
-                    suffixIcon: const Icon(
+                    fillColor: ColorManger.authFieldBg,
+                    prefixIcon: Icon(
                       Iconsax.mobile,
-                      color: iconColor,
+                      color: ColorManger.authIconColor,
                       size: 20,
                     ),
                     contentPadding: EdgeInsets.symmetric(
@@ -70,11 +65,17 @@ class PhoneOtpFormView extends StatelessWidget {
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(color: fieldBorder, width: 1.2),
+                      borderSide: BorderSide(
+                        color: ColorManger.authFieldBorder,
+                        width: 1.2,
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
-                      borderSide: const BorderSide(color: fieldBorder, width: 1.2),
+                      borderSide: BorderSide(
+                        color: ColorManger.authFieldBorder,
+                        width: 1.2,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16.r),
@@ -96,8 +97,8 @@ class PhoneOtpFormView extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManger.primaryLight,
                       foregroundColor: Colors.white,
-                      disabledBackgroundColor:
-                          ColorManger.primaryLight.withValues(alpha: 0.35),
+                      disabledBackgroundColor: ColorManger.primaryLight
+                          .withValues(alpha: 0.35),
                       disabledForegroundColor: Colors.white70,
                       elevation: isEnabled ? 1 : 0,
                       shape: RoundedRectangleBorder(
@@ -138,9 +139,9 @@ class PhoneOtpFormView extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  color: fieldBg,
+                  color: ColorManger.authFieldBg,
                   borderRadius: BorderRadius.circular(14.r),
-                  border: Border.all(color: fieldBorder),
+                  border: Border.all(color: ColorManger.authFieldBorder),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -232,18 +233,24 @@ class PhoneOtpFormView extends StatelessWidget {
                     color: const Color(0xFFCBD5E1),
                   ),
                   filled: true,
-                  fillColor: fieldBg,
+                  fillColor: ColorManger.authFieldBg,
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 16.w,
                     vertical: 14.h,
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
-                    borderSide: const BorderSide(color: fieldBorder, width: 1.2),
+                    borderSide: BorderSide(
+                      color: ColorManger.authFieldBorder,
+                      width: 1.2,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
-                    borderSide: const BorderSide(color: fieldBorder, width: 1.2),
+                    borderSide: BorderSide(
+                      color: ColorManger.authFieldBorder,
+                      width: 1.2,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
@@ -309,8 +316,8 @@ class PhoneOtpFormView extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorManger.primaryLight,
                     foregroundColor: Colors.white,
-                    disabledBackgroundColor:
-                        ColorManger.primaryLight.withValues(alpha: 0.35),
+                    disabledBackgroundColor: ColorManger.primaryLight
+                        .withValues(alpha: 0.35),
                     disabledForegroundColor: Colors.white70,
                     elevation: isEnabled ? 1 : 0,
                     shape: RoundedRectangleBorder(

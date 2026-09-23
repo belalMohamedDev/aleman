@@ -1,11 +1,11 @@
 import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_cubit.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 
 class ResendCodeSection extends StatelessWidget {
@@ -13,7 +13,6 @@ class ResendCodeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveUtils(context);
     final cubit = context.read<ForgotPasswordCubit>();
 
     return BlocSelector<ForgotPasswordCubit, ForgotPasswordState, bool>(
@@ -21,25 +20,26 @@ class ResendCodeSection extends StatelessWidget {
       builder: (context, isLoading) {
         if (isLoading) {
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: EdgeInsets.symmetric(vertical: 8.h),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  width: 18,
-                  height: 18,
+                  width: 18.r,
+                  height: 18.r,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.2,
-                    color: ColorManger.primary,
+                    color: ColorManger.primaryLight,
                   ),
                 ),
-                SizedBox(width: responsive.setWidth(2)),
+                SizedBox(width: 8.w),
                 Text(
                   context.translate(AppStrings.processing),
-                  style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                    fontSize: responsive.setTextSize(3.6),
-                    color: ColorManger.grey,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: ColorManger.authSubtitleGrey,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -57,15 +57,15 @@ class ResendCodeSection extends StatelessWidget {
               final seconds = (countdown % 60).toString().padLeft(2, '0');
 
               return Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 8,
+                padding: EdgeInsets.symmetric(
+                  horizontal: 14.w,
+                  vertical: 8.h,
                 ),
                 decoration: BoxDecoration(
-                  color: ColorManger.primaryLight.withValues(alpha: 0.08),
-                  borderRadius: BorderRadius.circular(24),
+                  color: ColorManger.authFieldBg,
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
-                    color: ColorManger.primaryLight.withValues(alpha: 0.2),
+                    color: ColorManger.authFieldBorder,
                     width: 1,
                   ),
                 ),
@@ -75,25 +75,25 @@ class ResendCodeSection extends StatelessWidget {
                   children: [
                     Icon(
                       Iconsax.timer_1,
-                      size: responsive.setTextSize(4.2),
-                      color: ColorManger.primary,
+                      size: 16.sp,
+                      color: ColorManger.primaryLight,
                     ),
-                    SizedBox(width: responsive.setWidth(2)),
+                    SizedBox(width: 6.w),
                     Text(
                       context.translate(AppStrings.resendCodeIn),
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        fontSize: responsive.setTextSize(3.5),
-                        color: ColorManger.grey,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: ColorManger.authSubtitleGrey,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(width: responsive.setWidth(1.5)),
+                    SizedBox(width: 6.w),
                     Directionality(
                       textDirection: TextDirection.ltr,
                       child: Text(
                         '$minutes:$seconds',
                         style: TextStyle(
-                          fontSize: responsive.setTextSize(3.8),
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.bold,
                           color: ColorManger.primaryLight,
                           letterSpacing: 1.0,
@@ -108,12 +108,12 @@ class ResendCodeSection extends StatelessWidget {
             return Material(
               color: Colors.transparent,
               child: InkWell(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20.r),
                 onTap: () => cubit.resendCode(),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 8,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 8.h,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -121,20 +121,19 @@ class ResendCodeSection extends StatelessWidget {
                     children: [
                       Icon(
                         Iconsax.rotate_left,
-                        size: responsive.setTextSize(4.2),
-                        color: ColorManger.primary,
+                        size: 16.sp,
+                        color: ColorManger.primaryLight,
                       ),
-                      SizedBox(width: responsive.setWidth(1.8)),
+                      SizedBox(width: 6.w),
                       Text(
                         context.translate(AppStrings.resendCode),
-                        style: Theme.of(context).textTheme.titleMedium!
-                            .copyWith(
-                              fontSize: responsive.setTextSize(3.8),
-                              color: ColorManger.primary,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
-                              decorationColor: ColorManger.primary,
-                            ),
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: ColorManger.primaryLight,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                          decorationColor: ColorManger.primaryLight,
+                        ),
                       ),
                     ],
                   ),

@@ -12,11 +12,6 @@ import 'package:iconsax/iconsax.dart';
 class EmailPasswordFormView extends StatelessWidget {
   const EmailPasswordFormView({super.key});
 
-  // Soft light blue-grey tones from the user's reference
-  static const Color fieldBg = Color(0xFFEFF4FA);
-  static const Color fieldBorder = Color(0xFFDFE7F3);
-  static const Color iconColor = Color(0xFF8C9DAE);
-
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
@@ -42,19 +37,19 @@ class EmailPasswordFormView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1E293B),
+                  color: ColorManger.authTitleDark,
                 ),
                 decoration: InputDecoration(
                   hintText: 'البريد الإلكتروني أو اسم المستخدم',
                   hintStyle: TextStyle(
                     fontSize: 13.sp,
-                    color: const Color(0xFF94A3B8),
+                    color: ColorManger.authHintGrey,
                   ),
                   filled: true,
-                  fillColor: fieldBg,
-                  suffixIcon: const Icon(
+                  fillColor: ColorManger.authFieldBg,
+                  prefixIcon: Icon(
                     Iconsax.sms,
-                    color: iconColor,
+                    color: ColorManger.authIconColor,
                     size: 20,
                   ),
                   contentPadding: EdgeInsets.symmetric(
@@ -63,15 +58,15 @@ class EmailPasswordFormView extends StatelessWidget {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
-                    borderSide: const BorderSide(
-                      color: fieldBorder,
+                    borderSide: BorderSide(
+                      color: ColorManger.authFieldBorder,
                       width: 1.2,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
-                    borderSide: const BorderSide(
-                      color: fieldBorder,
+                    borderSide: BorderSide(
+                      color: ColorManger.authFieldBorder,
                       width: 1.2,
                     ),
                   ),
@@ -95,21 +90,21 @@ class EmailPasswordFormView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1E293B),
+                  color: ColorManger.authTitleDark,
                 ),
                 decoration: InputDecoration(
                   hintText: 'كلمة المرور',
                   hintStyle: TextStyle(
                     fontSize: 13.sp,
-                    color: const Color(0xFF94A3B8),
+                    color: ColorManger.authHintGrey,
                   ),
                   filled: true,
-                  fillColor: fieldBg,
+                  fillColor: ColorManger.authFieldBg,
                   prefixIcon: IconButton(
                     onPressed: () => cubit.togglePasswordVisibility(),
                     icon: Icon(
                       state.showPass ? Iconsax.eye_slash : Iconsax.eye,
-                      color: iconColor,
+                      color: ColorManger.authIconColor,
                       size: 20,
                     ),
                   ),
@@ -119,15 +114,15 @@ class EmailPasswordFormView extends StatelessWidget {
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
-                    borderSide: const BorderSide(
-                      color: fieldBorder,
+                    borderSide: BorderSide(
+                      color: ColorManger.authFieldBorder,
                       width: 1.2,
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16.r),
-                    borderSide: const BorderSide(
-                      color: fieldBorder,
+                    borderSide: BorderSide(
+                      color: ColorManger.authFieldBorder,
                       width: 1.2,
                     ),
                   ),
