@@ -64,7 +64,8 @@ class _OrderDetailsView extends StatelessWidget {
         final order = state.order;
         final cubit = context.read<OrderDetailsCubit>();
         final bool isSmallMerchant = UserRoleHelper.isSmallMerchantSync();
-        final bool isParent = !isSmallMerchant &&
+        final bool isParent =
+            !isSmallMerchant &&
             (isParentMerchantView || UserRoleHelper.isParentMerchantSync());
 
         return PopScope(

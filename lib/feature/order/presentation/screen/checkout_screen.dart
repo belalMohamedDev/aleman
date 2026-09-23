@@ -54,15 +54,6 @@ class _CheckoutScreenContent extends StatelessWidget {
 
     return BlocConsumer<CheckoutCubit, CheckoutState>(
       listener: (context, state) {
-        if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
-        }
-
         if (state.status == CheckoutStatus.success &&
             state.createdOrder != null) {
           cartCubit.clearCart();
@@ -199,8 +190,10 @@ class _CheckoutScreenContent extends StatelessWidget {
 
         case 3:
           final shipping = state.shippingFee;
-          final currentTotal = (cartSubtotal - state.discount + shipping)
-              .clamp(0.0, double.infinity);
+          final currentTotal = (cartSubtotal - state.discount + shipping).clamp(
+            0.0,
+            double.infinity,
+          );
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,8 +252,10 @@ class _CheckoutScreenContent extends StatelessWidget {
           );
 
         case 2:
-          final currentTotal = (cartSubtotal - state.discount)
-              .clamp(0.0, double.infinity);
+          final currentTotal = (cartSubtotal - state.discount).clamp(
+            0.0,
+            double.infinity,
+          );
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -442,15 +437,18 @@ class _CheckoutScreenContent extends StatelessWidget {
                       Text(
                         (state.currentStep == 1
                             ? 'في الخطوة التالية'
-                            : (state.status == CheckoutStatus.calculatingShipping
-                                ? 'جاري الحساب...'
-                                : (state.selectedTruckType == null
-                                    ? 'اختر سيارة الشحن'
-                                    : '${state.shippingFee} ج.م'))),
+                            : (state.status ==
+                                      CheckoutStatus.calculatingShipping
+                                  ? 'جاري الحساب...'
+                                  : (state.selectedTruckType == null
+                                        ? 'اختر سيارة الشحن'
+                                        : '${state.shippingFee} ج.م'))),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.bold,
-                          color: state.currentStep == 1 || state.selectedTruckType == null
+                          color:
+                              state.currentStep == 1 ||
+                                  state.selectedTruckType == null
                               ? Colors.grey.shade600
                               : ColorManger.goldDark,
                         ),
@@ -537,9 +535,7 @@ class _CheckoutScreenContent extends StatelessWidget {
                               ),
                             )
                           : Text(
-                              !state.isLastStep
-                                  ? 'احفظ واستمر'
-                                  : 'تقديم الطلب',
+                              !state.isLastStep ? 'احفظ واستمر' : 'تقديم الطلب',
                               style: TextStyle(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.bold,

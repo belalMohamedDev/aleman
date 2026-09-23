@@ -1,5 +1,4 @@
 import 'package:aleman/core/routing/routes.dart';
-import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_cubit.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_state.dart';
@@ -20,17 +19,17 @@ class VerificationCodeButton extends StatelessWidget {
       listener: (context, state) {
         final cubit = context.read<ForgotPasswordCubit>();
         if (state.status == ForgotPasswordStatus.error) {
-          AppToast.showError(
-            context,
-            message: state.error ?? 'كود التحقق غير صحيح أو انتهت صلاحيته',
-          );
+          // AppToast.showError(
+          //   context,
+          //   message: state.error ?? 'كود التحقق غير صحيح أو انتهت صلاحيته',
+          // );
           cubit.resetStatus();
         } else if (state.status == ForgotPasswordStatus.verifyCodeSuccess) {
           cubit.cancelResendTimer();
-          AppToast.showSuccess(
-            context,
-            message: state.message ?? 'تم التحقق من الرمز بنجاح 🌾',
-          );
+          // AppToast.showSuccess(
+          //   context,
+          //   message: state.message ?? 'تم التحقق من الرمز بنجاح 🌾',
+          // );
           Navigator.pushNamed(
             context,
             Routes.newPasswordRoute,
@@ -54,8 +53,9 @@ class VerificationCodeButton extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorManger.primaryLight,
               foregroundColor: Colors.white,
-              disabledBackgroundColor:
-                  ColorManger.primaryLight.withValues(alpha: 0.35),
+              disabledBackgroundColor: ColorManger.primaryLight.withValues(
+                alpha: 0.35,
+              ),
               disabledForegroundColor: Colors.white70,
               elevation: isEnabled ? 1 : 0,
               shape: RoundedRectangleBorder(

@@ -145,7 +145,11 @@ class FactoryBankAccountsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Iconsax.card_pos, size: 16.sp, color: ColorManger.primaryLight),
+              Icon(
+                Iconsax.card_pos,
+                size: 16.sp,
+                color: ColorManger.primaryLight,
+              ),
               SizedBox(width: 6.w),
               Expanded(
                 child: Text(
@@ -205,10 +209,7 @@ class FactoryBankAccountsCard extends StatelessWidget {
       children: [
         Text(
           '$label: ',
-          style: TextStyle(
-            fontSize: 11.sp,
-            color: Colors.grey.shade600,
-          ),
+          style: TextStyle(fontSize: 11.sp, color: Colors.grey.shade600),
         ),
         Expanded(
           child: Text(
@@ -227,13 +228,6 @@ class FactoryBankAccountsCard extends StatelessWidget {
           InkWell(
             onTap: () {
               Clipboard.setData(ClipboardData(text: value));
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('تم نسخ $label إلى الحافظة'),
-                  duration: const Duration(seconds: 2),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
             },
             borderRadius: BorderRadius.circular(4.r),
             child: Padding(

@@ -12,7 +12,7 @@ class NotificationsShimmerLoading extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.only(top: 8.h, bottom: 24.h),
+      padding: EdgeInsets.only(bottom: 35.h),
       itemCount: itemCount,
       itemBuilder: (context, index) => const _NotificationShimmerCard(),
     );

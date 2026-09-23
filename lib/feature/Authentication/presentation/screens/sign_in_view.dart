@@ -30,12 +30,12 @@ class LoginView extends StatelessWidget {
           listener: (context, state) {
             if (state.status == LoginRequestStatus.error &&
                 state.error != null) {
-              AppToast.showError(context, message: state.error!);
+              // AppToast.showError(context, message: state.error!);
             } else if (state.status == LoginRequestStatus.success) {
-              AppToast.showSuccess(
-                context,
-                message: 'تم تسجيل الدخول بنجاح! أهلاً بك في الإيمان 🌾',
-              );
+              // AppToast.showSuccess(
+              //   context,
+              //   message: 'تم تسجيل الدخول بنجاح! أهلاً بك في الإيمان 🌾',
+              // );
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop(true);
               } else {

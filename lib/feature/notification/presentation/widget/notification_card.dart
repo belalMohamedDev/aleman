@@ -17,15 +17,20 @@ class NotificationCard extends StatelessWidget {
   const NotificationCard({super.key, required this.notification});
 
   String? _extractOrderId() {
-    final rawId = notification.data['orderId'] ??
+    final rawId =
+        notification.data['orderId'] ??
         notification.data['order_id'] ??
         notification.data['id'] ??
         notification.data['OrderId'];
-    if (rawId != null && rawId.toString().isNotEmpty && rawId.toString() != '0') {
+    if (rawId != null &&
+        rawId.toString().isNotEmpty &&
+        rawId.toString() != '0') {
       return rawId.toString();
     }
     final text = '${notification.title} ${notification.body}';
-    final regex = RegExp(r'#([A-Za-z0-9_-]+)|([A-Za-z0-9_-]+)#|رقم\s*[:#-]?\s*([A-Za-z0-9_-]+)');
+    final regex = RegExp(
+      r'#([A-Za-z0-9_-]+)|([A-Za-z0-9_-]+)#|رقم\s*[:#-]?\s*([A-Za-z0-9_-]+)',
+    );
     final match = regex.firstMatch(text);
     if (match != null) {
       return match.group(1) ?? match.group(2) ?? match.group(3);
@@ -57,7 +62,8 @@ class NotificationCard extends StatelessWidget {
       return false;
     }
 
-    final isAlreadyDecided = title.contains('تم اعتماد') ||
+    final isAlreadyDecided =
+        title.contains('تم اعتماد') ||
         title.contains('تم قبول') ||
         title.contains('تم رفض') ||
         title.contains('تم تأكيد') ||
@@ -72,7 +78,8 @@ class NotificationCard extends StatelessWidget {
 
     if (isAlreadyDecided) return false;
 
-    final isApprovalType = type == 'merchant_approval' ||
+    final isApprovalType =
+        type == 'merchant_approval' ||
         type == 'order_approval' ||
         type == 'small_merchant_order' ||
         action == 'approval' ||
@@ -80,7 +87,8 @@ class NotificationCard extends StatelessWidget {
         status == '8' ||
         requiresApproval == 'true';
 
-    final textHasApprovalKeyword = title.contains('موافقة') ||
+    final textHasApprovalKeyword =
+        title.contains('موافقة') ||
         title.contains('موافقتك') ||
         title.contains('اعتماد') ||
         body.contains('موافقة') ||
@@ -96,10 +104,16 @@ class NotificationCard extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         title: Row(
           children: [
-            Icon(Icons.check_circle_outline, color: const Color(0xFF059669), size: 24.sp),
+            Icon(
+              Icons.check_circle_outline,
+              color: const Color(0xFF059669),
+              size: 24.sp,
+            ),
             SizedBox(width: 8.w),
             Text(
               'اعتماد الطلب',
@@ -124,9 +138,14 @@ class NotificationCard extends StatelessWidget {
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF059669),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
             ),
-            child: const Text('تأكيد الاعتماد', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'تأكيد الاعتماد',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -134,10 +153,10 @@ class NotificationCard extends StatelessWidget {
 
     if (confirmed == true && context.mounted) {
       final success = await context.read<NotificationCubit>().reviewOrder(
-            orderId: orderId,
-            notificationId: notification.id,
-            isApproved: true,
-          );
+        orderId: orderId,
+        notificationId: notification.id,
+        isApproved: true,
+      );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -146,8 +165,7 @@ class NotificationCard extends StatelessWidget {
                   ? 'تم اعتماد الطلب بنجاح وإرساله لإدارة المبيعات'
                   : 'حدث خطأ أثناء اعتماد الطلب',
             ),
-            backgroundColor:
-                success ? const Color(0xFF059669) : Colors.red,
+            backgroundColor: success ? const Color(0xFF059669) : Colors.red,
           ),
         );
       }
@@ -161,7 +179,9 @@ class NotificationCard extends StatelessWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         title: Row(
           children: [
             Icon(Icons.cancel_outlined, color: Colors.red, size: 24.sp),
@@ -194,7 +214,9 @@ class NotificationCard extends StatelessWidget {
                 fillColor: Colors.white,
                 hintText: 'سبب الرفض (اختياري)...',
                 hintStyle: TextStyle(fontSize: 12.sp, color: Colors.grey),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.r),
                   borderSide: BorderSide(color: Colors.grey.shade300),
@@ -216,9 +238,14 @@ class NotificationCard extends StatelessWidget {
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
             ),
-            child: const Text('تأكيد الرفض', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'تأكيد الرفض',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -227,11 +254,11 @@ class NotificationCard extends StatelessWidget {
     if (confirmed == true && context.mounted) {
       final reason = reasonController.text.trim();
       final success = await context.read<NotificationCubit>().reviewOrder(
-            orderId: orderId,
-            notificationId: notification.id,
-            isApproved: false,
-            rejectionReason: reason.isEmpty ? null : reason,
-          );
+        orderId: orderId,
+        notificationId: notification.id,
+        isApproved: false,
+        rejectionReason: reason.isEmpty ? null : reason,
+      );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -263,8 +290,8 @@ class NotificationCard extends StatelessWidget {
           color: isApproval
               ? const Color(0xFFF59E0B).withAlpha(120)
               : isUnread
-                  ? ColorManger.buttonColor.withAlpha(80)
-                  : Colors.grey.withAlpha(30),
+              ? ColorManger.buttonColor.withAlpha(80)
+              : Colors.grey.withAlpha(30),
           width: isApproval ? 1.5 : 1.2,
         ),
         boxShadow: [
@@ -377,8 +404,8 @@ class NotificationCard extends StatelessWidget {
                       if (isApproval && orderId != null)
                         BlocBuilder<NotificationCubit, NotificationState>(
                           builder: (context, state) {
-                            final isProcessing =
-                                state.processingOrderIds.contains(orderId);
+                            final isProcessing = state.processingOrderIds
+                                .contains(orderId);
                             final actionStatus =
                                 state.orderReviewStatuses[orderId];
                             return _buildActionButtons(
@@ -422,7 +449,10 @@ class NotificationCard extends StatelessWidget {
             SizedBox(width: 6.w),
             Text(
               'تم اعتماد الطلب وإرساله للمبيعات',
-              style: getBoldStyle(fontSize: 11.5.sp, color: const Color(0xFF059669)),
+              style: getBoldStyle(
+                fontSize: 11.5.sp,
+                color: const Color(0xFF059669),
+              ),
             ),
           ],
         ),
@@ -482,7 +512,11 @@ class NotificationCard extends StatelessWidget {
           Expanded(
             child: ElevatedButton.icon(
               onPressed: () => _confirmApproval(context, orderId),
-              icon: const Icon(Icons.check_circle_outline, size: 15, color: Colors.white),
+              icon: const Icon(
+                Icons.check_circle_outline,
+                size: 15,
+                color: Colors.white,
+              ),
               label: Text(
                 'اعتماد الطلب',
                 style: getBoldStyle(fontSize: 11.5.sp, color: Colors.white),
@@ -491,7 +525,9 @@ class NotificationCard extends StatelessWidget {
                 backgroundColor: const Color(0xFF059669),
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 8.h),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
                 elevation: 0,
               ),
             ),
@@ -500,15 +536,24 @@ class NotificationCard extends StatelessWidget {
           Expanded(
             child: OutlinedButton.icon(
               onPressed: () => _showRejectDialog(context, orderId),
-              icon: const Icon(Icons.cancel_outlined, size: 15, color: Color(0xFFDC2626)),
+              icon: const Icon(
+                Icons.cancel_outlined,
+                size: 15,
+                color: Color(0xFFDC2626),
+              ),
               label: Text(
                 'رفض الطلب',
-                style: getBoldStyle(fontSize: 11.5.sp, color: const Color(0xFFDC2626)),
+                style: getBoldStyle(
+                  fontSize: 11.5.sp,
+                  color: const Color(0xFFDC2626),
+                ),
               ),
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: Color(0xFFDC2626), width: 1.2),
                 padding: EdgeInsets.symmetric(vertical: 8.h),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
               ),
             ),
           ),
@@ -527,7 +572,11 @@ class NotificationCard extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Center(
-          child: Icon(Iconsax.task_square, color: const Color(0xFFD97706), size: 20.sp),
+          child: Icon(
+            Iconsax.task_square,
+            color: const Color(0xFFD97706),
+            size: 20.sp,
+          ),
         ),
       );
     }

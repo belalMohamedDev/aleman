@@ -8,7 +8,6 @@ import 'package:aleman/core/services/app_logger.dart';
 import 'package:aleman/core/services/app_logout.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
-import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -120,7 +119,9 @@ class TokenInterceptor extends Interceptor {
           );
         }
 
-        appLogger.info('Attempting to refresh token via ${ApiConstants.baseUrl}${ApiConstants.refreshToken}');
+        appLogger.info(
+          'Attempting to refresh token via ${ApiConstants.baseUrl}${ApiConstants.refreshToken}',
+        );
 
         final response = await refreshDio.post(
           '${ApiConstants.baseUrl}${ApiConstants.refreshToken}',
@@ -139,15 +140,23 @@ class TokenInterceptor extends Interceptor {
           } catch (_) {}
         }
 
-        if (response.statusCode == 200 && responseData != null && responseData is Map) {
-          final newAccessToken = (responseData['accessToken'] ?? responseData['AccessToken']) as String?;
-          final newRefreshToken = (responseData['refreshToken'] ?? responseData['RefreshToken']) as String?;
+        if (response.statusCode == 200 &&
+            responseData != null &&
+            responseData is Map) {
+          final newAccessToken =
+              (responseData['accessToken'] ?? responseData['AccessToken'])
+                  as String?;
+          final newRefreshToken =
+              (responseData['refreshToken'] ?? responseData['RefreshToken'])
+                  as String?;
 
           if (newAccessToken != null &&
               newAccessToken.isNotEmpty &&
               newRefreshToken != null &&
               newRefreshToken.isNotEmpty) {
-            appLogger.info('Refresh token succeeded! Updating storage and retrying request.');
+            appLogger.info(
+              'Refresh token succeeded! Updating storage and retrying request.',
+            );
 
             // Save the updated tokens in secure storage
             await SharedPrefHelper.setSecuredString(
@@ -173,11 +182,15 @@ class TokenInterceptor extends Interceptor {
             final cloneReq = await dio.fetch(err.requestOptions);
             return handler.resolve(cloneReq);
           } else {
-            appLogger.warning('Tokens in refresh response are null or empty: $responseData');
+            appLogger.warning(
+              'Tokens in refresh response are null or empty: $responseData',
+            );
           }
         }
 
-        appLogger.warning('Refresh token failed with response status ${response.statusCode} or invalid data: ${response.data}');
+        appLogger.warning(
+          'Refresh token failed with response status ${response.statusCode} or invalid data: ${response.data}',
+        );
         _refreshCompleter?.complete(null);
         _refreshCompleter = null;
         _showSessionExpiredMessage();
@@ -185,7 +198,9 @@ class TokenInterceptor extends Interceptor {
       } catch (e, stack) {
         appLogger.error('Refresh token request threw exception: $e', stack);
         if (e is DioException) {
-          appLogger.error('Refresh DioException response status: ${e.response?.statusCode}, body: ${e.response?.data}');
+          appLogger.error(
+            'Refresh DioException response status: ${e.response?.statusCode}, body: ${e.response?.data}',
+          );
         }
         _refreshCompleter?.complete(null);
         _refreshCompleter = null;
@@ -215,10 +230,10 @@ class TokenInterceptor extends Interceptor {
     try {
       await AppLogout.logout();
 
-      AppToast.showError(
-        null,
-        message: 'انتهت صلاحية الجلسة، يرجى إعادة تسجيل الدخول',
-      );
+      // AppToast.showError(
+      //   null,
+      //   message: 'انتهت صلاحية الجلسة، يرجى إعادة تسجيل الدخول',
+      // );
 
       final context = instance<GlobalKey<NavigatorState>>().currentContext;
       if (context != null && context.mounted) {

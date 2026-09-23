@@ -28,24 +28,7 @@ class _MyOrdersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<OrdersCubit, OrdersState>(
-      listener: (context, state) {
-        if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
-        }
-        if (state.actionMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.actionMessage!),
-              backgroundColor: ColorManger.primaryLight,
-            ),
-          );
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         final cubit = context.read<OrdersCubit>();
 
@@ -491,8 +474,10 @@ class _MyOrdersView extends StatelessWidget {
                   )
                 else
                   Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 4.h,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF0FDF4),
                       borderRadius: BorderRadius.circular(8.r),
@@ -633,9 +618,7 @@ class _MyOrdersView extends StatelessWidget {
         return const Color(0xFF7C3AED);
       case 4:
       case 5:
-        return const Color(
-          0xFF0D9488,
-        );
+        return const Color(0xFF0D9488);
       case 6:
         return const Color(0xFF16A34A);
       case 7:

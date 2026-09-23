@@ -86,17 +86,6 @@ class _AddAddressBottomSheetFormState
         if (state.isSuccess && state.createdAddress != null) {
           widget.onAddressAdded(state.createdAddress!);
           Navigator.pop(context);
-          if (state.successMessage != null) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(state.successMessage!)));
-          }
-        } else if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
         }
       },
       builder: (context, state) {

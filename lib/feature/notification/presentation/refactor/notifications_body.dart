@@ -4,6 +4,7 @@ import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:aleman/feature/notification/logic/notification_state.dart';
 import 'package:aleman/feature/notification/presentation/widget/empty_notifications_view.dart';
 import 'package:aleman/feature/notification/presentation/widget/notification_card.dart';
+import 'package:aleman/feature/notification/presentation/widget/notifications_shimmer_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,10 +19,10 @@ class NotificationsBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<NotificationCubit, NotificationState>(
       builder: (context, state) {
-        // if (state.status == NotificationStatus.loading &&
-        //     state.notifications.isEmpty) {
-        //   return const NotificationsShimmerLoading();
-        // }
+        if (state.status == NotificationStatus.loading &&
+            state.notifications.isEmpty) {
+          return const NotificationsShimmerLoading();
+        }
 
         if (state.status == NotificationStatus.error &&
             state.notifications.isEmpty) {

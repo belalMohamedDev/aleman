@@ -1,4 +1,3 @@
-import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:flutter/material.dart';
@@ -34,10 +33,7 @@ void showAuthContactOptions(BuildContext context) {
               leading: Transform(
                 alignment: Alignment.center,
                 transform: Matrix4.rotationY(3.14159),
-                child: const Icon(
-                  Iconsax.call_received5,
-                  color: Colors.green,
-                ),
+                child: const Icon(Iconsax.call_received5, color: Colors.green),
               ),
               title: const Text("اتصال مباشر"),
               onTap: () async {
@@ -49,11 +45,7 @@ void showAuthContactOptions(BuildContext context) {
               },
             ),
             ListTile(
-              leading: Image.asset(
-                ImageAsset.whatsapp,
-                width: 24,
-                height: 24,
-              ),
+              leading: Image.asset(ImageAsset.whatsapp, width: 24, height: 24),
               title: const Text("واتساب"),
               onTap: () async {
                 Navigator.pop(context);
@@ -68,14 +60,15 @@ void showAuthContactOptions(BuildContext context) {
               title: const Text("نسخ الرقم"),
               onTap: () {
                 Navigator.pop(context);
-                Clipboard.setData(const ClipboardData(text: phoneNumber)).then((_) {
-                  if (context.mounted) {
-                    AppToast.showSuccess(
-                      context,
-                      message: "تم نسخ رقم التواصل بنجاح 🌾",
-                    );
-                  }
-                });
+                Clipboard.setData(const ClipboardData(text: phoneNumber))
+                    .then((_) {
+                      if (context.mounted) {
+                        // AppToast.showSuccess(
+                        //   context,
+                        //   message: "تم نسخ رقم التواصل بنجاح 🌾",
+                        // );
+                      }
+                    });
               },
             ),
           ],
@@ -95,10 +88,7 @@ class AuthContactSupportLink extends StatelessWidget {
         onTap: () => showAuthContactOptions(context),
         borderRadius: BorderRadius.circular(20.r),
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: 12.w,
-            vertical: 6.h,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [

@@ -39,7 +39,9 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
       return rawId.toString();
     }
     final text = '${notification.title} ${notification.body}';
-    final regex = RegExp(r'#([A-Za-z0-9_-]+)|([A-Za-z0-9_-]+)#|رقم\s*[:#-]?\s*([A-Za-z0-9_-]+)');
+    final regex = RegExp(
+      r'#([A-Za-z0-9_-]+)|([A-Za-z0-9_-]+)#|رقم\s*[:#-]?\s*([A-Za-z0-9_-]+)',
+    );
     final match = regex.firstMatch(text);
     if (match != null) {
       return match.group(1) ?? match.group(2) ?? match.group(3);

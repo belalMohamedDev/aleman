@@ -1,5 +1,4 @@
 import 'package:aleman/core/routing/routes.dart';
-import 'package:aleman/core/sharedWidget/app_toast.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_cubit.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_state.dart';
@@ -15,16 +14,16 @@ class ForgetPasswordButton extends StatelessWidget {
     return BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
       listener: (context, state) {
         if (state.status == ForgotPasswordStatus.error) {
-          AppToast.showError(
-            context,
-            message: state.error ?? 'حدث خطأ أثناء إرسال الكود',
-          );
+          // AppToast.showError(
+          //   context,
+          //   message: state.error ?? 'حدث خطأ أثناء إرسال الكود',
+          // );
         } else if (state.status == ForgotPasswordStatus.phoneSuccess) {
-          AppToast.showSuccess(
-            context,
-            message:
-                state.message ?? 'تم إرسال كود التحقق في رسالة نصية بنجاح 🌾',
-          );
+          // AppToast.showSuccess(
+          //   context,
+          //   message:
+          //       state.message ?? 'تم إرسال كود التحقق في رسالة نصية بنجاح 🌾',
+          // );
           Navigator.pushNamed(
             context,
             Routes.verificationCodeRoute,
@@ -42,14 +41,17 @@ class ForgetPasswordButton extends StatelessWidget {
           child: ElevatedButton(
             onPressed: isEnabled
                 ? () {
-                    context.read<ForgotPasswordCubit>().sendForgotPasswordCode();
+                    context
+                        .read<ForgotPasswordCubit>()
+                        .sendForgotPasswordCode();
                   }
                 : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorManger.primaryLight,
               foregroundColor: Colors.white,
-              disabledBackgroundColor:
-                  ColorManger.primaryLight.withValues(alpha: 0.35),
+              disabledBackgroundColor: ColorManger.primaryLight.withValues(
+                alpha: 0.35,
+              ),
               disabledForegroundColor: Colors.white70,
               elevation: isEnabled ? 1 : 0,
               shape: RoundedRectangleBorder(

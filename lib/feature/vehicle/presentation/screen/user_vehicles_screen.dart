@@ -29,24 +29,7 @@ class _UserVehiclesView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<VehicleCubit, VehicleState>(
-      listener: (context, state) {
-        if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: Colors.redAccent,
-            ),
-          );
-        }
-        if (state.actionSuccessMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.actionSuccessMessage!),
-              backgroundColor: ColorManger.primaryLight,
-            ),
-          );
-        }
-      },
+      listener: (context, state) {},
       builder: (context, state) {
         final cubit = context.read<VehicleCubit>();
 

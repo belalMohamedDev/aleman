@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/order/cubit/order_payment_cubit.dart';
 import 'package:aleman/feature/order/cubit/order_payment_state.dart';
@@ -12,33 +13,16 @@ import 'package:image_picker/image_picker.dart';
 class ReceiptUploadActionCard extends StatelessWidget {
   final VoidCallback? onUploadSuccess;
 
-  const ReceiptUploadActionCard({
-    super.key,
-    this.onUploadSuccess,
-  });
+  const ReceiptUploadActionCard({super.key, this.onUploadSuccess});
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<OrderPaymentCubit, OrderPaymentState>(
       listener: (context, state) {
         if (state.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage!),
-              backgroundColor: Colors.redAccent,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
           context.read<OrderPaymentCubit>().clearMessages();
         }
         if (state.successMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.successMessage!),
-              backgroundColor: const Color(0xFF059669),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
           context.read<OrderPaymentCubit>().clearMessages();
           if (onUploadSuccess != null) {
             onUploadSuccess!();
@@ -218,7 +202,10 @@ class ReceiptUploadActionCard extends StatelessWidget {
                 height: 44.w,
                 color: isPdf ? const Color(0xFFFEE2E2) : Colors.grey.shade200,
                 child: isPdf
-                    ? const Icon(Iconsax.document_text5, color: Color(0xFFDC2626))
+                    ? const Icon(
+                        Iconsax.document_text5,
+                        color: Color(0xFFDC2626),
+                      )
                     : Image.file(file, fit: BoxFit.cover),
               ),
             ),
@@ -250,11 +237,7 @@ class ReceiptUploadActionCard extends StatelessWidget {
             ),
           ),
           IconButton(
-            icon: Icon(
-              Iconsax.trash,
-              size: 18.sp,
-              color: Colors.red.shade400,
-            ),
+            icon: Icon(Iconsax.trash, size: 18.sp, color: Colors.red.shade400),
             onPressed: cubit.clearSelectedFile,
             tooltip: 'حذف واختيار ملف آخر',
           ),

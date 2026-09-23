@@ -558,10 +558,8 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => OrderDetailsScreen(
-              order: order,
-              isParentMerchantView: true,
-            ),
+            builder: (_) =>
+                OrderDetailsScreen(order: order, isParentMerchantView: true),
           ),
         );
       },
@@ -812,9 +810,16 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-        title: const Text('اعتماد الطلب', style: TextStyle(fontWeight: FontWeight.bold)),
-        content: Text('هل أنت متأكد من اعتماد طلب العميل الفرعي #${order.orderNumber}؟\nسيتم إرسال الطلب تلقائياً لإدارة ومبيعات المصنع لتأكيده وتجهيزه.'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: const Text(
+          'اعتماد الطلب',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        content: Text(
+          'هل أنت متأكد من اعتماد طلب العميل الفرعي #${order.orderNumber}؟\nسيتم إرسال الطلب تلقائياً لإدارة ومبيعات المصنع لتأكيده وتجهيزه.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -824,21 +829,15 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
             onPressed: () async {
               Navigator.pop(ctx);
               final cubit = context.read<SmallMerchantsOrdersCubit>();
-              final success = await cubit.reviewOrder(
-                orderId: order.id,
-                isApproved: true,
-              );
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(success ? 'تم اعتماد الطلب بنجاح وإرساله للمبيعات' : 'حدث خطأ أثناء اعتماد الطلب'),
-                    backgroundColor: success ? const Color(0xFF059669) : Colors.red,
-                  ),
-                );
-              }
+              await cubit.reviewOrder(orderId: order.id, isApproved: true);
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF059669)),
-            child: const Text('تأكيد الاعتماد', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF059669),
+            ),
+            child: const Text(
+              'تأكيد الاعتماد',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -850,8 +849,13 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-        title: const Text('رفض طلب العميل الفرعي', style: TextStyle(fontWeight: FontWeight.bold)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: const Text(
+          'رفض طلب العميل الفرعي',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -863,7 +867,9 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
               maxLines: 3,
               decoration: InputDecoration(
                 hintText: 'سبب الرفض (اختياري)...',
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.r)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
               ),
             ),
           ],
@@ -877,22 +883,21 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
             onPressed: () async {
               Navigator.pop(ctx);
               final cubit = context.read<SmallMerchantsOrdersCubit>();
-              final success = await cubit.reviewOrder(
+              await cubit.reviewOrder(
                 orderId: order.id,
                 isApproved: false,
-                rejectionReason: reasonController.text.trim().isEmpty ? null : reasonController.text.trim(),
+                rejectionReason: reasonController.text.trim().isEmpty
+                    ? null
+                    : reasonController.text.trim(),
               );
-              if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(success ? 'تم رفض الطلب بنجاح' : 'حدث خطأ أثناء رفض الطلب'),
-                    backgroundColor: success ? Colors.orange : Colors.red,
-                  ),
-                );
-              }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFDC2626)),
-            child: const Text('تأكيد الرفض', style: TextStyle(color: Colors.white)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFDC2626),
+            ),
+            child: const Text(
+              'تأكيد الرفض',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
