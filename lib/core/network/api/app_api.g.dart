@@ -13,7 +13,7 @@ part of 'app_api.dart';
 
 class _AppServiceClient implements AppServiceClient {
   _AppServiceClient(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://10.0.2.239:5094';
+    baseUrl ??= 'https://alemanapp.runasp.net';
   }
 
   final Dio _dio;

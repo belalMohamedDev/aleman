@@ -11,8 +11,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-// import 'package:url_launcher/url_launcher.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -90,62 +88,66 @@ class _HomeScreenState extends State<HomeScreen> {
                   previous.totalItemsCount != current.totalItemsCount,
               builder: (context, cartState) {
                 final count = cartState.totalItemsCount;
-                return InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, Routes.cartRoute);
-                  },
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      FloatingActionButton(
-                        key: CartAnimationHelper.cartKey,
-                        heroTag: 'fab_cart',
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                          side: BorderSide(
-                            color: ColorManger.gold.withValues(alpha: 0.1),
-                            width: 0.0,
-                          ),
-                        ),
-
-                        onPressed: () {
-                          // Navigator.pushNamed(context, Routes.cartRoute);
-                        },
-                        backgroundColor: ColorManger.backgroundItem.withValues(
-                          alpha: 0.4,
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    FloatingActionButton(
+                      key: CartAnimationHelper.cartKey,
+                      heroTag: 'fab_cart',
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.r),
+                        side: BorderSide(
+                          color: ColorManger.gold.withValues(alpha: 0.1),
+                          width: 0.0,
                         ),
                       ),
-                      Image.asset(ImageAsset.cart, width: 65.w, height: 65.h),
-                      if (count > 0)
-                        PositionedDirectional(
-                          top: -2,
-                          start: 0,
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 8.w,
-                              vertical: 2.5.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: ColorManger.chipProtein,
-                              borderRadius: BorderRadius.circular(10.r),
-                            ),
-                            constraints: BoxConstraints(
-                              minWidth: 18.w,
-                              minHeight: 18.h,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              '$count',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
+
+                      onPressed: () {
+                        if (state.isLoggedIn) {
+                          Navigator.pushNamed(context, Routes.cartRoute);
+                        } else {
+                          Navigator.pushNamed(context, Routes.loginRoute);
+                        }
+                      },
+                      backgroundColor: ColorManger.white.withValues(alpha: 0.8),
+                      child: RotatedBox(
+                        quarterTurns: 4,
+                        child: Image.asset(
+                          ImageAsset.cart,
+                          width: 50.w,
+                          height: 45.h,
+                        ),
+                      ),
+                    ),
+                    if (count > 0)
+                      PositionedDirectional(
+                        top: -2,
+                        start: 8,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 2.5.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: ColorManger.chipProtein,
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 18.w,
+                            minHeight: 18.h,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$count',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 );
               },
             ),

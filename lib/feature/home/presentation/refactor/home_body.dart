@@ -11,7 +11,6 @@ import 'package:aleman/feature/notification/presentation/widget/notification_bad
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
 
 class HomeBody extends StatelessWidget {
   const HomeBody({super.key});
@@ -37,9 +36,7 @@ class HomeBody extends StatelessWidget {
             const CategoryListViewBuilder(),
             responsive.setSizeBox(height: 2),
             const NewProductGrideView(),
-            responsive.setSizeBox(
-              height: 10,
-            ), // Extra space for floating bottom nav
+            responsive.setSizeBox(height: 10),
           ],
         ),
       ),
@@ -153,21 +150,20 @@ class HomeBody extends StatelessWidget {
                           : ImageAsset.loginFarmer,
                       height: responsive.setHeight(6),
                       width: responsive.setWidth(15),
-
-                      // color: ColorManger.primaryLight,
                     ),
-                    //    Icon(Iconsax.user, color: ColorManger.primaryLight),
                   ),
                 ),
-                PositionedDirectional(
-                  top: -2,
-                  start: -4,
-                  child: Icon(
-                    !state.isLoggedIn ? Iconsax.login_14 : Icons.settings,
-                    size: 20.sp,
-                    color: ColorManger.primaryLight,
+                if (state.isLoggedIn) ...[
+                  PositionedDirectional(
+                    top: -2,
+                    start: -4,
+                    child: Icon(
+                      Icons.settings,
+                      size: 20.sp,
+                      color: ColorManger.primaryLight,
+                    ),
                   ),
-                ),
+                ],
               ],
             );
           },

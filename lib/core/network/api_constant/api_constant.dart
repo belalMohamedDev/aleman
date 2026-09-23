@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'http://10.0.2.239:5094';
+  static const String baseUrl = 'https://alemanapp.runasp.net';
   //static const String baseUrl = 'http://10.0.2.2:5094';
   static const String banner = '/api/Banners';
   static const String category = '/api/Categories';
