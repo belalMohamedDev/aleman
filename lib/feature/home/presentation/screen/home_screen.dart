@@ -94,14 +94,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     FloatingActionButton(
                       key: CartAnimationHelper.cartKey,
                       heroTag: 'fab_cart',
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.r),
-                        side: BorderSide(
-                          color: ColorManger.gold.withValues(alpha: 0.1),
-                          width: 0.0,
-                        ),
-                      ),
-
+                      elevation: 4,
+                      highlightElevation: 6,
+                      clipBehavior: Clip.none,
+                      shape: const CircleBorder(),
+                      backgroundColor: ColorManger.noonYellow,
                       onPressed: () {
                         if (state.isLoggedIn) {
                           Navigator.pushNamed(context, Routes.cartRoute);
@@ -109,20 +106,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.pushNamed(context, Routes.loginRoute);
                         }
                       },
-                      backgroundColor: Colors.amber,
-                      child: RotatedBox(
-                        quarterTurns: 4,
-                        child: Image.asset(
-                          ImageAsset.cart,
-                          width: 50.w,
-                          height: 45.h,
+                      child: Transform.translate(
+                        offset: Offset(-8.w, 1.h),
+                        child: Transform.rotate(
+                          angle: -0.09,
+                          child: Image.asset(
+                            ImageAsset.cart,
+                            width: 65.w,
+                            height: 65.h,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return const SizedBox.shrink();
+                            },
+                          ),
                         ),
                       ),
                     ),
+
                     if (count > 0)
                       PositionedDirectional(
-                        top: -2,
-                        start: 8,
+                        top: -4,
+                        start: 15,
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             horizontal: 8.w,

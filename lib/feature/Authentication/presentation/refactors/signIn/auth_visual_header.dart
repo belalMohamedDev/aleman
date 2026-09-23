@@ -1,3 +1,4 @@
+import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,9 +7,6 @@ class AuthVisualHeader extends StatelessWidget {
   const AuthVisualHeader({super.key, this.onClose});
 
   final VoidCallback? onClose;
-
-  // Vibrant Noon signature yellow
-  static const Color noonYellow = Color(0xFFFCE000);
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +131,7 @@ class _CollageItem extends StatelessWidget {
             height: circleSize,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              color: AuthVisualHeader.noonYellow,
+              color: ColorManger.noonYellow,
             ),
           ),
 

@@ -56,4 +56,5 @@ class ColorManger {
   static const Color authHintGrey = Color(0xFF94A3B8);
   static const Color authBackBtnBg = Color(0xFFF1F5F9);
   static const Color authBackBtnIcon = Color(0xFF334155);
+  static const Color noonYellow = Color(0xFFFCE000);
 }

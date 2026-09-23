@@ -31,126 +31,157 @@ class VerificationCodeView extends StatelessWidget {
           backgroundColor: Colors.white,
           body: SafeArea(
             top: false,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 60.h),
-                  const AuthVisualHeader(),
+            child: Stack(
+              children: [
+                SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      SizedBox(height: 60.h),
+                      const AuthVisualHeader(),
 
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        SizedBox(height: 50.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            SizedBox(height: 50.h),
 
-                        // Title (Noon Style)
-                        Text(
-                          'تأكيد كود التحقق',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 22.sp,
-                            fontWeight: FontWeight.w900,
-                            color: ColorManger.authTitleDark,
-                            letterSpacing: -0.3,
-                          ),
-                        ),
-                        SizedBox(height: 4.h),
-                        Text(
-                          'أدخل كود التحقق المكون من 6 أرقام والمُرسل إلى هاتفك',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: ColorManger.authSubtitleGrey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-
-                        SizedBox(height: 18.h),
-
-                        // Info box with current phone & Change action
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 14.w,
-                            vertical: 12.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorManger.authFieldBg,
-                            borderRadius: BorderRadius.circular(14.r),
-                            border: Border.all(
-                              color: ColorManger.authFieldBorder,
+                            // Title (Noon Style)
+                            Text(
+                              'تأكيد كود التحقق',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.w900,
+                                color: ColorManger.authTitleDark,
+                                letterSpacing: -0.3,
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Iconsax.message_tick,
-                                      size: 18.sp,
-                                      color: ColorManger.primaryLight,
+                            SizedBox(height: 4.h),
+                            Text(
+                              'أدخل كود التحقق المكون من 6 أرقام والمُرسل إلى هاتفك',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: ColorManger.authSubtitleGrey,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+
+                            SizedBox(height: 18.h),
+
+                            // Info box with current phone & Change action
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 14.w,
+                                vertical: 12.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: ColorManger.authFieldBg,
+                                borderRadius: BorderRadius.circular(14.r),
+                                border: Border.all(
+                                  color: ColorManger.authFieldBorder,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Iconsax.message_tick,
+                                          size: 18.sp,
+                                          color: ColorManger.primaryLight,
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        Expanded(
+                                          child: Text(
+                                            'تم إرسال الكود إلى ${cubit.userPhoneController.text.isNotEmpty ? cubit.userPhoneController.text : '01xxxxxxxxx'}',
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w600,
+                                              color: ColorManger.authTitleDark,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(width: 8.w),
-                                    Expanded(
+                                  ),
+                                  InkWell(
+                                    onTap: () =>
+                                        Navigator.of(context).maybePop(),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 4.w,
+                                      ),
                                       child: Text(
-                                        'تم إرسال الكود إلى ${cubit.userPhoneController.text.isNotEmpty ? cubit.userPhoneController.text : '01xxxxxxxxx'}',
+                                        'تغيير',
                                         style: TextStyle(
                                           fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: ColorManger.authTitleDark,
+                                          fontWeight: FontWeight.bold,
+                                          color: ColorManger.primaryLight,
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                              InkWell(
-                                onTap: () => Navigator.of(context).maybePop(),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 4.w),
-                                  child: Text(
-                                    'تغيير',
-                                    style: TextStyle(
-                                      fontSize: 12.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: ColorManger.primaryLight,
-                                    ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
+                            ),
+
+                            SizedBox(height: 24.h),
+
+                            // Discrete 6-digit OTP Input Boxes
+                            const VerifyCodeTextFormField(),
+
+                            SizedBox(height: 18.h),
+
+                            // Resend Code with Countdown Timer
+                            const ResendCodeSection(),
+
+                            SizedBox(height: 24.h),
+
+                            // Verification Button
+                            const VerificationCodeButton(),
+
+                            SizedBox(height: 20.h),
+
+                            // Contact / Help Link
+                            const AuthContactSupportLink(),
+
+                            SizedBox(height: 20.h),
+                          ],
                         ),
+                      ),
+                    ],
+                  ),
+                ),
 
-                        SizedBox(height: 24.h),
-
-                        // Discrete 6-digit OTP Input Boxes
-                        const VerifyCodeTextFormField(),
-
-                        SizedBox(height: 18.h),
-
-                        // Resend Code with Countdown Timer
-                        const ResendCodeSection(),
-
-                        SizedBox(height: 24.h),
-
-                        // Verification Button
-                        const VerificationCodeButton(),
-
-                        SizedBox(height: 20.h),
-
-                        // Contact / Help Link
-                        const AuthContactSupportLink(),
-
-                        SizedBox(height: 20.h),
-                      ],
+                // Fixed Close (X) Button on top-start
+                PositionedDirectional(
+                  top: MediaQuery.of(context).padding.top + 8.h,
+                  start: 16.w,
+                  child: InkWell(
+                    onTap: () => Navigator.of(context).maybePop(),
+                    borderRadius: BorderRadius.circular(50),
+                    child: Container(
+                      width: 36.w,
+                      height: 36.h,
+                      decoration: BoxDecoration(
+                        color: ColorManger.authBackBtnBg,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.arrow_back,
+                        size: 20,
+                        color: ColorManger.authBackBtnIcon,
+                      ),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
