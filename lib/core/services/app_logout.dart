@@ -1,6 +1,7 @@
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/auth_event_bus.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/core/utils/extensions.dart';
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/logout/logout_body_request.dart';
@@ -25,16 +26,15 @@ class AppLogout {
             LogoutRequestBody(refreshToken: refreshToken),
           );
         }
-      } catch (_) {
-        // Silently continue so local logout always succeeds even if offline or server returns an error
-      }
+      } catch (_) {}
     }
 
     final String fcmToken = await SharedPrefHelper.getSecuredString(
       PrefKeys.fcmDeviceToken,
     );
 
-    if (fcmToken.isNotEmpty && instance.isRegistered<RemoveDeviceTokenUseCase>()) {
+    if (fcmToken.isNotEmpty &&
+        instance.isRegistered<RemoveDeviceTokenUseCase>()) {
       try {
         await instance<RemoveDeviceTokenUseCase>().execute(
           RemoveTokenRequestBody(fcmToken: fcmToken),
@@ -44,6 +44,7 @@ class AppLogout {
 
     await SharedPrefHelper.clearAllSecuredData();
     await SharedPrefHelper.setData(PrefKeys.prefsKeyIsUserLoggedIn, false);
+    AuthEventBus.notifyLoggedOut();
   }
 
   /// Clears authentication credentials and navigates to the login screen
@@ -51,12 +52,11 @@ class AppLogout {
     await logout();
 
     if (context != null && context.mounted) {
-      context.pushNamedAndRemoveUntil(Routes.loginRoute);
+      context.pushNamedAndRemoveUntil(Routes.homeRoute);
     } else {
-      instance<GlobalKey<NavigatorState>>()
-          .currentState
+      instance<GlobalKey<NavigatorState>>().currentState
           ?.pushNamedAndRemoveUntil(
-            Routes.loginRoute,
+            Routes.homeRoute,
             (Route<dynamic> route) => false,
           );
     }

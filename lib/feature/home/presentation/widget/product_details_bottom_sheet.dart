@@ -151,7 +151,15 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                   ),
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, Routes.loginRoute);
+                      final homeCubit = context.read<HomeCuibtCubit>();
+                      Navigator.pop(context);
+                      Navigator.of(context, rootNavigator: true)
+                          .pushNamed(Routes.loginRoute)
+                          .then((result) {
+                            if (result == true) {
+                              homeCubit.fetchHomeData();
+                            }
+                          });
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManger.primaryLight,
@@ -810,7 +818,11 @@ class _ActionBar extends StatelessWidget {
                     Navigator.pop(context);
                     Navigator.of(context, rootNavigator: true)
                         .pushNamed(Routes.loginRoute)
-                        .then((_) => homeCubit.checkLoginStatus());
+                        .then((result) {
+                          if (result == true) {
+                            homeCubit.fetchHomeData();
+                          }
+                        });
                     return;
                   }
 

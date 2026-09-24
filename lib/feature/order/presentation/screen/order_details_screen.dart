@@ -7,6 +7,7 @@ import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:aleman/feature/order/presentation/widget/order_details/order_details_timeline_widget.dart';
 import 'package:aleman/feature/order/presentation/widget/order_details/payment/order_bank_transfer_flow_widget.dart';
+import 'package:aleman/feature/order/presentation/widget/order_details_shimmer_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -153,46 +154,63 @@ class _OrderDetailsView extends StatelessWidget {
                   ),
               ],
             ),
-            body: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildOrderHeaderCard(context, order),
-                  SizedBox(height: 14.h),
+            body: (state.status == OrderDetailsStatus.loading &&
+                    (order.createdAt == null || order.orderNumber.isEmpty))
+                ? const OrderDetailsShimmerLoading()
+                : RefreshIndicator(
+                    onRefresh: cubit.fetchOrderDetails,
+                    color: ColorManger.primaryLight,
+                    backgroundColor: Colors.white,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 14.h,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildOrderHeaderCard(context, order),
+                          SizedBox(height: 14.h),
 
-                  OrderDetailsTimelineWidget(order: order),
-                  SizedBox(height: 14.h),
+                          OrderDetailsTimelineWidget(order: order),
+                          SizedBox(height: 14.h),
 
-                  if (order.isBankTransfer) ...[
-                    OrderBankTransferFlowWidget(
-                      order: order,
-                      onOrderUpdated: cubit.fetchOrderDetails,
+                          if (order.items.isNotEmpty) ...[
+                            _buildOrderItemsCard(order),
+                            SizedBox(height: 14.h),
+                          ],
+
+                          if (order.isBankTransfer) ...[
+                            OrderBankTransferFlowWidget(
+                              order: order,
+                              onOrderUpdated: cubit.fetchOrderDetails,
+                            ),
+                            SizedBox(height: 14.h),
+                          ],
+
+                          _buildFulfillmentDetailsCard(order),
+                          SizedBox(height: 14.h),
+
+                          _buildInvoicePricingCard(order, isParent: isParent),
+                          SizedBox(height: 20.h),
+
+                          if (isSmallMerchant &&
+                              (order.isPending ||
+                                  order.isPendingMerchantApproval ||
+                                  order.isPendingAdminApproval)) ...[
+                            _buildCancelOrderSection(
+                              context,
+                              order,
+                              cubit,
+                              state.isCancelling,
+                            ),
+                            SizedBox(height: 16.h),
+                          ],
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 14.h),
-                  ],
-
-                  _buildFulfillmentDetailsCard(order),
-                  SizedBox(height: 14.h),
-
-                  _buildInvoicePricingCard(order, isParent: isParent),
-                  SizedBox(height: 20.h),
-
-                  if (isSmallMerchant &&
-                      (order.isPending ||
-                          order.isPendingMerchantApproval ||
-                          order.isPendingAdminApproval)) ...[
-                    _buildCancelOrderSection(
-                      context,
-                      order,
-                      cubit,
-                      state.isCancelling,
-                    ),
-                    SizedBox(height: 16.h),
-                  ],
-                ],
-              ),
-            ),
+                  ),
             bottomNavigationBar: (isParent && order.isPendingMerchantApproval)
                 ? _buildMerchantApprovalBottomBar(
                     context,
@@ -204,6 +222,96 @@ class _OrderDetailsView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildOrderItemsCard(OrderResponseModel order) {
+    return Container(
+      padding: EdgeInsets.all(16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Iconsax.box,
+                color: ColorManger.primaryLight,
+                size: 22.sp,
+              ),
+              SizedBox(width: 10.w),
+              Text(
+                'المنتجات المطلوبة (${order.items.length})',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.bold,
+                  color: ColorManger.primary,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 12.h),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: order.items.length,
+            separatorBuilder: (_, _) => Divider(
+              color: Colors.grey.shade100,
+              height: 16.h,
+            ),
+            itemBuilder: (context, index) {
+              final item = order.items[index];
+              return Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.productName,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        Text(
+                          'الوزن: ${item.weightKg.toInt()} كجم | الكمية: ${item.quantity}',
+                          style: TextStyle(
+                            fontSize: 11.5.sp,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (item.totalPrice > 0)
+                    Text(
+                      '${item.totalPrice.toStringAsFixed(0)} ج.م',
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                        color: ColorManger.primary,
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

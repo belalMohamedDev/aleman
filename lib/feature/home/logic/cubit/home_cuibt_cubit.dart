@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/auth_event_bus.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/feature/home/data/mapper/banner_mapper.dart';
 import 'package:aleman/feature/home/data/mapper/category_mapper.dart';
@@ -12,9 +15,22 @@ part 'home_cuibt_state.dart';
 part 'home_cuibt_cubit.freezed.dart';
 
 class HomeCuibtCubit extends Cubit<HomeCuibtState> {
-  HomeCuibtCubit(this._homeRepository) : super(const HomeCuibtState());
+  HomeCuibtCubit(this._homeRepository) : super(const HomeCuibtState()) {
+    _authSubscription = AuthEventBus.stream.listen((event) {
+      if (!isClosed) {
+        fetchHomeData();
+      }
+    });
+  }
 
   final HomeRepository _homeRepository;
+  StreamSubscription<AuthEvent>? _authSubscription;
+
+  @override
+  Future<void> close() {
+    _authSubscription?.cancel();
+    return super.close();
+  }
 
   Future<void> fetchHomeData() async {
     await Future.wait([

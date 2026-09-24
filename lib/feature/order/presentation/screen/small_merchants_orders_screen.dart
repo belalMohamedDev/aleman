@@ -5,6 +5,7 @@ import 'package:aleman/feature/order/cubit/small_merchants_orders_state.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:aleman/feature/order/presentation/screen/order_details_screen.dart';
+import 'package:aleman/feature/order/presentation/widget/merchant_orders_shimmer_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -396,7 +397,7 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
   ) {
     if (state.status == SmallMerchantsOrdersStatus.loading &&
         state.orders.isEmpty) {
-      return const Center(child: CircularProgressIndicator());
+      return const MerchantOrdersShimmerLoading();
     }
 
     if (state.status == SmallMerchantsOrdersStatus.error &&

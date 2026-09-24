@@ -2,11 +2,12 @@ import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
+import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/widget/banner_carousel_slider.dart';
 import 'package:aleman/feature/home/presentation/widget/category_list_view_builder.dart';
 import 'package:aleman/feature/home/presentation/widget/product_gride_view.dart';
 import 'package:aleman/feature/home/presentation/widget/search_row.dart';
-import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/notification/presentation/widget/notification_badge_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -128,10 +129,14 @@ class HomeBody extends StatelessWidget {
                           rootNavigator: true,
                         ).pushNamed(Routes.profileRoute);
                       } else {
-                        Navigator.of(
+                        final result = await Navigator.of(
                           context,
                           rootNavigator: true,
                         ).pushNamed(Routes.loginRoute);
+                        if (result == true && context.mounted) {
+                          context.read<HomeCuibtCubit>().fetchHomeData();
+                          context.read<CartCubit>().getCartCount();
+                        }
                       }
                     }
                   },

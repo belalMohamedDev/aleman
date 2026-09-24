@@ -4,9 +4,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CartAnimationHelper {
-  static GlobalKey cartKey = GlobalKey();
+  static GlobalKey? cartKey;
 
-  static GlobalKey cartSearchKey = GlobalKey();
+  static GlobalKey? cartSearchKey;
 
   static void runFlyToCartAnimation({
     required BuildContext context,
@@ -29,11 +29,11 @@ class CartAnimationHelper {
     Size endSize = const Size(48, 48);
 
     RenderBox? targetRenderBox =
-        cartSearchKey.currentContext?.findRenderObject() as RenderBox?;
+        cartSearchKey?.currentContext?.findRenderObject() as RenderBox?;
 
     if (targetRenderBox == null || !targetRenderBox.hasSize) {
       targetRenderBox =
-          cartKey.currentContext?.findRenderObject() as RenderBox?;
+          cartKey?.currentContext?.findRenderObject() as RenderBox?;
     }
 
     if (targetRenderBox != null && targetRenderBox.hasSize) {

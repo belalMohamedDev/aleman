@@ -7,6 +7,7 @@ import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
+import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,14 +21,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey _cartKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
+    CartAnimationHelper.cartKey = _cartKey;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<CartCubit>().getCartCount();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    if (CartAnimationHelper.cartKey == _cartKey) {
+      CartAnimationHelper.cartKey = null;
+    }
+    super.dispose();
+  }
+
+  Future<void> _navigateToLogin() async {
+    final result = await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamed(Routes.loginRoute);
+    if (result == true && mounted) {
+      context.read<HomeCuibtCubit>().fetchHomeData();
+      context.read<CartCubit>().getCartCount();
+      context.read<NotificationCubit>().getUnreadCount();
+    }
   }
 
   @override
@@ -77,11 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Center(
                     child: _WelcomeLoginCard(
                       onLogin: () {
-                        final cubit = context.read<HomeCuibtCubit>();
-                        cubit.dismissLoginPrompt();
-                        Navigator.of(context, rootNavigator: true)
-                            .pushNamed(Routes.loginRoute)
-                            .then((_) => cubit.checkLoginStatus());
+                        context.read<HomeCuibtCubit>().dismissLoginPrompt();
+                        _navigateToLogin();
                       },
                       onDismiss: () =>
                           context.read<HomeCuibtCubit>().dismissLoginPrompt(),
@@ -105,8 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         clipBehavior: Clip.none,
                         children: [
                           FloatingActionButton(
-                            key: CartAnimationHelper.cartKey,
-                            heroTag: 'fab_cart',
+                            key: _cartKey,
+                            heroTag: null,
                             elevation: 8,
                             highlightElevation: 3,
                             clipBehavior: Clip.none,
@@ -118,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               if (state.isLoggedIn) {
                                 Navigator.pushNamed(context, Routes.cartRoute);
                               } else {
-                                Navigator.pushNamed(context, Routes.loginRoute);
+                                _navigateToLogin();
                               }
                             },
                             child: Transform.translate(
@@ -138,7 +159,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
 
-                          if (count > 0)
+                          if (count > 0 && state.isLoggedIn)
                             PositionedDirectional(
                               top: -4,
                               start: 15,

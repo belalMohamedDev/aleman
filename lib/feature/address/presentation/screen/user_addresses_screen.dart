@@ -5,6 +5,7 @@ import 'package:aleman/feature/address/data/repository/address_repo.dart';
 import 'package:aleman/feature/address/logic/cubit/address_cubit.dart';
 import 'package:aleman/feature/address/logic/cubit/address_state.dart';
 import 'package:aleman/feature/address/presentation/widget/add_address_bottom_sheet.dart';
+import 'package:aleman/feature/address/presentation/widget/addresses_shimmer_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,7 +50,7 @@ class _UserAddressesView extends StatelessWidget {
             ),
           ),
           body: state.status == AddressStatus.loading
-              ? const Center(child: CircularProgressIndicator())
+              ? const AddressesShimmerLoading()
               : state.addresses.isEmpty
               ? _buildEmptyState(context, cubit)
               : RefreshIndicator(

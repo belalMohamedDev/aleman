@@ -5,6 +5,7 @@ import 'package:aleman/feature/vehicle/data/repository/vehicle_repo.dart';
 import 'package:aleman/feature/vehicle/logic/cubit/vehicle_cubit.dart';
 import 'package:aleman/feature/vehicle/logic/cubit/vehicle_state.dart';
 import 'package:aleman/feature/vehicle/presentation/widget/add_edit_vehicle_bottom_sheet.dart';
+import 'package:aleman/feature/vehicle/presentation/widget/vehicles_shimmer_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,7 +50,7 @@ class _UserVehiclesView extends StatelessWidget {
             ),
           ),
           body: state.status == VehicleStatus.loading
-              ? const Center(child: CircularProgressIndicator())
+              ? const VehiclesShimmerLoading()
               : state.vehicles.isEmpty
               ? _buildEmptyState(context, cubit)
               : ListView.separated(

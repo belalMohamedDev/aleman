@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/auth_event_bus.dart';
 import 'package:aleman/core/services/notification_service.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/core/services/user_role_helper.dart';
@@ -246,6 +247,8 @@ class LoginCubit extends Cubit<LoginState> {
     if (instance.isRegistered<NotificationCubit>()) {
       instance<NotificationCubit>().getUnreadCount();
     }
+
+    AuthEventBus.notifyLoggedIn();
 
     emit(state.copyWith(status: LoginRequestStatus.success));
   }

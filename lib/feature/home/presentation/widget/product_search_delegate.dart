@@ -19,12 +19,15 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
   final List<ProductEntity> products;
   final CartCubit cartCubit;
   final HomeCuibtCubit homeCubit;
+  final GlobalKey _searchCartKey = GlobalKey();
 
   ProductSearchDelegate({
     required this.products,
     required this.cartCubit,
     required this.homeCubit,
-  });
+  }) {
+    CartAnimationHelper.cartSearchKey = _searchCartKey;
+  }
 
   @override
   String get searchFieldLabel => 'ابحث عن منتج...';
@@ -71,7 +74,7 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
               alignment: Alignment.center,
               children: [
                 IconButton(
-                  key: CartAnimationHelper.cartSearchKey,
+                  key: _searchCartKey,
                   onPressed: () {
                     Navigator.of(context).pushNamed(Routes.cartRoute);
                   },
@@ -139,6 +142,14 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
         close(context, null);
       },
     );
+  }
+
+  @override
+  void close(BuildContext context, ProductEntity? result) {
+    if (CartAnimationHelper.cartSearchKey == _searchCartKey) {
+      CartAnimationHelper.cartSearchKey = null;
+    }
+    super.close(context, result);
   }
 
   @override

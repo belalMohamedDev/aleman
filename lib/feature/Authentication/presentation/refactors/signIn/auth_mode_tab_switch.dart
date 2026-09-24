@@ -73,7 +73,7 @@ class AuthModeTabSwitch extends StatelessWidget {
                       },
                       child: Center(
                         child: _TabContent(
-                          title: 'رقم الهاتف (OTP)',
+                          title: 'رقم الهاتف',
                           icon: Iconsax.mobile,
                           isSelected: isPhone,
                         ),

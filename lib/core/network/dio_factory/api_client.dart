@@ -230,11 +230,6 @@ class TokenInterceptor extends Interceptor {
     try {
       await AppLogout.logout();
 
-      // AppToast.showError(
-      //   null,
-      //   message: 'انتهت صلاحية الجلسة، يرجى إعادة تسجيل الدخول',
-      // );
-
       final context = instance<GlobalKey<NavigatorState>>().currentContext;
       if (context != null && context.mounted) {
         final currentRouteName = ModalRoute.of(context)?.settings.name;
