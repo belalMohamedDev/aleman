@@ -7,6 +7,7 @@ import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
+import 'package:aleman/feature/home/presentation/widget/cart_eggs_badge.dart';
 import 'package:aleman/feature/home/presentation/widget/quick_login_card.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:flutter/material.dart';
@@ -126,39 +127,55 @@ class _HomeScreenState extends State<HomeScreen> {
                     : Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          FloatingActionButton(
-                            key: _cartKey,
-                            heroTag: null,
-                            elevation: 8,
-                            highlightElevation: 3,
-                            clipBehavior: Clip.none,
-                            shape: const CircleBorder(),
-                            backgroundColor: ColorManger.white.withValues(
-                              alpha: 0.7,
-                            ),
-                            onPressed: () {
-                              if (state.isLoggedIn) {
-                                Navigator.pushNamed(context, Routes.cartRoute);
-                              } else {
-                                _navigateToLogin();
-                              }
+                          ValueListenableBuilder<double>(
+                            valueListenable:
+                                CartAnimationHelper.cartBounceNotifier,
+                            builder: (context, bounceScale, fabChild) {
+                              return Transform.scale(
+                                scale: bounceScale,
+                                child: fabChild,
+                              );
                             },
-                            child: Transform.translate(
-                              offset: Offset(-8.w, 1.h),
-                              child: Transform.rotate(
-                                angle: -0.09,
-                                child: Image.asset(
-                                  ImageAsset.cart,
-                                  width: 65.w,
-                                  height: 65.h,
-                                  fit: BoxFit.contain,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return const SizedBox.shrink();
-                                  },
+                            child: FloatingActionButton(
+                              key: _cartKey,
+                              heroTag: null,
+                              elevation: 8,
+                              highlightElevation: 3,
+                              clipBehavior: Clip.none,
+                              shape: const CircleBorder(),
+                              backgroundColor: ColorManger.white.withValues(
+                                alpha: 0.7,
+                              ),
+                              onPressed: () {
+                                if (state.isLoggedIn) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    Routes.cartRoute,
+                                  );
+                                } else {
+                                  _navigateToLogin();
+                                }
+                              },
+                              child: Transform.translate(
+                                offset: Offset(-8.w, 1.h),
+                                child: Transform.rotate(
+                                  angle: -0.09,
+                                  child: Image.asset(
+                                    ImageAsset.cart,
+                                    width: 65.w,
+                                    height: 65.h,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return const SizedBox.shrink();
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
                           ),
+
+                          // Easter egg animation: eggs filling the cart basket
+                          const Positioned.fill(child: CartEggsBadge()),
 
                           if (count > 0 && state.isLoggedIn)
                             PositionedDirectional(

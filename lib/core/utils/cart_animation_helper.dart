@@ -8,6 +8,30 @@ class CartAnimationHelper {
 
   static GlobalKey? cartSearchKey;
 
+  static final ValueNotifier<int> cartEggsCountNotifier = ValueNotifier<int>(0);
+  static final ValueNotifier<double> cartBounceNotifier =
+      ValueNotifier<double>(1.0);
+
+  static void addEggToCart() {
+    cartEggsCountNotifier.value = (cartEggsCountNotifier.value + 1).clamp(0, 8);
+    triggerCartBounce();
+  }
+
+  static void triggerCartBounce() {
+    cartBounceNotifier.value = 1.22;
+    Future.delayed(const Duration(milliseconds: 120), () {
+      cartBounceNotifier.value = 0.94;
+      Future.delayed(const Duration(milliseconds: 100), () {
+        cartBounceNotifier.value = 1.0;
+      });
+    });
+  }
+
+  static void resetCartEggs() {
+    cartEggsCountNotifier.value = 0;
+    cartBounceNotifier.value = 1.0;
+  }
+
   static void runFlyToCartAnimation({
     required BuildContext context,
     required String imageUrl,
