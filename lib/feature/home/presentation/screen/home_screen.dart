@@ -7,6 +7,7 @@ import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
+import 'package:aleman/feature/home/presentation/widget/quick_login_card.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -94,19 +95,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: () =>
                           context.read<HomeCuibtCubit>().dismissLoginPrompt(),
                       child: Container(
-                        color: Colors.black.withValues(alpha: 0.45),
+                        color: Colors.black.withValues(alpha: 0.55),
                       ),
                     ),
                   ),
-                  Center(
-                    child: _WelcomeLoginCard(
-                      onLogin: () {
-                        context.read<HomeCuibtCubit>().dismissLoginPrompt();
-                        _navigateToLogin();
-                      },
-                      onDismiss: () =>
-                          context.read<HomeCuibtCubit>().dismissLoginPrompt(),
-                    ),
+                  QuickLoginCard(
+                    onDismiss: () =>
+                        context.read<HomeCuibtCubit>().dismissLoginPrompt(),
+                    onLoginSuccess: () {
+                      context.read<HomeCuibtCubit>().dismissLoginPrompt();
+                      context.read<HomeCuibtCubit>().fetchHomeData();
+                      context.read<CartCubit>().getCartCount();
+                      context.read<NotificationCubit>().getUnreadCount();
+                    },
                   ),
                 ],
               ],
@@ -193,141 +194,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _WelcomeLoginCard extends StatelessWidget {
-  const _WelcomeLoginCard({required this.onLogin, required this.onDismiss});
-
-  final VoidCallback onLogin;
-  final VoidCallback onDismiss;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 310.w,
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 32,
-            offset: const Offset(0, 12),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Align(
-            alignment: AlignmentDirectional.topEnd,
-            child: GestureDetector(
-              onTap: onDismiss,
-              child: Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(Icons.close, size: 16, color: Colors.grey.shade500),
-              ),
-            ),
-          ),
-          Container(
-            width: 1000.w,
-            height: 100.h,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  ColorManger.backgroundItem,
-                  ColorManger.backgroundItem,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: ColorManger.primaryLight.withValues(alpha: 0.1),
-                  blurRadius: 18,
-                  offset: const Offset(0, 6),
-                ),
-              ],
-            ),
-            child: Image.asset(
-              ImageAsset.loginFarmer,
-              width: 16.w,
-              height: 16.h,
-              // color: ColorManger.primaryLight,
-              fit: BoxFit.contain,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'سجل حسابك الآن',
-            style: TextStyle(
-              fontSize: 17.sp,
-              fontWeight: FontWeight.w800,
-              color: ColorManger.primary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Text(
-              'سجل دخولك لمتابعة الأسعار، وتتبع شحناتك، والاستمتاع بكافة مزايا التطبيق',
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey.shade600,
-                height: 1.5,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            height: 46.h,
-            child: ElevatedButton(
-              onPressed: onLogin,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorManger.primaryLight,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(14),
-                ),
-              ),
-              child: Text(
-                'تسجيل الدخول الآن',
-                style: TextStyle(
-                  fontSize: 13.5.sp,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-          SizedBox(height: 12.h),
-          TextButton(
-            onPressed: onDismiss,
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey.shade800,
-              padding: const EdgeInsets.symmetric(vertical: 4),
-              minimumSize: Size.zero,
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            ),
-            child: Text(
-              'تصفح كزائر الآن',
-              style: TextStyle(fontSize: 11.5.sp, fontWeight: FontWeight.w500),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -24,4 +24,7 @@ class ImageAsset {
   static const String notificationIcon = '$iconPath/notification.png';
   static const String notification = '$imagePath/notification.png';
   static const String cart = '$imagePath/cart.png';
+  static const String duckBag = '$imagePath/dugbag.png';
+  static const String cowBag = '$imagePath/cawbag.png';
+  static const String feedPellets = '$imagePath/4.png';
 }
