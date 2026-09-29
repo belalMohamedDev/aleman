@@ -1,6 +1,7 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
@@ -93,7 +94,7 @@ class ProductDetailsBottomSheet extends StatelessWidget {
               ),
               Flexible(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -106,12 +107,33 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                         const SizedBox(height: 16),
                       ],
                       if (canToggleTon) ...[
+                        Row(
+                          children: [
+                            Icon(
+                              Iconsax.truck,
+                              size: 15,
+                              color: ColorManger.primary,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'طريقة البيع:',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12.5.sp,
+                                color: ColorManger.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12.h),
+                      ],
+                      if (canToggleTon) ...[
                         _UnitToggle(isTonMode: isTonMode),
                         const SizedBox(height: 16),
                       ],
 
                       if (product.description.isNotEmpty) ...[
-                        const SizedBox(height: 18),
+                        const SizedBox(height: 2),
                         Text(
                           product.description,
                           style: TextStyle(
@@ -153,13 +175,14 @@ class ProductDetailsBottomSheet extends StatelessWidget {
                     onPressed: () {
                       final homeCubit = context.read<HomeCuibtCubit>();
                       Navigator.pop(context);
-                      Navigator.of(context, rootNavigator: true)
-                          .pushNamed(Routes.loginRoute)
-                          .then((result) {
-                            if (result == true) {
-                              homeCubit.fetchHomeData();
-                            }
-                          });
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(Routes.loginRoute).then((result) {
+                        if (result == true) {
+                          homeCubit.fetchHomeData();
+                        }
+                      });
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManger.primaryLight,
@@ -209,7 +232,7 @@ class _HeroSection extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
       decoration: BoxDecoration(
-        color: ColorManger.primaryLight.withValues(alpha: 0.06),
+        // color: ColorManger.primaryLight.withValues(alpha: 0.06),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
@@ -230,42 +253,84 @@ class _HeroSection extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                key: imageKey,
-                width: 95.w,
-                height: 95.w,
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                  border: Border.all(color: Colors.grey.shade100),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
-                  fit: BoxFit.contain,
-                  placeholder: (context, url) => Shimmer.fromColors(
-                    baseColor: Colors.grey.shade200,
-                    highlightColor: Colors.grey.shade50,
+              Stack(
+                children: [
+                  Positioned(
+                    top: 20.h,
+                    left: 0,
+                    right: 0,
                     child: Container(
+                      key: imageKey,
+                      width: 160.w,
+                      height: 150.w,
+
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
+                        color: ColorManger.primaryLight.withValues(alpha: 0.09),
+                        borderRadius: BorderRadius.circular(80.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                        border: Border.all(color: Colors.grey.shade100),
                       ),
                     ),
                   ),
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.grass_rounded,
-                    color: ColorManger.primaryLight.withValues(alpha: 0.4),
-                    size: 40,
+                  Positioned(
+                    left: 0,
+                    top: 70.h,
+
+                    child: Image.asset(
+                      ImageAsset.leftPlant,
+                      width: 90.w,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
+                  Positioned(
+                    right: -5,
+                    top: 110.h,
+
+                    child: Image.asset(
+                      ImageAsset.rightPlant,
+                      width: 50.w,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+
+                  CachedNetworkImage(
+                    height: 180.h,
+                    width: 150.w,
+                    imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Shimmer.fromColors(
+                      baseColor: Colors.grey.shade200,
+                      highlightColor: Colors.grey.shade50,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.grass_rounded,
+                      color: ColorManger.primaryLight.withValues(alpha: 0.4),
+                      size: 40,
+                    ),
+                  ),
+                  Positioned(
+                    bottom: -10.h,
+                    right: 0.w,
+                    child: Image.asset(
+                      ImageAsset.bob,
+                      width: 100.w,
+                      height: 70.w,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -273,6 +338,7 @@ class _HeroSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    SizedBox(height: 30.h),
                     Text(
                       product.name,
                       style: TextStyle(
@@ -284,7 +350,7 @@ class _HeroSection extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -292,7 +358,7 @@ class _HeroSection extends StatelessWidget {
                           '${displayPrice.toStringAsFixed(0)} ج.م',
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
-                            fontSize: 18.sp,
+                            fontSize: 20.sp,
                             color: ColorManger.goldDark,
                           ),
                         ),
@@ -319,7 +385,7 @@ class _HeroSection extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 10.h),
+                    SizedBox(height: 15.h),
                     _SpecChipsRow(
                       product: product,
                       getGrowthStageName: getGrowthStageName,
@@ -366,7 +432,7 @@ class _PackageSelector extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Row(
           children: List.generate(packages.length, (index) {
             final pkg = packages[index];
@@ -382,7 +448,7 @@ class _PackageSelector extends StatelessWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     padding: const EdgeInsets.symmetric(
-                      vertical: 9,
+                      vertical: 15,
                       horizontal: 10,
                     ),
                     decoration: BoxDecoration(
@@ -424,7 +490,7 @@ class _PackageSelector extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 5),
                         Text(
                           isTonMode
                               ? '${pkg.pricePerTon.toStringAsFixed(0)} ج.م/طن'
@@ -655,84 +721,124 @@ class _NutritionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasIngredients = product.ingredients.isNotEmpty;
+    final hasAdditives = product.additives.isNotEmpty;
+
     return Container(
-      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FA),
-        borderRadius: BorderRadius.circular(12),
+        // color: const Color(0xFFF8FAFB),
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: Colors.blueGrey.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(7),
-                ),
-                child: const Icon(
+          // Header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            child: Row(
+              children: [
+                Icon(
                   Iconsax.info_circle,
-                  size: 16,
-                  color: Colors.blueGrey,
+                  size: 15,
+                  color: Colors.blueGrey.shade400,
                 ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'المعلومات الغذائية',
-                style: TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 13.sp,
-                  color: Colors.blueGrey,
+                const SizedBox(width: 6),
+                Text(
+                  'المعلومات الغذائية',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12.sp,
+                    color: Colors.blueGrey.shade600,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          if (product.ingredients.isNotEmpty) ...[
-            const SizedBox(height: 10),
-            _nutRow('المكونات', product.ingredients),
-          ],
-          if (product.additives.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            _nutRow('الإضافات', product.additives),
-          ],
+          Divider(height: 1, thickness: 1, color: Colors.grey.shade200),
+          // Content
+          IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (hasIngredients)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: _NutritionColumn(
+                        icon: Icons.food_bank_rounded,
+                        label: 'المكونات',
+                        value: product.ingredients,
+                        iconColor: const Color(0xFF43A047),
+                      ),
+                    ),
+                  ),
+                if (hasIngredients && hasAdditives)
+                  VerticalDivider(
+                    width: 1,
+                    thickness: 1,
+                    color: Colors.grey.shade200,
+                  ),
+                if (hasAdditives)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: _NutritionColumn(
+                        icon: Iconsax.setting_2,
+                        label: 'الإضافات',
+                        value: product.additives,
+                        iconColor: const Color(0xFFEF6C00),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget _nutRow(String label, String value) {
-    return Row(
+class _NutritionColumn extends StatelessWidget {
+  const _NutritionColumn({
+    required this.icon,
+    required this.label,
+    required this.value,
+    required this.iconColor,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          margin: const EdgeInsets.only(top: 5),
-          width: 5,
-          height: 5,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey.shade300,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 8),
-        Text(
-          '$label: ',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 12.sp,
-            color: Colors.grey.shade700,
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: Colors.grey.shade600,
-              height: 1.5,
+        Row(
+          children: [
+            Icon(icon, size: 13, color: iconColor),
+            const SizedBox(width: 5),
+            Text(
+              '$label:',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 11.5.sp,
+                color: Colors.grey.shade800,
+              ),
             ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 11.sp,
+            color: Colors.grey.shade600,
+            height: 1.55,
           ),
         ),
       ],
@@ -816,13 +922,14 @@ class _ActionBar extends StatelessWidget {
                   final homeCubit = context.read<HomeCuibtCubit>();
                   if (!homeCubit.state.isLoggedIn) {
                     Navigator.pop(context);
-                    Navigator.of(context, rootNavigator: true)
-                        .pushNamed(Routes.loginRoute)
-                        .then((result) {
-                          if (result == true) {
-                            homeCubit.fetchHomeData();
-                          }
-                        });
+                    Navigator.of(
+                      context,
+                      rootNavigator: true,
+                    ).pushNamed(Routes.loginRoute).then((result) {
+                      if (result == true) {
+                        homeCubit.fetchHomeData();
+                      }
+                    });
                     return;
                   }
 

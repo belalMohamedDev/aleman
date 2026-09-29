@@ -27,4 +27,8 @@ class ImageAsset {
   static const String duckBag = '$imagePath/dugbag.png';
   static const String cowBag = '$imagePath/cawbag.png';
   static const String feedPellets = '$imagePath/4.png';
+
+  static const String bob = '$imagePath/bob.png';
+  static const String rightPlant = '$imagePath/right_plant.png';
+  static const String leftPlant = '$imagePath/left_palnt.png';
 }
