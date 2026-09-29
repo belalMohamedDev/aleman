@@ -236,8 +236,11 @@ class LoginCubit extends Cubit<LoginState> {
       await UserRoleHelper.getUserRole();
     }
 
+    // Save logged-in flag
+    await SharedPrefHelper.setData(PrefKeys.prefsKeyIsUserLoggedIn, true);
+
     if (instance.isRegistered<NotificationService>()) {
-      instance<NotificationService>().syncTokenWithBackend();
+      await instance<NotificationService>().syncTokenWithBackend();
     }
 
     if (instance.isRegistered<CartCubit>()) {

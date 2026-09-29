@@ -43,6 +43,12 @@ class AppLogout {
     }
 
     await SharedPrefHelper.clearAllSecuredData();
+    if (fcmToken.isNotEmpty) {
+      await SharedPrefHelper.setSecuredString(
+        PrefKeys.fcmDeviceToken,
+        fcmToken,
+      );
+    }
     await SharedPrefHelper.setData(PrefKeys.prefsKeyIsUserLoggedIn, false);
     AuthEventBus.notifyLoggedOut();
   }

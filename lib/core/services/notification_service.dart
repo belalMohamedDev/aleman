@@ -179,10 +179,33 @@ class NotificationService {
 
   Future<void> syncTokenWithBackend([String? token]) async {
     try {
-      final fcmToken = token ??
-          await SharedPrefHelper.getSecuredString(PrefKeys.fcmDeviceToken);
+      String? fcmToken = token;
+      if (fcmToken == null || fcmToken.isEmpty) {
+        fcmToken =
+            await SharedPrefHelper.getSecuredString(PrefKeys.fcmDeviceToken);
+      }
 
-      if (fcmToken.isEmpty) return;
+      // If token is still missing, fetch it directly from FirebaseMessaging
+      if (fcmToken.isEmpty) {
+        try {
+          fcmToken = await FirebaseMessaging.instance.getToken();
+          if (fcmToken != null && fcmToken.isNotEmpty) {
+            await SharedPrefHelper.setSecuredString(
+              PrefKeys.fcmDeviceToken,
+              fcmToken,
+            );
+          }
+        } catch (e) {
+          appLogger.warning('Failed to fetch FCM token from Firebase: $e');
+        }
+      }
+
+      if (fcmToken == null || fcmToken.isEmpty) {
+        appLogger.warning(
+          'Cannot sync token with backend: FCM device token is empty',
+        );
+        return;
+      }
 
       if (instance.isRegistered<RegisterDeviceTokenUseCase>()) {
         final registerUseCase = instance<RegisterDeviceTokenUseCase>();
@@ -198,10 +221,14 @@ class NotificationService {
 
         result.when(
           success: (res) {
-            appLogger.info('Device token registered with backend: ${res.message}');
+            appLogger.info(
+              'Device token registered with backend: ${res.message}',
+            );
           },
           failure: (err) {
-            appLogger.warning('Failed to register device token with backend: ${err.message}');
+            appLogger.warning(
+              'Failed to register device token with backend: ${err.message}',
+            );
           },
         );
       }
