@@ -87,7 +87,7 @@ class LogoutConfirmationBottomSheet extends StatelessWidget {
                       child: TextButton(
                         onPressed: isLoggingOut
                             ? null
-                            : () => Navigator.pop(context),
+                            : () => Navigator.of(context).maybePop(),
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.symmetric(vertical: 14.h),
                           shape: RoundedRectangleBorder(

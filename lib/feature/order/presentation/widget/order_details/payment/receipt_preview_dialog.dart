@@ -53,7 +53,7 @@ class ReceiptPreviewDialog extends StatelessWidget {
               child: IconButton(
                 padding: EdgeInsets.zero,
                 icon: const Icon(Icons.close, color: Colors.black87, size: 20),
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => Navigator.of(context).maybePop(),
               ),
             ),
           ),

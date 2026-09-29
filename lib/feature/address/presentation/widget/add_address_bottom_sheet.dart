@@ -85,7 +85,7 @@ class _AddAddressBottomSheetFormState
       listener: (context, state) {
         if (state.isSuccess && state.createdAddress != null) {
           widget.onAddressAdded(state.createdAddress!);
-          Navigator.pop(context);
+          Navigator.of(context).maybePop();
         }
       },
       builder: (context, state) {
@@ -123,7 +123,7 @@ class _AddAddressBottomSheetFormState
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () => Navigator.of(context).maybePop(),
                         ),
                       ],
                     ),

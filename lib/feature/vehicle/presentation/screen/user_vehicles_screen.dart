@@ -46,7 +46,7 @@ class _UserVehiclesView extends StatelessWidget {
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.of(context).maybePop(),
             ),
           ),
           body: state.status == VehicleStatus.loading

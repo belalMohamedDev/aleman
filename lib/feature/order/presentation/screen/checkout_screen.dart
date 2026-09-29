@@ -90,7 +90,7 @@ class _CheckoutScreenContent extends StatelessWidget {
                   if (state.currentStep > 1) {
                     cubit.previousStep();
                   } else {
-                    Navigator.pop(context);
+                    Navigator.of(context).maybePop();
                   }
                 },
               ),

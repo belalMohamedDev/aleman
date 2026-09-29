@@ -41,7 +41,7 @@ class PickLocationButton extends StatelessWidget {
                   controller: mapCubit.newAddressMapController,
                 );
                 if (context.mounted) {
-                  Navigator.pop(context);
+                  Navigator.of(context).maybePop();
                 }
               } else if (isHomeMap == true) {
                 await SharedPrefHelper.setSecuredString(
@@ -62,7 +62,7 @@ class PickLocationButton extends StatelessWidget {
                 );
 
                 mapCubit.setLocationToHome();
-                if (context.mounted) Navigator.pop(context);
+                if (context.mounted) Navigator.of(context).maybePop();
               } else if (loginMap == true) {
                 await SharedPrefHelper.setSecuredString(
                   PrefKeys.enLocationArea,

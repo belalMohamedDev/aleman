@@ -35,7 +35,7 @@ class ChangePasswordScreen extends StatelessWidget {
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.of(context).maybePop(),
           ),
         ),
         body: BlocListener<ChangePasswordCubit, ChangePasswordState>(
@@ -52,7 +52,7 @@ class ChangePasswordScreen extends StatelessWidget {
                 message:
                     state.successMessage ?? 'تم تغيير كلمة المرور بنجاح',
               );
-              Navigator.pop(context);
+              Navigator.of(context).maybePop();
             }
           },
           child: SafeArea(

@@ -89,7 +89,7 @@ class ProfileImagePickerBottomSheet extends StatelessWidget {
                     title: 'الكاميرا',
                     color: ColorManger.primary,
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.of(context).maybePop();
                       cubit.pickAndUploadImage(ImageSource.camera);
                     },
                   ),
@@ -101,7 +101,7 @@ class ProfileImagePickerBottomSheet extends StatelessWidget {
                     title: 'المعرض',
                     color: ColorManger.primaryLight,
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.of(context).maybePop();
                       cubit.pickAndUploadImage(ImageSource.gallery);
                     },
                   ),
@@ -112,7 +112,7 @@ class ProfileImagePickerBottomSheet extends StatelessWidget {
               SizedBox(height: 12.h),
               TextButton.icon(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.of(context).maybePop();
                   cubit.removeProfileImage();
                 },
                 icon: Icon(Iconsax.trash, size: 18.sp, color: Colors.red),

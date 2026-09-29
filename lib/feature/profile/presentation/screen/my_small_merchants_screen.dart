@@ -65,7 +65,7 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
         ),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A)),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => Navigator.of(context).maybePop(),
         ),
       ),
       body: BlocBuilder<SmallMerchantsCubit, SmallMerchantsState>(

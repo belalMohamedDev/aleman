@@ -123,7 +123,7 @@ class _AddEditVehicleBottomSheetState extends State<AddEditVehicleBottomSheet> {
           cubit.state.createdOrUpdatedVehicle != null) {
         widget.onVehicleSaved!(cubit.state.createdOrUpdatedVehicle!);
       }
-      Navigator.pop(context);
+      Navigator.of(context).maybePop();
     }
   }
 
@@ -179,7 +179,7 @@ class _AddEditVehicleBottomSheetState extends State<AddEditVehicleBottomSheet> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () => Navigator.pop(context),
+                          onPressed: () => Navigator.of(context).maybePop(),
                           icon: const Icon(Icons.close, color: Colors.black54),
                         ),
                       ],

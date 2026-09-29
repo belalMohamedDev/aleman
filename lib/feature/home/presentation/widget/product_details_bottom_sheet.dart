@@ -81,126 +81,153 @@ class ProductDetailsBottomSheet extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+          child: Stack(
             children: [
-              _HeroSection(
-                imageKey: imageKey,
-                product: product,
-                displayPrice: displayPrice,
-                isTonMode: isTonMode,
-                getGrowthStageName: _getGrowthStageName,
-                getFeedFormName: _getFeedFormName,
-              ),
-              Flexible(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (hasPackages && product.packages.length > 1) ...[
-                        _PackageSelector(
-                          packages: product.packages,
-                          selectedIndex: selectedPackageIndex,
-                          isTonMode: isTonMode,
-                        ),
-                        const SizedBox(height: 16),
-                      ],
-                      if (canToggleTon) ...[
-                        Row(
-                          children: [
-                            Icon(
-                              Iconsax.truck,
-                              size: 15,
-                              color: ColorManger.primary,
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _HeroSection(
+                    imageKey: imageKey,
+                    product: product,
+                    displayPrice: displayPrice,
+                    isTonMode: isTonMode,
+                    getGrowthStageName: _getGrowthStageName,
+                    getFeedFormName: _getFeedFormName,
+                  ),
+                  Flexible(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          if (hasPackages && product.packages.length > 1) ...[
+                            _PackageSelector(
+                              packages: product.packages,
+                              selectedIndex: selectedPackageIndex,
+                              isTonMode: isTonMode,
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(height: 16),
+                          ],
+                          if (canToggleTon) ...[
+                            Row(
+                              children: [
+                                Icon(
+                                  Iconsax.truck,
+                                  size: 15,
+                                  color: ColorManger.primary,
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  'طريقة البيع:',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12.5.sp,
+                                    color: ColorManger.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 12.h),
+                          ],
+                          if (canToggleTon) ...[
+                            _UnitToggle(isTonMode: isTonMode),
+                            const SizedBox(height: 16),
+                          ],
+
+                          if (product.description.isNotEmpty) ...[
+                            const SizedBox(height: 2),
                             Text(
-                              'طريقة البيع:',
+                              product.description,
                               style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12.5.sp,
-                                color: ColorManger.primary,
+                                color: Colors.grey.shade600,
+                                fontSize: 13.sp,
+                                height: 1.6,
                               ),
                             ),
                           ],
-                        ),
-                        SizedBox(height: 12.h),
-                      ],
-                      if (canToggleTon) ...[
-                        _UnitToggle(isTonMode: isTonMode),
-                        const SizedBox(height: 16),
-                      ],
+                          if (product.ingredients.isNotEmpty ||
+                              product.additives.isNotEmpty) ...[
+                            const SizedBox(height: 18),
+                            _NutritionCard(product: product),
+                          ],
+                          const SizedBox(height: 20),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (state.isLoggedIn)
+                    _ActionBar(
+                      imageKey: imageKey,
+                      product: product,
+                      currentPackage: currentPackage,
+                      currentWeight: currentWeight,
+                      quantity: quantity,
+                      isTonMode: isTonMode,
+                      responsive: responsive,
+                    ),
+                  if (!state.isLoggedIn)
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.only(
+                        left: responsive.setWidth(5),
+                        right: responsive.setWidth(5),
+                        bottom: responsive.setHeight(4),
+                      ),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          final homeCubit = context.read<HomeCuibtCubit>();
+                          Navigator.of(context).maybePop();
+                          Navigator.of(
+                            context,
+                            rootNavigator: true,
+                          ).pushNamed(Routes.loginRoute).then((result) {
+                            if (result == true) {
+                              homeCubit.fetchHomeData();
+                            }
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorManger.primaryLight,
 
-                      if (product.description.isNotEmpty) ...[
-                        const SizedBox(height: 2),
-                        Text(
-                          product.description,
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: 13.sp,
-                            height: 1.6,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                      ],
-                      if (product.ingredients.isNotEmpty ||
-                          product.additives.isNotEmpty) ...[
-                        const SizedBox(height: 18),
-                        _NutritionCard(product: product),
-                      ],
-                      const SizedBox(height: 20),
-                    ],
+                        child: Text(
+                          'تسجيل الدخول للشراء',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+
+              // Close button — same style as login screen
+              PositionedDirectional(
+                top: 20.h,
+                end: 20.w,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).maybePop(),
+                  borderRadius: BorderRadius.circular(50),
+                  child: Container(
+                    width: 34.w,
+                    height: 34.w,
+                    decoration: BoxDecoration(
+                      color: ColorManger.authBackBtnBg,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      size: 18,
+                      color: ColorManger.authBackBtnIcon,
+                    ),
                   ),
                 ),
               ),
-              if (state.isLoggedIn)
-                _ActionBar(
-                  imageKey: imageKey,
-                  product: product,
-                  currentPackage: currentPackage,
-                  currentWeight: currentWeight,
-                  quantity: quantity,
-                  isTonMode: isTonMode,
-                  responsive: responsive,
-                ),
-              if (!state.isLoggedIn)
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.only(
-                    left: responsive.setWidth(5),
-                    right: responsive.setWidth(5),
-                    bottom: responsive.setHeight(4),
-                  ),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      final homeCubit = context.read<HomeCuibtCubit>();
-                      Navigator.pop(context);
-                      Navigator.of(
-                        context,
-                        rootNavigator: true,
-                      ).pushNamed(Routes.loginRoute).then((result) {
-                        if (result == true) {
-                          homeCubit.fetchHomeData();
-                        }
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManger.primaryLight,
-
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    child: Text(
-                      'تسجيل الدخول للشراء',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
         );
@@ -921,7 +948,7 @@ class _ActionBar extends StatelessWidget {
                 onPressed: () {
                   final homeCubit = context.read<HomeCuibtCubit>();
                   if (!homeCubit.state.isLoggedIn) {
-                    Navigator.pop(context);
+                    Navigator.of(context).maybePop();
                     Navigator.of(
                       context,
                       rootNavigator: true,

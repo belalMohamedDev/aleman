@@ -37,7 +37,7 @@ void showAuthContactOptions(BuildContext context) {
               ),
               title: const Text("اتصال مباشر"),
               onTap: () async {
-                Navigator.pop(context);
+                Navigator.of(context).maybePop();
                 final Uri url = Uri(scheme: 'tel', path: phoneNumber);
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url);
@@ -48,7 +48,7 @@ void showAuthContactOptions(BuildContext context) {
               leading: Image.asset(ImageAsset.whatsapp, width: 24, height: 24),
               title: const Text("واتساب"),
               onTap: () async {
-                Navigator.pop(context);
+                Navigator.of(context).maybePop();
                 final Uri url = Uri.parse("https://wa.me/$phoneNumber");
                 if (await canLaunchUrl(url)) {
                   await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -59,7 +59,7 @@ void showAuthContactOptions(BuildContext context) {
               leading: Icon(Icons.copy, color: ColorManger.goldDark),
               title: const Text("نسخ الرقم"),
               onTap: () {
-                Navigator.pop(context);
+                Navigator.of(context).maybePop();
                 Clipboard.setData(const ClipboardData(text: phoneNumber))
                     .then((_) {
                       if (context.mounted) {
