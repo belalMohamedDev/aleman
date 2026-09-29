@@ -56,12 +56,12 @@ extension ProfileStatePatterns on ProfileState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Success value)?  success,TResult Function( _Error value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( ProfileSuccess value)?  success,TResult Function( _Error value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Success() when success != null:
+return loading(_that);case ProfileSuccess() when success != null:
 return success(_that);case _Error() when error != null:
 return error(_that);case _:
   return orElse();
@@ -81,12 +81,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Success value)  success,required TResult Function( _Error value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( ProfileSuccess value)  success,required TResult Function( _Error value)  error,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case _Loading():
-return loading(_that);case _Success():
+return loading(_that);case ProfileSuccess():
 return success(_that);case _Error():
 return error(_that);case _:
   throw StateError('Unexpected subclass');
@@ -105,12 +105,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Success value)?  success,TResult? Function( _Error value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( ProfileSuccess value)?  success,TResult? Function( _Error value)?  error,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Success() when success != null:
+return loading(_that);case ProfileSuccess() when success != null:
 return success(_that);case _Error() when error != null:
 return error(_that);case _:
   return null;
@@ -129,12 +129,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( UserProfileModel profile)?  success,TResult Function( ApiErrorModel error)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( UserProfileModel profile,  bool isUploadingImage,  String? imageUploadError,  String? imageUploadSuccess)?  success,TResult Function( ApiErrorModel error)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
-return loading();case _Success() when success != null:
-return success(_that.profile);case _Error() when error != null:
+return loading();case ProfileSuccess() when success != null:
+return success(_that.profile,_that.isUploadingImage,_that.imageUploadError,_that.imageUploadSuccess);case _Error() when error != null:
 return error(_that.error);case _:
   return orElse();
 
@@ -153,12 +153,12 @@ return error(_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( UserProfileModel profile)  success,required TResult Function( ApiErrorModel error)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( UserProfileModel profile,  bool isUploadingImage,  String? imageUploadError,  String? imageUploadSuccess)  success,required TResult Function( ApiErrorModel error)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Loading():
-return loading();case _Success():
-return success(_that.profile);case _Error():
+return loading();case ProfileSuccess():
+return success(_that.profile,_that.isUploadingImage,_that.imageUploadError,_that.imageUploadSuccess);case _Error():
 return error(_that.error);case _:
   throw StateError('Unexpected subclass');
 
@@ -176,12 +176,12 @@ return error(_that.error);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( UserProfileModel profile)?  success,TResult? Function( ApiErrorModel error)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( UserProfileModel profile,  bool isUploadingImage,  String? imageUploadError,  String? imageUploadSuccess)?  success,TResult? Function( ApiErrorModel error)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Loading() when loading != null:
-return loading();case _Success() when success != null:
-return success(_that.profile);case _Error() when error != null:
+return loading();case ProfileSuccess() when success != null:
+return success(_that.profile,_that.isUploadingImage,_that.imageUploadError,_that.imageUploadSuccess);case _Error() when error != null:
 return error(_that.error);case _:
   return null;
 
@@ -257,45 +257,48 @@ String toString() {
 /// @nodoc
 
 
-class _Success implements ProfileState {
-  const _Success(this.profile);
+class ProfileSuccess implements ProfileState {
+  const ProfileSuccess(this.profile, {this.isUploadingImage = false, this.imageUploadError, this.imageUploadSuccess});
   
 
  final  UserProfileModel profile;
+@JsonKey() final  bool isUploadingImage;
+ final  String? imageUploadError;
+ final  String? imageUploadSuccess;
 
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$SuccessCopyWith<_Success> get copyWith => __$SuccessCopyWithImpl<_Success>(this, _$identity);
+$ProfileSuccessCopyWith<ProfileSuccess> get copyWith => _$ProfileSuccessCopyWithImpl<ProfileSuccess>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Success&&(identical(other.profile, profile) || other.profile == profile));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileSuccess&&(identical(other.profile, profile) || other.profile == profile)&&(identical(other.isUploadingImage, isUploadingImage) || other.isUploadingImage == isUploadingImage)&&(identical(other.imageUploadError, imageUploadError) || other.imageUploadError == imageUploadError)&&(identical(other.imageUploadSuccess, imageUploadSuccess) || other.imageUploadSuccess == imageUploadSuccess));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,profile);
+    return Object.hash(runtimeType,profile,isUploadingImage,imageUploadError,imageUploadSuccess);
 }
 
 @override
 String toString() {
-    return 'ProfileState.success(profile: $profile)';
+    return 'ProfileState.success(profile: $profile, isUploadingImage: $isUploadingImage, imageUploadError: $imageUploadError, imageUploadSuccess: $imageUploadSuccess)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$SuccessCopyWith<$Res> implements $ProfileStateCopyWith<$Res> {
-  factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) = __$SuccessCopyWithImpl;
+abstract mixin class $ProfileSuccessCopyWith<$Res> implements $ProfileStateCopyWith<$Res> {
+  factory $ProfileSuccessCopyWith(ProfileSuccess value, $Res Function(ProfileSuccess) _then) = _$ProfileSuccessCopyWithImpl;
 @useResult
 $Res call({
- UserProfileModel profile
+ UserProfileModel profile, bool isUploadingImage, String? imageUploadError, String? imageUploadSuccess
 });
 
 
@@ -303,19 +306,22 @@ $Res call({
 
 }
 /// @nodoc
-class __$SuccessCopyWithImpl<$Res>
-    implements _$SuccessCopyWith<$Res> {
-  __$SuccessCopyWithImpl(this._self, this._then);
+class _$ProfileSuccessCopyWithImpl<$Res>
+    implements $ProfileSuccessCopyWith<$Res> {
+  _$ProfileSuccessCopyWithImpl(this._self, this._then);
 
-  final _Success _self;
-  final $Res Function(_Success) _then;
+  final ProfileSuccess _self;
+  final $Res Function(ProfileSuccess) _then;
 
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? profile = null,}) {
-  return _then(_Success(
+@pragma('vm:prefer-inline') $Res call({Object? profile = null,Object? isUploadingImage = null,Object? imageUploadError = freezed,Object? imageUploadSuccess = freezed,}) {
+  return _then(ProfileSuccess(
 null == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
-as UserProfileModel,
+as UserProfileModel,isUploadingImage: null == isUploadingImage ? _self.isUploadingImage : isUploadingImage // ignore: cast_nullable_to_non_nullable
+as bool,imageUploadError: freezed == imageUploadError ? _self.imageUploadError : imageUploadError // ignore: cast_nullable_to_non_nullable
+as String?,imageUploadSuccess: freezed == imageUploadSuccess ? _self.imageUploadSuccess : imageUploadSuccess // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

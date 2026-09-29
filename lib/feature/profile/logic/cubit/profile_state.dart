@@ -8,6 +8,11 @@ part 'profile_state.freezed.dart';
 class ProfileState with _$ProfileState {
   const factory ProfileState.initial() = _Initial;
   const factory ProfileState.loading() = _Loading;
-  const factory ProfileState.success(UserProfileModel profile) = _Success;
+  const factory ProfileState.success(
+    UserProfileModel profile, {
+    @Default(false) bool isUploadingImage,
+    String? imageUploadError,
+    String? imageUploadSuccess,
+  }) = ProfileSuccess;
   const factory ProfileState.error(ApiErrorModel error) = _Error;
 }

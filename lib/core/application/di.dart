@@ -15,6 +15,7 @@ import 'package:aleman/feature/cart/data/repository/cart_repo_impl.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/profile/data/repository/profile_repository.dart';
 import 'package:aleman/feature/profile/logic/cubit/profile_cubit.dart';
+import 'package:aleman/feature/profile/logic/changePasswordCubit/change_password_cubit.dart';
 import 'package:aleman/feature/address/data/repository/address_repo.dart';
 import 'package:aleman/feature/address/logic/cubit/address_cubit.dart';
 import 'package:aleman/feature/order/data/repository/order_repo.dart';
@@ -112,7 +113,13 @@ Future<void> _initProfile() async {
     () => ProfileRepositoryImpl(instance<AppServiceClient>()),
   );
   instance.registerFactory<ProfileCubit>(
-    () => ProfileCubit(instance<ProfileRepository>()),
+    () => ProfileCubit(
+      instance<ProfileRepository>(),
+      imagePicker: instance<ImagePicker>(),
+    ),
+  );
+  instance.registerFactory<ChangePasswordCubit>(
+    () => ChangePasswordCubit(instance<ProfileRepository>()),
   );
 }
 

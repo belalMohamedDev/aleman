@@ -14,6 +14,8 @@ class UserProfileModel {
   final String phoneNumber;
   @JsonKey(name: 'role')
   final String role;
+  @JsonKey(name: 'profileImageUrl')
+  final String? profileImageUrl;
   @JsonKey(name: 'smallMerchants')
   final List<SmallMerchantModel>? smallMerchants;
 
@@ -23,8 +25,29 @@ class UserProfileModel {
     required this.email,
     required this.phoneNumber,
     required this.role,
+    this.profileImageUrl,
     this.smallMerchants,
   });
+
+  UserProfileModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? phoneNumber,
+    String? role,
+    String? profileImageUrl,
+    List<SmallMerchantModel>? smallMerchants,
+  }) {
+    return UserProfileModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      role: role ?? this.role,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      smallMerchants: smallMerchants ?? this.smallMerchants,
+    );
+  }
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) =>
       _$UserProfileModelFromJson(json);
@@ -44,6 +67,8 @@ class SmallMerchantModel {
   final String phoneNumber;
   @JsonKey(name: 'role')
   final String role;
+  @JsonKey(name: 'profileImageUrl')
+  final String? profileImageUrl;
 
   const SmallMerchantModel({
     required this.id,
@@ -51,6 +76,7 @@ class SmallMerchantModel {
     required this.email,
     required this.phoneNumber,
     required this.role,
+    this.profileImageUrl,
   });
 
   factory SmallMerchantModel.fromJson(Map<String, dynamic> json) =>

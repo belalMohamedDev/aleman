@@ -13,6 +13,7 @@ UserProfileModel _$UserProfileModelFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       phoneNumber: json['phoneNumber'] as String,
       role: json['role'] as String,
+      profileImageUrl: json['profileImageUrl'] as String?,
       smallMerchants: (json['smallMerchants'] as List<dynamic>?)
           ?.map((e) => SmallMerchantModel.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -25,6 +26,7 @@ Map<String, dynamic> _$UserProfileModelToJson(UserProfileModel instance) =>
       'email': instance.email,
       'phoneNumber': instance.phoneNumber,
       'role': instance.role,
+      'profileImageUrl': instance.profileImageUrl,
       'smallMerchants': instance.smallMerchants,
     };
 
@@ -35,6 +37,7 @@ SmallMerchantModel _$SmallMerchantModelFromJson(Map<String, dynamic> json) =>
       email: json['email'] as String,
       phoneNumber: json['phoneNumber'] as String,
       role: json['role'] as String,
+      profileImageUrl: json['profileImageUrl'] as String?,
     );
 
 Map<String, dynamic> _$SmallMerchantModelToJson(SmallMerchantModel instance) =>
@@ -44,4 +47,5 @@ Map<String, dynamic> _$SmallMerchantModelToJson(SmallMerchantModel instance) =>
       'email': instance.email,
       'phoneNumber': instance.phoneNumber,
       'role': instance.role,
+      'profileImageUrl': instance.profileImageUrl,
     };

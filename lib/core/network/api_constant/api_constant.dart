@@ -16,6 +16,8 @@ class ApiConstants {
   static const String cartCount = '/api/Cart/count';
   static const String getCart = '/api/Cart';
   static const String userProfile = '/api/Users/me';
+  static const String changePassword = '/api/Users/change-password';
+  static const String profileImage = '/api/Users/profile-image';
   static const String userAddresses = '/api/user-addresses';
   static const String userVehicles = '/api/user-vehicles';
   static const String orders = '/api/orders';

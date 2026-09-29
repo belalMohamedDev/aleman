@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:aleman/core/network/api_constant/api_constant.dart';
 import 'package:aleman/feature/Authentication/data/model/authResponse/auth_response.dart';
 import 'package:aleman/feature/Authentication/data/model/authResponse/message_response.dart';
@@ -16,6 +18,8 @@ import 'package:aleman/feature/cart/data/model/cart_count_response.dart';
 import 'package:aleman/feature/cart/data/model/cart_response_model.dart';
 import 'package:aleman/feature/cart/data/model/update_cart_item_request_body.dart';
 import 'package:aleman/feature/profile/data/model/user_profile_model.dart';
+import 'package:aleman/feature/profile/data/model/change_password_request_body.dart';
+import 'package:aleman/feature/profile/data/model/update_profile_image_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -31,6 +35,8 @@ import 'package:aleman/feature/order/data/model/calculate_shipping_model.dart';
 import 'package:aleman/feature/order/data/model/create_order_request.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/order/data/model/small_merchants_orders_response.dart';
+import 'package:aleman/feature/order/data/model/merchant_review_request.dart';
+import 'package:aleman/feature/order/data/model/upload_receipt_response.dart';
 
 part 'app_api.g.dart';
 
@@ -76,17 +82,27 @@ abstract class AppServiceClient {
   );
 
   @POST(ApiConstants.logout)
-  Future<MessageResponse> logoutService(
-    @Body() LogoutRequestBody body,
-  );
+  Future<MessageResponse> logoutService(@Body() LogoutRequestBody body);
 
   @POST(ApiConstants.cartItems)
-  Future<CartResponseModel> addToCartService(
-    @Body() AddToCartRequestBody body,
-  );
+  Future<CartResponseModel> addToCartService(@Body() AddToCartRequestBody body);
 
   @GET(ApiConstants.userProfile)
   Future<UserProfileModel> getUserProfileService();
+
+  @POST(ApiConstants.changePassword)
+  Future<MessageResponse> changePasswordService(
+    @Body() ChangePasswordRequestBody body,
+  );
+
+  @POST(ApiConstants.profileImage)
+  @MultiPart()
+  Future<UpdateProfileImageResponse> updateProfileImageService(
+    @Part(name: 'file') File file,
+  );
+
+  @DELETE(ApiConstants.profileImage)
+  Future<MessageResponse> removeProfileImageService();
 
   @GET(ApiConstants.cartCount)
   Future<CartCountResponse> getCartCountService();
@@ -104,9 +120,7 @@ abstract class AppServiceClient {
   );
 
   @DELETE('${ApiConstants.cartItems}/{itemId}')
-  Future<dynamic> deleteCartItemService(
-    @Path('itemId') int itemId,
-  );
+  Future<dynamic> deleteCartItemService(@Path('itemId') int itemId);
 
   @POST(ApiConstants.registerToken)
   Future<MessageResponse> registerDeviceToken(
@@ -128,9 +142,7 @@ abstract class AppServiceClient {
   Future<UnreadCountResponse> getUnreadNotificationsCount();
 
   @PATCH('${ApiConstants.notifications}/{id}/read')
-  Future<MessageResponse> markNotificationAsRead(
-    @Path('id') int id,
-  );
+  Future<MessageResponse> markNotificationAsRead(@Path('id') int id);
 
   @POST(ApiConstants.markAllNotificationsRead)
   Future<MessageResponse> markAllNotificationsAsRead();
@@ -142,9 +154,7 @@ abstract class AppServiceClient {
   Future<dynamic> getVehicles();
 
   @POST(ApiConstants.userVehicles)
-  Future<UserVehicleModel> createVehicle(
-    @Body() CreateVehicleRequest request,
-  );
+  Future<UserVehicleModel> createVehicle(@Body() CreateVehicleRequest request);
 
   @PUT('${ApiConstants.userVehicles}/{id}')
   Future<UserVehicleModel> updateVehicle(
@@ -153,14 +163,10 @@ abstract class AppServiceClient {
   );
 
   @DELETE('${ApiConstants.userVehicles}/{id}')
-  Future<dynamic> deleteVehicle(
-    @Path('id') String id,
-  );
+  Future<dynamic> deleteVehicle(@Path('id') String id);
 
   @PATCH('${ApiConstants.userVehicles}/{id}/set-default')
-  Future<dynamic> setDefaultVehicle(
-    @Path('id') String id,
-  );
+  Future<dynamic> setDefaultVehicle(@Path('id') String id);
 
   // ----------------------------------------------------
   // User Addresses
@@ -169,14 +175,10 @@ abstract class AppServiceClient {
   Future<dynamic> getAddresses();
 
   @POST(ApiConstants.userAddresses)
-  Future<UserAddressModel> createAddress(
-    @Body() CreateAddressRequest request,
-  );
+  Future<UserAddressModel> createAddress(@Body() CreateAddressRequest request);
 
   @DELETE('${ApiConstants.userAddresses}/{id}')
-  Future<dynamic> deleteAddress(
-    @Path('id') String id,
-  );
+  Future<dynamic> deleteAddress(@Path('id') String id);
 
   // ----------------------------------------------------
   // Orders
@@ -187,28 +189,43 @@ abstract class AppServiceClient {
   );
 
   @POST(ApiConstants.orders)
-  Future<OrderResponseModel> createOrder(
-    @Body() CreateOrderRequest request,
-  );
+  Future<OrderResponseModel> createOrder(@Body() CreateOrderRequest request);
 
   @GET(ApiConstants.orders)
-  Future<dynamic> getMyOrders(
-    @Query('status') int? status,
-  );
+  Future<dynamic> getMyOrders(@Query('status') int? status);
 
   @GET('${ApiConstants.orders}/{orderId}')
-  Future<dynamic> getOrderDetails(
-    @Path('orderId') String orderId,
-  );
+  Future<dynamic> getOrderDetails(@Path('orderId') String orderId);
 
   @POST('${ApiConstants.orders}/{orderId}/cancel')
-  Future<dynamic> cancelOrder(
-    @Path('orderId') String orderId,
-  );
+  Future<dynamic> cancelOrder(@Path('orderId') String orderId);
 
   @GET(ApiConstants.smallMerchantsOrders)
   Future<SmallMerchantsOrdersResponse> getSmallMerchantsOrders(
     @Query('page') int page,
     @Query('pageSize') int pageSize,
+  );
+
+  @POST(ApiConstants.uploadReceipt)
+  @MultiPart()
+  Future<UploadReceiptResponse> uploadReceiptService(
+    @Part(name: 'file') File file,
+  );
+
+  @POST('${ApiConstants.orders}/{orderId}/upload-receipt')
+  @MultiPart()
+  Future<UploadReceiptResponse> uploadOrderReceiptService(
+    @Path('orderId') String orderId,
+    @Part(name: 'file') File file,
+    @Part(name: 'orderId') String orderIdPart,
+  );
+
+  @GET('${ApiConstants.orders}/bank-accounts')
+  Future<dynamic> getBankAccountsService();
+
+  @POST('${ApiConstants.orders}/{orderId}/merchant-approval')
+  Future<dynamic> reviewOrderByMerchantService(
+    @Path('orderId') String orderId,
+    @Body() MerchantReviewRequest body,
   );
 }

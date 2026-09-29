@@ -15,6 +15,7 @@ import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:aleman/feature/onboarding/presentation/screen/on_boarding_screen.dart';
 import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
+import 'package:aleman/feature/profile/presentation/screen/change_password_screen.dart';
 import 'package:aleman/feature/order/presentation/screen/checkout_screen.dart';
 import 'package:aleman/feature/notification/presentation/screen/notifications_screen.dart';
 import 'package:flutter/material.dart';
@@ -95,6 +96,12 @@ class RouteGenerator {
       case Routes.notificationsRoute:
         return _buildFadeRoute(
           const NotificationsScreen(),
+          settings,
+        );
+
+      case Routes.changePasswordRoute:
+        return _buildFadeRoute(
+          const ChangePasswordScreen(),
           settings,
         );
 
