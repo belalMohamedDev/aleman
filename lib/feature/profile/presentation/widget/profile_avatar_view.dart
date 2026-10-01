@@ -35,10 +35,10 @@ class ProfileAvatarView extends StatelessWidget {
       onTap: isUploading
           ? null
           : () => ProfileImagePickerBottomSheet.show(
-                context,
-                cubit: cubit,
-                hasExistingImage: hasValidUrl,
-              ),
+              context,
+              cubit: cubit,
+              hasExistingImage: hasValidUrl,
+            ),
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -116,7 +116,7 @@ class ProfileAvatarView extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
-                color: ColorManger.primary,
+                color: ColorManger.primary.withValues(alpha: 0.9),
                 shape: BoxShape.circle,
                 border: Border.all(color: Colors.white, width: 2),
                 boxShadow: [
@@ -127,11 +127,7 @@ class ProfileAvatarView extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Icon(
-                Iconsax.camera,
-                size: 14.w,
-                color: Colors.white,
-              ),
+              child: Icon(Iconsax.camera, size: 14.w, color: Colors.white),
             ),
           ),
         ],

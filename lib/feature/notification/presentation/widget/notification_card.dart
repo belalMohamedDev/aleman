@@ -284,7 +284,7 @@ class NotificationCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: isUnread ? ColorManger.primary.withAlpha(12) : ColorManger.white,
+        color: isUnread ? ColorManger.primary.withAlpha(2) : ColorManger.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: isApproval
@@ -298,7 +298,7 @@ class NotificationCard extends StatelessWidget {
           BoxShadow(
             color: isApproval
                 ? const Color(0xFFF59E0B).withAlpha(20)
-                : Colors.black.withAlpha(isUnread ? 12 : 6),
+                : Colors.black.withAlpha(isUnread ? 8 : 6),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -356,19 +356,19 @@ class NotificationCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          if (isUnread) ...[
-                            SizedBox(width: 6.w),
-                            Container(
-                              width: 8.w,
-                              height: 8.w,
-                              decoration: BoxDecoration(
-                                color: isApproval
-                                    ? const Color(0xFFF59E0B)
-                                    : ColorManger.buttonColor,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                          ],
+                          // if (isUnread) ...[
+                          //   SizedBox(width: 6.w),
+                          //   Container(
+                          //     width: 8.w,
+                          //     height: 8.w,
+                          //     decoration: BoxDecoration(
+                          //       color: isApproval
+                          //           ? const Color(0xFFF59E0B)
+                          //           : ColorManger.buttonColor,
+                          //       shape: BoxShape.circle,
+                          //     ),
+                          //   ),
+                          // ],
                         ],
                       ),
                       SizedBox(height: 6.h),

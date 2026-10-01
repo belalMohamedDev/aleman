@@ -139,13 +139,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: FloatingActionButton(
                               key: _cartKey,
                               heroTag: null,
-                              elevation: 8,
+                              elevation: 0,
                               highlightElevation: 3,
                               clipBehavior: Clip.none,
                               shape: const CircleBorder(),
-                              backgroundColor: ColorManger.white.withValues(
-                                alpha: 0.7,
-                              ),
+                              backgroundColor: Colors.transparent,
+                              //  ColorManger.white.withValues(
+                              //   alpha: 0.7,
+                              // ),
                               onPressed: () {
                                 if (state.isLoggedIn) {
                                   Navigator.pushNamed(

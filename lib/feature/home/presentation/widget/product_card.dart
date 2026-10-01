@@ -6,6 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../../../../core/style/color/color_manger.dart';
@@ -68,30 +69,29 @@ class ProductCard extends StatelessWidget {
                     top: Radius.circular(16),
                   ),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: CachedNetworkImage(
-                    imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
-                    fit: BoxFit.contain,
-                    placeholder: (context, url) => Shimmer.fromColors(
-                      baseColor: Colors.grey.shade300,
-                      highlightColor: Colors.grey.shade100,
-                      child: Container(
-                        decoration: const BoxDecoration(color: Colors.white),
-                      ),
+                child: CachedNetworkImage(
+                  imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
+                  fit: BoxFit.contain,
+                  placeholder: (context, url) => Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: Container(
+                      decoration: const BoxDecoration(color: Colors.white),
                     ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.broken_image, color: Colors.grey),
                   ),
+                  errorWidget: (context, url, error) =>
+                      const Icon(Icons.broken_image, color: Colors.grey),
                 ),
               ),
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10.0,
+                  vertical: 8.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
                   children: [
                     Text(
                       product.name,
@@ -104,52 +104,46 @@ class ProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 2),
-                    Text(
-                      product.description,
-                      style: Theme.of(context).textTheme.bodySmall!.copyWith(
-                        color: Colors.grey.shade600,
-                        fontSize: responsive.setTextSize(2.7),
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    // const Spacer(),
-                    SizedBox(height: 5.h),
-                    Text(
-                      '${product.price} ج.م',
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        color: ColorManger.goldDark,
-                        fontWeight: FontWeight.w800,
-                        fontSize: responsive.setTextSize(3.6),
+                    Expanded(
+                      child: Text(
+                        product.description,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(
+                          color: Colors.grey.shade600,
+                          fontSize: responsive.setTextSize(2.7),
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
-
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //   children: [
-                    //     Text(
-                    //       style: Theme.of(context).textTheme.bodyLarge!
-                    //           .copyWith(
-                    //             color: ColorManger.goldDark,
-                    //             fontWeight: FontWeight.w800,
-                    //             fontSize: responsive.setTextSize(3.5),
-                    //           ),
-                    //     ),
-                    //     // Container(
-                    //     //   padding: const EdgeInsets.all(6),
-                    //     //   decoration: BoxDecoration(
-                    //     //     color:
-                    //     //         ColorManger.primaryLight.withValues(alpha: 0.9),
-                    //     //     borderRadius: BorderRadius.circular(8),
-                    //     //   ),
-                    //     //   child: const Icon(
-                    //     //     Iconsax.bag_happy,
-                    //     //     color: Colors.white,
-                    //     //     size: 18,
-                    //     //   ),
-                    //     // ),
-                    //   ],
-                    // ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text(
+                          '${product.price} ج.م',
+                          style: Theme.of(context).textTheme.bodyLarge!
+                              .copyWith(
+                                color: ColorManger.goldDark,
+                                fontWeight: FontWeight.w800,
+                                fontSize: responsive.setTextSize(3.6),
+                              ),
+                        ),
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: ColorManger.primaryLight.withValues(
+                              alpha: 0.9,
+                            ),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(
+                            Iconsax.bag_happy,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),

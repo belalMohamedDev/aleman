@@ -16,7 +16,9 @@ class CategoryListViewBuilder extends StatelessWidget {
     final responsive = ResponsiveUtils(context);
 
     return BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
-      buildWhen: (previous, current) => previous.categoriesStatus != current.categoriesStatus || previous.selectedCategoryId != current.selectedCategoryId,
+      buildWhen: (previous, current) =>
+          previous.categoriesStatus != current.categoriesStatus ||
+          previous.selectedCategoryId != current.selectedCategoryId,
       builder: (context, state) {
         if (state.categoriesStatus == RequestStatus.loading) {
           return Column(
@@ -66,7 +68,8 @@ class CategoryListViewBuilder extends StatelessWidget {
           );
         }
 
-        if (state.categoriesStatus == RequestStatus.error || state.categories.isEmpty) {
+        if (state.categoriesStatus == RequestStatus.error ||
+            state.categories.isEmpty) {
           return const SizedBox.shrink();
         }
 
@@ -88,7 +91,9 @@ class CategoryListViewBuilder extends StatelessWidget {
                     padding: responsive.setPadding(left: 4.2),
                     child: InkWell(
                       onTap: () {
-                        context.read<HomeCuibtCubit>().changeSelectedCategory(category.id);
+                        context.read<HomeCuibtCubit>().changeSelectedCategory(
+                          category.id,
+                        );
                       },
                       borderRadius: BorderRadius.circular(
                         responsive.setBorderRadius(2),
@@ -100,6 +105,7 @@ class CategoryListViewBuilder extends StatelessWidget {
                             duration: const Duration(milliseconds: 300),
                             height: responsive.setHeight(8),
                             width: responsive.setHeight(8.5),
+                            clipBehavior: Clip.antiAlias,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                 responsive.setBorderRadius(2),
@@ -111,36 +117,38 @@ class CategoryListViewBuilder extends StatelessWidget {
                                     ),
                               border: isSelected
                                   ? Border.all(
-                                      color: ColorManger.primaryLight.withValues(
-                                        alpha: 0.02,
-                                      ),
+                                      color: ColorManger.primaryLight
+                                          .withValues(alpha: 0.02),
                                       width: 2,
                                     )
-                                  : Border.all(color: Colors.transparent, width: 2),
+                                  : Border.all(
+                                      color: Colors.transparent,
+                                      width: 2,
+                                    ),
                             ),
                             child: Padding(
-                              padding: responsive.setPadding(
-                                top: 1.5,
-                                bottom: 1.5,
-                                left: 1.5,
-                                right: 1.5,
-                              ),
+                              padding: responsive.setPadding(top: 0.5),
                               child: CachedNetworkImage(
-                                imageUrl: "${ApiConstants.baseUrl}${category.imageUrl}",
-                                fit: BoxFit.contain,
-                                placeholder: (context, url) => Shimmer.fromColors(
-                                  baseColor: Colors.grey.shade300,
-                                  highlightColor: Colors.grey.shade100,
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: Colors.white,
+                                imageUrl:
+                                    "${ApiConstants.baseUrl}${category.imageUrl}",
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                                placeholder: (context, url) =>
+                                    Shimmer.fromColors(
+                                      baseColor: Colors.grey.shade300,
+                                      highlightColor: Colors.grey.shade100,
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                                errorWidget: (context, url, error) => const Icon(
-                                  Icons.broken_image,
-                                  color: Colors.grey,
-                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(
+                                      Icons.broken_image,
+                                      color: Colors.grey,
+                                    ),
                               ),
                             ),
                           ),
@@ -150,13 +158,16 @@ class CategoryListViewBuilder extends StatelessWidget {
                           // Category title
                           Text(
                             category.name,
-                            style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                              fontSize: responsive.setTextSize(3.2),
-                              fontWeight: isSelected
-                                  ? FontWeight.bold
-                                  : FontWeight.w600,
-                              color: isSelected ? ColorManger.primary : null,
-                            ),
+                            style: Theme.of(context).textTheme.bodyMedium!
+                                .copyWith(
+                                  fontSize: responsive.setTextSize(3.2),
+                                  fontWeight: isSelected
+                                      ? FontWeight.bold
+                                      : FontWeight.w600,
+                                  color: isSelected
+                                      ? ColorManger.primary
+                                      : null,
+                                ),
                           ),
                         ],
                       ),

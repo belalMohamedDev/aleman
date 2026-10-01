@@ -31,4 +31,6 @@ class ImageAsset {
   static const String bob = '$imagePath/bob.png';
   static const String rightPlant = '$imagePath/right_plant.png';
   static const String leftPlant = '$imagePath/left_palnt.png';
+  static const String categoryPlante = '$imagePath/category_plante.png';
+  static const String backgroundProduct = '$imagePath/background_item.png';
 }
