@@ -31,6 +31,16 @@ class OnboardingCubit extends Cubit<OnboardingState> {
     }
   }
 
+  void goToPage(int index) {
+    if (index >= 0 && index < items.length) {
+      pageController.animateToPage(
+        index,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOutCubic,
+      );
+    }
+  }
+
   void finishOnboarding() {
     emit(
       OnboardingCompletedState(

@@ -1,16 +1,17 @@
+import 'dart:math' as math;
+
+import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
 import 'package:aleman/core/services/shared_pref_helper.dart';
-import 'package:aleman/core/utils/responsive_utils.dart';
-import 'package:aleman/core/routing/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
-import '../widget/circular_progress_button.dart';
+import '../widget/curved_card_clipper.dart';
+import '../widget/onboarding_bottom_controls.dart';
 import '../widget/onboarding_page_content.dart';
-import '../../../../core/style/color/color_manger.dart';
 
 class OnBoardingView extends StatelessWidget {
   const OnBoardingView({super.key});
@@ -26,7 +27,10 @@ class OnBoardingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<OnboardingCubit>();
-    final responsive = ResponsiveUtils(context);
+    final size = MediaQuery.of(context).size;
+    final bottomSafeArea = MediaQuery.of(context).padding.bottom;
+    final double cardHeight = (size.height * 0.43).clamp(320.0, 410.0);
+    final double bottomInset = math.max(bottomSafeArea, 16.0) + 10.0;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -42,63 +46,107 @@ class OnBoardingView extends StatelessWidget {
               _saveOnboardingAndNavigateToHome(context);
             }
           },
-          child: Padding(
-            padding: responsive.setPadding(top: 8, bottom: 4),
-            child: Column(
-              children: [
-                // PageView Content
-                Expanded(
-                  child: PageView.builder(
-                    controller: cubit.pageController,
-                    itemCount: cubit.items.length,
-                    onPageChanged: cubit.onPageChanged,
-                    itemBuilder: (context, index) {
-                      return OnboardingPageContent(item: cubit.items[index]);
-                    },
+          child: Stack(
+            children: [
+              // 1. Bottom Curved White Card Background
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: cardHeight,
+                child: CustomPaint(
+                  painter: const CurvedCardShadowPainter(curveHeight: 28.0),
+                  child: ClipPath(
+                    clipper: const CurvedCardClipper(curveHeight: 28.0),
+                    child: Container(color: Colors.white),
                   ),
                 ),
+              ),
 
-                // Bottom Controls: Action Text + Circular Progress Indicator Button
-                BlocBuilder<OnboardingCubit, OnboardingState>(
-                  builder: (context, state) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircularProgressButton(
-                          progress: state.progress,
-                          totalSteps: cubit.items.length,
-                          isLastPage: state.isLastPage,
-                          onTap: cubit.onNext,
-                        ),
-                        const SizedBox(
-                          height: 32,
-                        ), // Spacing between button and dots
-                        // Page Indicators
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: List.generate(cubit.items.length, (index) {
-                            bool isActive = state.currentIndex == index;
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              margin: const EdgeInsets.symmetric(horizontal: 5),
-                              width: 8,
-                              height: 8,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isActive
-                                    ? ColorManger.gold
-                                    : ColorManger.gold.withValues(alpha: 0.15),
-                              ),
-                            );
-                          }),
-                        ),
-                        const SizedBox(height: 16), // Bottom spacing
-                      ],
+              // 2. Swipeable Page Content (Image in green zone + Text in white card)
+              Positioned.fill(
+                child: PageView.builder(
+                  controller: cubit.pageController,
+                  itemCount: cubit.items.length,
+                  onPageChanged: cubit.onPageChanged,
+                  itemBuilder: (context, index) {
+                    return OnboardingPageContent(
+                      item: cubit.items[index],
+                      cardHeight: cardHeight,
                     );
                   },
                 ),
-              ],
-            ),
+              ),
+
+              // 3. Fixed Bottom Controls (Dots Indicator + Action Button)
+              Positioned(
+                left: 24,
+                right: 24,
+                bottom: bottomInset,
+                child: BlocBuilder<OnboardingCubit, OnboardingState>(
+                  builder: (context, state) {
+                    return OnboardingBottomControls(
+                      currentIndex: state.currentIndex,
+                      totalSteps: cubit.items.length,
+                      isLastPage: state.isLastPage,
+                      onNext: cubit.onNext,
+                      onDotTap: cubit.goToPage,
+                    );
+                  },
+                ),
+              ),
+
+              // SafeArea(
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(
+              //       horizontal: 18.0,
+              //       vertical: 8.0,
+              //     ),
+              //     child: Align(
+              //       alignment: AlignmentDirectional.topEnd,
+              //       child: BlocBuilder<OnboardingCubit, OnboardingState>(
+              //         buildWhen: (prev, current) =>
+              //             prev.isLastPage != current.isLastPage,
+              //         builder: (context, state) {
+              //           return AnimatedOpacity(
+              //             opacity: state.isLastPage ? 0.0 : 1.0,
+              //             duration: const Duration(milliseconds: 250),
+              //             child: IgnorePointer(
+              //               ignoring: state.isLastPage,
+              //               child: TextButton(
+              //                 onPressed: cubit.finishOnboarding,
+              //                 style: TextButton.styleFrom(
+              //                   foregroundColor: Colors.white.withValues(
+              //                     alpha: 0.9,
+              //                   ),
+              //                   backgroundColor: Colors.white.withValues(
+              //                     alpha: 0.12,
+              //                   ),
+              //                   padding: const EdgeInsets.symmetric(
+              //                     horizontal: 14,
+              //                     vertical: 6,
+              //                   ),
+              //                   shape: RoundedRectangleBorder(
+              //                     borderRadius: BorderRadius.circular(18),
+              //                   ),
+              //                 ),
+              //                 child: const Text(
+              //                   'تخطي',
+              //                   style: TextStyle(
+              //                     fontFamily: 'Cairo',
+              //                     fontSize: 13.5,
+              //                     fontWeight: FontWeight.w600,
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //           );
+              //         },
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            ],
           ),
         ),
       ),
