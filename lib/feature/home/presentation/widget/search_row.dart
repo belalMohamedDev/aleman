@@ -2,12 +2,16 @@ import 'package:aleman/core/language/app_localizations.dart';
 import 'package:aleman/core/language/localization_extensions.dart';
 import 'package:aleman/core/language/strings_manger.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/core/style/images/asset_manger.dart';
+// import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 
-import 'falling_eggs_animation.dart';
+import 'package:aleman/core/routing/routes.dart';
+import 'package:aleman/core/utils/cart_animation_helper.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
+
+// import 'falling_eggs_animation.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
@@ -25,6 +29,14 @@ class SearchRow extends StatefulWidget {
 }
 
 class _SearchRowState extends State<SearchRow> {
+  final GlobalKey _cartKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    CartAnimationHelper.cartKey = _cartKey;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Initialize the ResponsiveUtils to handle responsive layout adjustments
@@ -57,7 +69,7 @@ class _SearchRowState extends State<SearchRow> {
                     AppStrings.findYourProducts,
                   ), // Placeholder text
                   prefixIcon: Icon(
-                    Iconsax.scan,
+                    Iconsax.search_normal_1,
                     color: ColorManger.primaryLight,
                   ),
                   // Image.asset(
@@ -92,7 +104,7 @@ class _SearchRowState extends State<SearchRow> {
             builder: (context, homeState) {
               // final isLoggedIn = homeState.isLoggedIn;
 
-              return
+              // return
               // isLoggedIn
               //     ? BlocBuilder<CartCubit, CartState>(
               //         buildWhen: (previous, current) =>
@@ -158,6 +170,8 @@ class _SearchRowState extends State<SearchRow> {
               //         },
               //       )
               //     :
+              // --- Chicken Button (Commented) ---
+              /*
               Container(
                 height: responsive.setHeight(5.5),
                 margin: responsive.setMargin(
@@ -184,6 +198,91 @@ class _SearchRowState extends State<SearchRow> {
                     );
                   },
                 ),
+              );
+              */
+
+              // --- Cart Button ---
+              return BlocBuilder<CartCubit, CartState>(
+                buildWhen: (previous, current) =>
+                    previous.totalItemsCount != current.totalItemsCount,
+                builder: (context, cartState) {
+                  final count = cartState.totalItemsCount;
+
+                  return ValueListenableBuilder<double>(
+                    valueListenable: CartAnimationHelper.cartBounceNotifier,
+                    builder: (context, bounceScale, child) {
+                      return Transform.scale(scale: bounceScale, child: child);
+                    },
+                    child: Container(
+                      key: _cartKey,
+                      height: responsive.setHeight(5.5),
+                      width: responsive.setHeight(5.5),
+                      margin: responsive.setMargin(
+                        right: isEnLocale ? null : 1.5,
+                        left: isEnLocale ? 1.5 : null,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorManger.primaryLight.withValues(alpha: 0.7),
+                        borderRadius: BorderRadius.circular(
+                          responsive.setBorderRadius(2),
+                        ),
+                      ),
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        alignment: Alignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              Iconsax.bag_happy,
+                              color: ColorManger.white,
+                              size: 22,
+                            ),
+                            onPressed: () {
+                              final isLoggedIn = context
+                                  .read<HomeCuibtCubit>()
+                                  .state
+                                  .isLoggedIn;
+                              if (isLoggedIn) {
+                                Navigator.pushNamed(context, Routes.cartRoute);
+                              } else {
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pushNamed(Routes.loginRoute);
+                              }
+                            },
+                          ),
+                          if (count > 0)
+                            PositionedDirectional(
+                              top: -4,
+                              start: -4,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: ColorManger.chipProtein,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: const BoxConstraints(
+                                  minWidth: 18,
+                                  minHeight: 18,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  count > 99 ? '99+' : '$count',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               );
             },
           ),

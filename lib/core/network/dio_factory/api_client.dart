@@ -89,7 +89,9 @@ class TokenInterceptor extends Interceptor {
         appLogger.warning('Cannot refresh token: oldRefreshToken is empty');
         _refreshCompleter?.complete(null);
         _refreshCompleter = null;
-        _showSessionExpiredMessage();
+        if (oldAccessToken.isNotEmpty) {
+          _showSessionExpiredMessage();
+        }
         return handler.reject(err);
       }
 

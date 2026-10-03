@@ -1,5 +1,7 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
+import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
+import 'package:aleman/feature/home/presentation/screen/category_products_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,9 +23,10 @@ class CategoryListViewBuilder extends StatelessWidget {
           previous.selectedCategoryId != current.selectedCategoryId,
       builder: (context, state) {
         if (state.categoriesStatus == RequestStatus.loading) {
+          // ---  (ListView Shimmer) ---
+          /*
           return Column(
             children: [
-              const Row(children: []),
               SizedBox(
                 height: responsive.setHeight(12),
                 child: ListView.builder(
@@ -66,6 +69,54 @@ class CategoryListViewBuilder extends StatelessWidget {
               ),
             ],
           );
+          */
+
+          // ---  (GridView Shimmer) ---
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: 9,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 0.78,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+            ),
+            itemBuilder: (context, index) {
+              return Column(
+                children: [
+                  Expanded(
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.grey.shade300,
+                      highlightColor: Colors.grey.shade100,
+                      child: Container(
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(
+                            responsive.setBorderRadius(2),
+                          ),
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  responsive.setSizeBox(height: 1.5),
+                  Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade100,
+                    child: Container(
+                      height: responsive.setHeight(1.5),
+                      width: responsive.setWidth(18),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
         }
 
         if (state.categoriesStatus == RequestStatus.error ||
@@ -75,9 +126,10 @@ class CategoryListViewBuilder extends StatelessWidget {
 
         final categories = state.categories;
 
+        // ---  (ListView Categories) ---
+        /*
         return Column(
           children: [
-            const Row(children: []),
             SizedBox(
               height: responsive.setHeight(12),
               child: ListView.builder(
@@ -177,6 +229,115 @@ class CategoryListViewBuilder extends StatelessWidget {
               ),
             ),
           ],
+        );
+        */
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: categories.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 0.78,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+          ),
+          itemBuilder: (context, index) {
+            final category = categories[index];
+            // final isSelected = state.selectedCategoryId == category.id;
+
+            return InkWell(
+              onTap: () {
+                context.read<HomeCuibtCubit>().changeSelectedCategory(
+                  category.id,
+                );
+                Navigator.of(context).pushNamed(
+                  Routes.categoryProductsRoute,
+                  arguments: CategoryProductsArgs(
+                    category: category,
+                    cubit: context.read<HomeCuibtCubit>(),
+                  ),
+                );
+              },
+              borderRadius: BorderRadius.circular(
+                responsive.setBorderRadius(2),
+              ),
+              child: Column(
+                children: [
+                  // Category image container
+                  Expanded(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      width: double.infinity,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(
+                          responsive.setBorderRadius(2),
+                        ),
+                        color:
+                            //  isSelected
+                            //     ?
+                            ColorManger.primary.withValues(alpha: 0.05),
+                        // : ColorManger.primaryLight.withValues(alpha: 0.04),
+                        // border:
+                        //     // isSelected
+                        //     //     ?
+                        //     Border.all(
+                        //       color: ColorManger.primaryLight.withValues(
+                        //         alpha: 0.02,
+                        //       ),
+                        //       width: 2,
+                        //     ),
+                        // : Border.all(color: Colors.transparent, width: 2)
+                      ),
+                      child: Padding(
+                        padding: responsive.setPadding(
+                          top: 1.2,
+                          // left: 3,
+                          // right: 3,
+                        ),
+                        child: CachedNetworkImage(
+                          imageUrl:
+                              "${ApiConstants.baseUrl}${category.imageUrl}",
+                          fit: BoxFit.contain,
+
+                          width: double.infinity,
+                          height: double.infinity,
+                          placeholder: (context, url) => Shimmer.fromColors(
+                            baseColor: Colors.grey.shade300,
+                            highlightColor: Colors.grey.shade100,
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => const Icon(
+                            Icons.broken_image,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  responsive.setSizeBox(height: 1.5),
+                  // Category title
+                  Text(
+                    category.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      fontSize: responsive.setTextSize(3.0),
+                      fontWeight: FontWeight.bold,
+                      color: ColorManger.primary,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         );
       },
     );

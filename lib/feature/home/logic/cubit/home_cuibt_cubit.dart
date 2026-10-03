@@ -32,13 +32,22 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
     return super.close();
   }
 
+  bool _isFetchingHomeData = false;
+
   Future<void> fetchHomeData() async {
-    await Future.wait([
-      fetchBanners(),
-      fetchCategories(),
-      fetchProducts(),
-      checkLoginStatus(),
-    ]);
+    if (_isFetchingHomeData) return;
+    _isFetchingHomeData = true;
+
+    try {
+      await Future.wait([
+        fetchBanners(),
+        fetchCategories(),
+        fetchProducts(),
+        checkLoginStatus(),
+      ]);
+    } finally {
+      _isFetchingHomeData = false;
+    }
   }
 
   Future<void> checkLoginStatus() async {

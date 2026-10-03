@@ -10,5 +10,6 @@ class Routes {
   static const String checkoutRoute = 'checkoutScreen';
   static const String notificationsRoute = 'notificationsScreen';
   static const String changePasswordRoute = 'changePasswordScreen';
+  static const String categoryProductsRoute = 'categoryProductsScreen';
   static const String noRoute = 'noRoute';
 }

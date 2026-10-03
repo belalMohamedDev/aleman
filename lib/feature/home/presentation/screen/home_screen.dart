@@ -1,13 +1,9 @@
-import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
-import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
-import 'package:aleman/feature/home/presentation/widget/cart_eggs_badge.dart';
 import 'package:aleman/feature/home/presentation/widget/quick_login_card.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:flutter/material.dart';
@@ -44,17 +40,17 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  Future<void> _navigateToLogin() async {
-    final result = await Navigator.of(
-      context,
-      rootNavigator: true,
-    ).pushNamed(Routes.loginRoute);
-    if (result == true && mounted) {
-      context.read<HomeCuibtCubit>().fetchHomeData();
-      context.read<CartCubit>().getCartCount();
-      context.read<NotificationCubit>().getUnreadCount();
-    }
-  }
+  // Future<void> _navigateToLogin() async {
+  //   final result = await Navigator.of(
+  //     context,
+  //     rootNavigator: true,
+  //   ).pushNamed(Routes.loginRoute);
+  //   if (result == true && mounted) {
+  //     context.read<HomeCuibtCubit>().fetchHomeData();
+  //     context.read<CartCubit>().getCartCount();
+  //     context.read<NotificationCubit>().getUnreadCount();
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -114,102 +110,102 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
 
-            floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-            floatingActionButton: BlocBuilder<CartCubit, CartState>(
-              buildWhen: (previous, current) =>
-                  previous.totalItemsCount != current.totalItemsCount,
-              builder: (context, cartState) {
-                final count = cartState.totalItemsCount;
-                return (state.bannersError != null &&
-                        state.categoriesError != null &&
-                        state.productsError != null)
-                    ? const SizedBox.shrink()
-                    : Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          ValueListenableBuilder<double>(
-                            valueListenable:
-                                CartAnimationHelper.cartBounceNotifier,
-                            builder: (context, bounceScale, fabChild) {
-                              return Transform.scale(
-                                scale: bounceScale,
-                                child: fabChild,
-                              );
-                            },
-                            child: FloatingActionButton(
-                              key: _cartKey,
-                              heroTag: null,
-                              elevation: 0,
-                              highlightElevation: 3,
-                              clipBehavior: Clip.none,
-                              shape: const CircleBorder(),
-                              backgroundColor: Colors.transparent,
-                              //  ColorManger.white.withValues(
-                              //   alpha: 0.7,
-                              // ),
-                              onPressed: () {
-                                if (state.isLoggedIn) {
-                                  Navigator.pushNamed(
-                                    context,
-                                    Routes.cartRoute,
-                                  );
-                                } else {
-                                  _navigateToLogin();
-                                }
-                              },
-                              child: Transform.translate(
-                                offset: Offset(-8.w, 1.h),
-                                child: Transform.rotate(
-                                  angle: -0.09,
-                                  child: Image.asset(
-                                    ImageAsset.cart,
-                                    width: 65.w,
-                                    height: 65.h,
-                                    fit: BoxFit.contain,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return const SizedBox.shrink();
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+            // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            // floatingActionButton: BlocBuilder<CartCubit, CartState>(
+            //   buildWhen: (previous, current) =>
+            //       previous.totalItemsCount != current.totalItemsCount,
+            //   builder: (context, cartState) {
+            //     final count = cartState.totalItemsCount;
+            //     return (state.bannersError != null &&
+            //             state.categoriesError != null &&
+            //             state.productsError != null)
+            //         ? const SizedBox.shrink()
+            //         : Stack(
+            //             clipBehavior: Clip.none,
+            //             children: [
+            //               ValueListenableBuilder<double>(
+            //                 valueListenable:
+            //                     CartAnimationHelper.cartBounceNotifier,
+            //                 builder: (context, bounceScale, fabChild) {
+            //                   return Transform.scale(
+            //                     scale: bounceScale,
+            //                     child: fabChild,
+            //                   );
+            //                 },
+            //                 child: FloatingActionButton(
+            //                   key: _cartKey,
+            //                   heroTag: null,
+            //                   elevation: 0,
+            //                   highlightElevation: 3,
+            //                   clipBehavior: Clip.none,
+            //                   shape: const CircleBorder(),
+            //                   backgroundColor: Colors.transparent,
+            //                   //  ColorManger.white.withValues(
+            //                   //   alpha: 0.7,
+            //                   // ),
+            //                   onPressed: () {
+            //                     if (state.isLoggedIn) {
+            //                       Navigator.pushNamed(
+            //                         context,
+            //                         Routes.cartRoute,
+            //                       );
+            //                     } else {
+            //                       _navigateToLogin();
+            //                     }
+            //                   },
+            //                   child: Transform.translate(
+            //                     offset: Offset(-8.w, 1.h),
+            //                     child: Transform.rotate(
+            //                       angle: -0.09,
+            //                       child: Image.asset(
+            //                         ImageAsset.cart,
+            //                         width: 65.w,
+            //                         height: 65.h,
+            //                         fit: BoxFit.contain,
+            //                         errorBuilder: (context, error, stackTrace) {
+            //                           return const SizedBox.shrink();
+            //                         },
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 ),
+            //               ),
 
-                          // Easter egg animation: eggs filling the cart basket
-                          const Positioned.fill(child: CartEggsBadge()),
+            //               // Easter egg animation: eggs filling the cart basket
+            //               const Positioned.fill(child: CartEggsBadge()),
 
-                          if (count > 0 && state.isLoggedIn)
-                            PositionedDirectional(
-                              top: -4,
-                              start: 15,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8.w,
-                                  vertical: 2.5.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: ColorManger.chipProtein,
-                                  borderRadius: BorderRadius.circular(10.r),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 18.w,
-                                  minHeight: 18.h,
-                                ),
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '$count',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12.sp,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      );
-              },
-            ),
+            //               if (count > 0 && state.isLoggedIn)
+            //                 PositionedDirectional(
+            //                   top: -4,
+            //                   start: 15,
+            //                   child: Container(
+            //                     padding: EdgeInsets.symmetric(
+            //                       horizontal: 8.w,
+            //                       vertical: 2.5.h,
+            //                     ),
+            //                     decoration: BoxDecoration(
+            //                       color: ColorManger.chipProtein,
+            //                       borderRadius: BorderRadius.circular(10.r),
+            //                     ),
+            //                     constraints: BoxConstraints(
+            //                       minWidth: 18.w,
+            //                       minHeight: 18.h,
+            //                     ),
+            //                     alignment: Alignment.center,
+            //                     child: Text(
+            //                       '$count',
+            //                       style: TextStyle(
+            //                         color: Colors.white,
+            //                         fontSize: 12.sp,
+            //                         fontWeight: FontWeight.bold,
+            //                       ),
+            //                     ),
+            //                   ),
+            //                 ),
+            //             ],
+            //           );
+            //   },
+            // ),
           );
         },
       ),

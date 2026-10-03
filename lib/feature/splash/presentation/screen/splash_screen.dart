@@ -53,11 +53,15 @@ class _SplashScreenState extends State<SplashScreen>
     _exitController.forward();
   }
 
+  bool _hasNavigated = false;
+
   void _navigateToNextScreen() {
+    if (_hasNavigated || !mounted) return;
+    _hasNavigated = true;
+
     final bool isOnBoardingScreenView = SharedPrefHelper.getBool(
       PrefKeys.prefsKeyOnBoardingScreenView,
     );
-    if (!mounted) return;
     final String nextRoute = isOnBoardingScreenView
         ? Routes.homeRoute
         : Routes.onBoardingRoute;

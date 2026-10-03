@@ -6,12 +6,12 @@ import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/widget/banner_carousel_slider.dart';
 import 'package:aleman/feature/home/presentation/widget/category_list_view_builder.dart';
-import 'package:aleman/feature/home/presentation/widget/product_gride_view.dart';
 import 'package:aleman/feature/home/presentation/widget/search_row.dart';
 import 'package:aleman/feature/notification/presentation/widget/notification_badge_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iconsax/iconsax.dart';
 
 class HomeBody extends StatelessWidget {
   const HomeBody({super.key});
@@ -24,20 +24,37 @@ class HomeBody extends StatelessWidget {
       bottom: false,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: responsive.setPadding(left: 5.5, right: 5.5, top: 1),
+        padding: responsive.setPadding(top: 1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _titleAndNotificationRow(context),
+            Padding(
+              padding: responsive.setPadding(left: 5.5, right: 5.5),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _titleAndNotificationRow(context),
 
-            responsive.setSizeBox(height: 2),
-            const SearchRow(),
-            responsive.setSizeBox(height: 3),
-            const BannerCarouselSlider(),
-            const CategoryListViewBuilder(),
-            responsive.setSizeBox(height: 2),
-            const NewProductGrideView(),
-            responsive.setSizeBox(height: 10),
+                  responsive.setSizeBox(height: 2),
+                  const SearchRow(),
+                  responsive.setSizeBox(height: 3),
+                  const BannerCarouselSlider(),
+
+                  const CategoryListViewBuilder(),
+                  // responsive.setSizeBox(height: 2),
+                  // const BannerCarouselSlider(),
+
+                  // const NewProductGrideView(),
+                  // responsive.setSizeBox(height: 10),
+                ],
+              ),
+            ),
+            // Image.asset(
+            //   ImageAsset.categoryPlante,
+            //   width: double.infinity,
+            //   fit: BoxFit.fitWidth,
+            //   alignment: Alignment.bottomCenter,
+            // ),
           ],
         ),
       ),
@@ -68,7 +85,7 @@ class HomeBody extends StatelessWidget {
             ),
             responsive.setSizeBox(height: 0.3),
             Text(
-              'شركائك فى النجاح',
+              'رائدة الأعلاف فى مصر',
               maxLines: 1,
               textAlign: TextAlign.start,
               overflow: TextOverflow.ellipsis,
@@ -83,97 +100,76 @@ class HomeBody extends StatelessWidget {
           buildWhen: (previous, current) =>
               previous.isLoggedIn != current.isLoggedIn,
           builder: (context, state) {
-            if (!state.isLoggedIn) {
-              return const SizedBox.shrink();
-            }
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  height: responsive.setHeight(6),
-                  width: responsive.setWidth(12),
-                  decoration: BoxDecoration(
-                    color: ColorManger.backgroundItem,
-                    borderRadius: BorderRadius.circular(
-                      responsive.setBorderRadius(5),
-                    ),
-                  ),
-                  child: NotificationBadgeIcon(
-                    iconColor: ColorManger.primaryLight,
+                if (state.isLoggedIn) ...[
+                  _buildHeaderButton(
                     onTap: () {
                       Navigator.of(
                         context,
                         rootNavigator: true,
                       ).pushNamed(Routes.notificationsRoute);
                     },
+                    child: NotificationBadgeIcon(
+                      iconColor: ColorManger.primaryLight,
+                    ),
                   ),
-                ),
-                responsive.setSizeBox(width: 3),
-              ],
-            );
-          },
-        ),
-        BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
-          buildWhen: (previous, current) =>
-              previous.isLoggedIn != current.isLoggedIn,
-          builder: (context, state) {
-            return Stack(
-              clipBehavior: Clip.none,
-              children: [
-                GestureDetector(
+                  SizedBox(width: 8.w),
+                ],
+                _buildHeaderButton(
                   onTap: () async {
-                    if (context.mounted) {
-                      if (state.isLoggedIn) {
-                        Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pushNamed(Routes.profileRoute);
-                      } else {
-                        final result = await Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pushNamed(Routes.loginRoute);
-                        if (result == true && context.mounted) {
-                          context.read<HomeCuibtCubit>().fetchHomeData();
-                          context.read<CartCubit>().getCartCount();
-                        }
+                    if (state.isLoggedIn) {
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(Routes.profileRoute);
+                    } else {
+                      final result = await Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(Routes.loginRoute);
+                      if (result == true && context.mounted) {
+                        context.read<HomeCuibtCubit>().fetchHomeData();
+                        context.read<CartCubit>().getCartCount();
                       }
                     }
                   },
-                  child: Container(
-                    height: responsive.setHeight(6),
-                    width: responsive.setWidth(12),
-                    decoration: BoxDecoration(
-                      color: ColorManger.backgroundItem,
-                      borderRadius: BorderRadius.circular(
-                        responsive.setBorderRadius(5),
-                      ),
-                    ),
-                    child: Image.asset(
-                      state.isLoggedIn
-                          ? ImageAsset.farmer
-                          : ImageAsset.loginFarmer,
-                      height: responsive.setHeight(6),
-                      width: responsive.setWidth(15),
-                    ),
+                  child: Icon(
+                    state.isLoggedIn ? Icons.settings : Iconsax.login,
+                    size: 22.sp,
+                    color: ColorManger.primaryLight,
                   ),
                 ),
-                if (state.isLoggedIn) ...[
-                  PositionedDirectional(
-                    top: -2,
-                    start: -4,
-                    child: Icon(
-                      Icons.settings,
-                      size: 20.sp,
-                      color: ColorManger.primaryLight,
-                    ),
-                  ),
-                ],
               ],
             );
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildHeaderButton({required Widget child, VoidCallback? onTap}) {
+    return Material(
+      color: ColorManger.backgroundItem,
+      borderRadius: BorderRadius.circular(12.r),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12.r),
+        child: Container(
+          width: 42.w,
+          height: 42.w,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: Colors.black.withValues(alpha: 0.02),
+              width: 1,
+            ),
+          ),
+          child: child,
+        ),
+      ),
     );
   }
 }

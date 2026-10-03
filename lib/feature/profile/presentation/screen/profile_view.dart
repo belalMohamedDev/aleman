@@ -32,10 +32,10 @@ class ProfileView extends StatelessWidget {
           title: Text(
             'حسابي',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
-                ),
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+              fontSize: 16.sp,
+            ),
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,

@@ -54,7 +54,7 @@ class NotificationBadgeIcon extends StatelessWidget {
                 child: Icon(
                   Iconsax.notification5,
                   color: ColorManger.primaryLight,
-                  size: 30,
+                  size: 24,
                 ),
                 // Image.asset(
                 //   ImageAsset.notificationIcon,

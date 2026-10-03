@@ -5,7 +5,6 @@ import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -64,7 +63,7 @@ class ProductCard extends StatelessWidget {
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  color: ColorManger.primaryLight.withValues(alpha: 0.06),
+                  color: ColorManger.primaryLight.withValues(alpha: 0.16),
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(16),
                   ),
@@ -72,6 +71,7 @@ class ProductCard extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
                   fit: BoxFit.contain,
+
                   placeholder: (context, url) => Shimmer.fromColors(
                     baseColor: Colors.grey.shade300,
                     highlightColor: Colors.grey.shade100,

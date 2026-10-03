@@ -1,4 +1,6 @@
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
+import 'package:aleman/core/services/app_storage_key.dart';
+import 'package:aleman/core/services/shared_pref_helper.dart';
 import 'package:aleman/feature/cart/data/model/add_to_cart_request_body.dart';
 import 'package:aleman/feature/cart/data/model/cart_response_model.dart';
 import 'package:aleman/feature/cart/data/model/update_cart_item_request_body.dart';
@@ -91,6 +93,14 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<void> getCartCount() async {
+    final token = await SharedPrefHelper.getSecuredString(
+      PrefKeys.userAccessToken,
+    );
+    if (token.isEmpty) {
+      emit(state.copyWith(totalItemsCount: 0));
+      return;
+    }
+
     final result = await _cartRepository.getCartCount();
 
     result.when(
@@ -104,6 +114,14 @@ class CartCubit extends Cubit<CartState> {
   }
 
   Future<void> getCart({bool isSilent = false}) async {
+    final token = await SharedPrefHelper.getSecuredString(
+      PrefKeys.userAccessToken,
+    );
+    if (token.isEmpty) {
+      emit(state.copyWith(status: CartStatus.success, cart: null));
+      return;
+    }
+
     if (!isSilent) {
       emit(state.copyWith(status: CartStatus.loading, errorMessage: null));
     }

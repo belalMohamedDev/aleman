@@ -11,7 +11,9 @@ import 'package:aleman/feature/Authentication/presentation/screens/new_password_
 import 'package:aleman/feature/Authentication/presentation/screens/sign_in_view.dart';
 import 'package:aleman/feature/Authentication/presentation/screens/verification_code_screen.dart';
 import 'package:aleman/feature/cart/presentation/screen/cart_screen.dart';
+import 'package:aleman/feature/home/data/mapper/category_mapper.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
+import 'package:aleman/feature/home/presentation/screen/category_products_screen.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:aleman/feature/onboarding/presentation/screen/on_boarding_screen.dart';
 import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
@@ -104,6 +106,29 @@ class RouteGenerator {
           const ChangePasswordScreen(),
           settings,
         );
+
+      case Routes.categoryProductsRoute:
+        if (settings.arguments is CategoryProductsArgs) {
+          final args = settings.arguments as CategoryProductsArgs;
+          final cubit = args.cubit ?? instance<HomeCuibtCubit>();
+          return _buildFadeRoute(
+            BlocProvider.value(
+              value: cubit,
+              child: CategoryProductsScreen(category: args.category),
+            ),
+            settings,
+          );
+        } else if (settings.arguments is CategoryEntity) {
+          final category = settings.arguments as CategoryEntity;
+          return _buildFadeRoute(
+            BlocProvider(
+              create: (_) => instance<HomeCuibtCubit>()..fetchProducts(),
+              child: CategoryProductsScreen(category: category),
+            ),
+            settings,
+          );
+        }
+        return unDefinedRoute();
 
       // ---------------------- DEFAULT -----------------------
       case Routes.noRoute:
