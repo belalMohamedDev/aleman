@@ -19,7 +19,7 @@ ThemeData getApplicationTheme(BuildContext context) {
     // //elevated button theme
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: ColorManger.buttonColor,
+        backgroundColor: ColorManger.primaryLight,
         textStyle: getSemiBoldStyle(fontSize: 14.sp, color: ColorManger.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.r),

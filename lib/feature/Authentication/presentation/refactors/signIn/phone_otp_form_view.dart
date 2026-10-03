@@ -1,4 +1,5 @@
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/fonts/font_manger.dart';
 import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart';
 import 'package:aleman/feature/Authentication/logic/loginCubit/login_state.dart';
 import 'package:flutter/material.dart';
@@ -90,19 +91,31 @@ class PhoneOtpFormView extends StatelessWidget {
                 SizedBox(height: 24.h),
 
                 // Continue Button
-                SizedBox(
+                Container(
                   height: 52.h,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(18.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: ColorManger.primaryLight.withValues(
+                          alpha: isEnabled ? 0.28 : 0.0,
+                        ),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
                   child: ElevatedButton(
                     onPressed: isEnabled ? () => cubit.sendLoginOtp() : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorManger.primaryLight,
-                      foregroundColor: Colors.white,
+                      foregroundColor: ColorManger.white,
                       disabledBackgroundColor: ColorManger.primaryLight
                           .withValues(alpha: 0.35),
                       disabledForegroundColor: Colors.white70,
-                      elevation: isEnabled ? 1 : 0,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.r),
+                        borderRadius: BorderRadius.circular(18.r),
                       ),
                     ),
                     child: isLoading
@@ -116,11 +129,12 @@ class PhoneOtpFormView extends StatelessWidget {
                           )
                         : Text(
                             'متابعة',
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeightManger.bold,
+                                  color: ColorManger.white,
+                                  letterSpacing: 0.2,
+                                ),
                           ),
                   ),
                 ),
@@ -309,19 +323,31 @@ class PhoneOtpFormView extends StatelessWidget {
               SizedBox(height: 20.h),
 
               // Verify Button
-              SizedBox(
+              Container(
                 height: 52.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorManger.primaryLight.withValues(
+                        alpha: isEnabled ? 0.28 : 0.0,
+                      ),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
                 child: ElevatedButton(
                   onPressed: isEnabled ? () => cubit.verifyLoginOtp() : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorManger.primaryLight,
-                    foregroundColor: Colors.white,
+                    foregroundColor: ColorManger.white,
                     disabledBackgroundColor: ColorManger.primaryLight
                         .withValues(alpha: 0.35),
                     disabledForegroundColor: Colors.white70,
-                    elevation: isEnabled ? 1 : 0,
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14.r),
+                      borderRadius: BorderRadius.circular(18.r),
                     ),
                   ),
                   child: isLoading
@@ -335,10 +361,12 @@ class PhoneOtpFormView extends StatelessWidget {
                         )
                       : Text(
                           'تأكيد الدخول',
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeightManger.bold,
+                                color: ColorManger.white,
+                                letterSpacing: 0.2,
+                              ),
                         ),
                 ),
               ),

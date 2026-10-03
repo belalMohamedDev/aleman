@@ -29,8 +29,8 @@ class CustomButton extends StatelessWidget {
     final buttonColor =
         color ??
         (onPressed == null
-            ? ColorManger.primaryLight
-            : ColorManger.primary.withValues(alpha: 0.9));
+            ? ColorManger.primaryLight.withValues(alpha: 0.35)
+            : ColorManger.primaryLight);
     return Container(
       height: responsive.setHeight(height),
       width: responsive.setWidth(width),
@@ -40,6 +40,15 @@ class CustomButton extends StatelessWidget {
             : null,
         borderRadius: BorderRadius.circular(responsive.setBorderRadius(radius)),
         color: buttonColor,
+        boxShadow: onPressed != null && color == null
+            ? [
+                BoxShadow(
+                  color: ColorManger.primaryLight.withValues(alpha: 0.25),
+                  blurRadius: 14,
+                  offset: const Offset(0, 5),
+                ),
+              ]
+            : null,
       ),
       child: TextButton(onPressed: onPressed, child: widget!),
     );

@@ -122,7 +122,7 @@ class _TabContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final selectedColor = ColorManger.authTitleDark;
+    final selectedColor = ColorManger.primaryLight;
     final unselectedColor = ColorManger.authSubtitleGrey;
 
     return TweenAnimationBuilder<Color?>(

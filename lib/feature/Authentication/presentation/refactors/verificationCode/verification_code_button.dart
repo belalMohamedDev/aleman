@@ -1,5 +1,6 @@
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/fonts/font_manger.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_cubit.dart';
 import 'package:aleman/feature/Authentication/logic/forgotPasswordCubit/forgot_password_state.dart';
 import 'package:flutter/material.dart';
@@ -41,9 +42,21 @@ class VerificationCodeButton extends StatelessWidget {
         final isLoading = state.status == ForgotPasswordStatus.loading;
         final bool isEnabled = state.isCodeValid && !isLoading;
 
-        return SizedBox(
+        return Container(
           height: 52.h,
           width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18.r),
+            boxShadow: [
+              BoxShadow(
+                color: ColorManger.primaryLight.withValues(
+                  alpha: isEnabled ? 0.28 : 0.0,
+                ),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
           child: ElevatedButton(
             onPressed: isEnabled
                 ? () {
@@ -52,14 +65,14 @@ class VerificationCodeButton extends StatelessWidget {
                 : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: ColorManger.primaryLight,
-              foregroundColor: Colors.white,
+              foregroundColor: ColorManger.white,
               disabledBackgroundColor: ColorManger.primaryLight.withValues(
                 alpha: 0.35,
               ),
               disabledForegroundColor: Colors.white70,
-              elevation: isEnabled ? 1 : 0,
+              elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(18.r),
               ),
             ),
             child: isLoading
@@ -73,11 +86,12 @@ class VerificationCodeButton extends StatelessWidget {
                   )
                 : Text(
                     'تأكيد ومتابعة',
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.white,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeightManger.bold,
+                          color: ColorManger.white,
+                          letterSpacing: 0.2,
+                        ),
                   ),
           ),
         );

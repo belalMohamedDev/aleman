@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/style/color/color_manger.dart';
+import '../../../../core/style/fonts/font_manger.dart';
+
 class OnboardingBottomControls extends StatelessWidget {
   final int currentIndex;
   final int totalSteps;
@@ -39,8 +42,8 @@ class OnboardingBottomControls extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(4.0),
                   color: isActive
-                      ? const Color(0xFF122912)
-                      : const Color(0xFFE2E8F0),
+                      ? ColorManger.onboardingDotActive
+                      : ColorManger.onboardingDotInactive,
                 ),
               ),
             );
@@ -56,17 +59,17 @@ class OnboardingBottomControls extends StatelessWidget {
             borderRadius: BorderRadius.circular(26),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF122912).withValues(alpha: 0.22),
-                blurRadius: 14,
-                offset: const Offset(0, 5),
+                color: ColorManger.onboardingButtonBg.withValues(alpha: 0.28),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
           child: ElevatedButton(
             onPressed: onNext,
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF122912).withValues(alpha: 0.85),
-              foregroundColor: Colors.white,
+              backgroundColor: ColorManger.onboardingButtonBg,
+              foregroundColor: ColorManger.white,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(18),
@@ -77,13 +80,12 @@ class OnboardingBottomControls extends StatelessWidget {
               child: Text(
                 isLastPage ? 'ابدأ التسوق' : 'التالي',
                 key: ValueKey<bool>(isLastPage),
-                style: const TextStyle(
-                  fontFamily: 'Cairo',
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                  letterSpacing: 0.2,
-                ),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeightManger.bold,
+                      color: ColorManger.white,
+                      letterSpacing: 0.2,
+                    ),
               ),
             ),
           ),

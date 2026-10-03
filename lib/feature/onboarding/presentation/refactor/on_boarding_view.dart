@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/style/color/color_manger.dart';
 import '../cubit/onboarding_cubit.dart';
 import '../cubit/onboarding_state.dart';
 import '../widget/curved_card_clipper.dart';
@@ -39,15 +40,26 @@ class OnBoardingView extends StatelessWidget {
         statusBarBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: const Color(0xFF122912),
-        body: BlocListener<OnboardingCubit, OnboardingState>(
-          listener: (context, state) {
-            if (state is OnboardingCompletedState) {
-              _saveOnboardingAndNavigateToHome(context);
-            }
-          },
-          child: Stack(
-            children: [
+        backgroundColor: ColorManger.onboardingBackground,
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                ColorManger.onboardingBackgroundTop,
+                ColorManger.onboardingBackgroundBottom,
+              ],
+            ),
+          ),
+          child: BlocListener<OnboardingCubit, OnboardingState>(
+            listener: (context, state) {
+              if (state is OnboardingCompletedState) {
+                _saveOnboardingAndNavigateToHome(context);
+              }
+            },
+            child: Stack(
+              children: [
               // 1. Bottom Curved White Card Background
               Positioned(
                 left: 0,
@@ -58,7 +70,7 @@ class OnBoardingView extends StatelessWidget {
                   painter: const CurvedCardShadowPainter(curveHeight: 28.0),
                   child: ClipPath(
                     clipper: const CurvedCardClipper(curveHeight: 28.0),
-                    child: Container(color: Colors.white),
+                    child: Container(color: ColorManger.white),
                   ),
                 ),
               ),
@@ -130,12 +142,12 @@ class OnBoardingView extends StatelessWidget {
               //                     borderRadius: BorderRadius.circular(18),
               //                   ),
               //                 ),
-              //                 child: const Text(
+              //                 child: Text(
               //                   'تخطي',
-              //                   style: TextStyle(
-              //                     fontFamily: 'Cairo',
-              //                     fontSize: 13.5,
-              //                     fontWeight: FontWeight.w600,
+              //                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              //                     fontSize: 13.5.sp,
+              //                     fontWeight: FontWeightManger.semiBold,
+              //                     color: ColorManger.white,
               //                   ),
               //                 ),
               //               ),
@@ -150,6 +162,7 @@ class OnBoardingView extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
