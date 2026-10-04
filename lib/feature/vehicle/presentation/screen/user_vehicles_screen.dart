@@ -1,5 +1,8 @@
 import 'package:aleman/core/application/di.dart';
+import 'package:aleman/core/statsScreen/global_empty_state.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/vehicle/data/model/user_vehicle_model.dart';
 import 'package:aleman/feature/vehicle/data/repository/vehicle_repo.dart';
 import 'package:aleman/feature/vehicle/logic/cubit/vehicle_cubit.dart';
@@ -51,6 +54,11 @@ class _UserVehiclesView extends StatelessWidget {
           ),
           body: state.status == VehicleStatus.loading
               ? const VehiclesShimmerLoading()
+              : state.status == VehicleStatus.error
+              ? GlobalError(
+                  message: state.errorMessage ?? 'حدث خطأ في تحميل البيانات',
+                  onRetry: () => cubit.loadVehicles(),
+                )
               : state.vehicles.isEmpty
               ? _buildEmptyState(context, cubit)
               : ListView.separated(
@@ -86,47 +94,10 @@ class _UserVehiclesView extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, VehicleCubit cubit) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 32.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: ColorManger.primaryLight.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.local_shipping_outlined,
-                size: 54.sp,
-                color: ColorManger.primaryLight,
-              ),
-            ),
-            SizedBox(height: 20.h),
-            Text(
-              'لا توجد سيارات أو سائقين محفوظين',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              'احفظ بيانات سيارات النقل والسائقين لتسهيل استلام طلباتك من أرض المصنع بضغطة واحدة',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: Colors.black54,
-                height: 1.5,
-              ),
-            ),
-            SizedBox(height: 20.h),
-          ],
-        ),
-      ),
+    return GlobalEmptyState(
+      imageAsset: ImageAsset.noCar,
+      title: 'لا توجد سيارات أو سائقين محفوظين',
+      description: 'احفظ بيانات سيارات النقل والسائقين لتسهيل استلام طلباتك من أرض المصنع بضغطة واحدة',
     );
   }
 }

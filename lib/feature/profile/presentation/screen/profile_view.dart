@@ -59,7 +59,7 @@ class ProfileView extends StatelessWidget {
               initial: () => const ProfileShimmer(),
               loading: () => const ProfileShimmer(),
               error: (error) => GlobalError(
-                onTap: () {
+                onRetry: () {
                   context.read<ProfileCubit>().fetchUserProfile();
                 },
               ),
@@ -71,9 +71,11 @@ class ProfileView extends StatelessWidget {
                     profile.role.toLowerCase().contains('bigmerchant');
 
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 12.0,
+                  padding: EdgeInsets.only(
+                    left: 16.w,
+                    right: 16.w,
+                    top: 12.h,
+                    bottom: 90.h,
                   ),
                   child: Column(
                     children: [

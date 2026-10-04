@@ -1,5 +1,6 @@
 import 'package:aleman/core/network/api_constant/api_constant.dart';
 import 'package:aleman/core/routing/routes.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/home/data/mapper/category_mapper.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
@@ -48,37 +49,10 @@ class CategoriesScreen extends StatelessWidget {
 
           if (state.categoriesStatus == RequestStatus.error &&
               state.categories.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline_rounded,
-                    size: 48.sp,
-                    color: ColorManger.redError,
-                  ),
-                  SizedBox(height: 12.h),
-                  Text(
-                    'تعذر تحميل الأقسام',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Colors.grey.shade700,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  TextButton.icon(
-                    onPressed: () {
-                      context.read<HomeCuibtCubit>().fetchHomeData();
-                    },
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('إعادة المحاولة'),
-                    style: TextButton.styleFrom(
-                      foregroundColor: ColorManger.primaryLight,
-                    ),
-                  ),
-                ],
-              ),
+            return GlobalError(
+              onRetry: () {
+                context.read<HomeCuibtCubit>().fetchHomeData();
+              },
             );
           }
 
@@ -105,7 +79,7 @@ class CategoriesScreen extends StatelessWidget {
                 left: 10.w,
                 right: 10.w,
                 top: 65.h,
-                bottom: 20.h,
+                bottom: 90.h,
               ),
               child: _build3ColumnStaggeredGrid(context, categories),
             ),

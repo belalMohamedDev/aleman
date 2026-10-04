@@ -86,7 +86,7 @@ class HomeProductsSection extends StatelessWidget {
             itemBuilder: (context, index) {
               final product = products[index];
               return SizedBox(
-                width: 130.w,
+                width: 150.w,
                 child: ProductCard(product: product, isCompact: true),
               );
             },

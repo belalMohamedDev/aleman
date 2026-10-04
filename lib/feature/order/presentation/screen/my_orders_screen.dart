@@ -1,4 +1,6 @@
 import 'package:aleman/core/application/di.dart';
+import 'package:aleman/core/statsScreen/global_empty_state.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/order/cubit/orders_cubit.dart';
 import 'package:aleman/feature/order/cubit/orders_state.dart';
@@ -50,6 +52,8 @@ class _MyOrdersView extends StatelessWidget {
           ),
           body: state.status == OrdersStatus.loading
               ? const OrdersShimmerLoading()
+              : state.status == OrdersStatus.error && state.orders.isEmpty
+              ? GlobalError(onRetry: cubit.loadOrders)
               : RefreshIndicator(
                   onRefresh: cubit.loadOrders,
                   color: ColorManger.primaryLight,
@@ -88,7 +92,10 @@ class _MyOrdersView extends StatelessWidget {
                           child: KeyedSubtree(
                             key: ValueKey<int>(state.selectedTab),
                             child: state.filteredOrders.isEmpty
-                                ? _buildEmptyOrdersState(state.selectedTab)
+                                ? _buildEmptyOrdersState(
+                                    context,
+                                    state.selectedTab,
+                                  )
                                 : ListView.separated(
                                     shrinkWrap: true,
                                     physics:
@@ -558,50 +565,20 @@ class _MyOrdersView extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyOrdersState(int selectedTab) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 100.h, horizontal: 24.w),
-      child: Center(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.all(22.r),
-              decoration: BoxDecoration(
-                color: ColorManger.primaryLight.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Iconsax.box_remove,
-                size: 50.sp,
-                color: ColorManger.primaryLight,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              selectedTab == 0
-                  ? 'لا توجد طلبات جارية حالياً'
-                  : 'لا توجد طلبات سابقة',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: ColorManger.primary,
-              ),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              selectedTab == 0
-                  ? 'أي طلب جديد تقوم بإنشائه سيظهر هنا لمتابعة خط سير التجهيز والشحن.'
-                  : 'جميع طلباتك المكتملة أو الملغاة ستظهر هنا في سجلك الدائم.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey.shade600,
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
-      ),
+  Widget _buildEmptyOrdersState(BuildContext context, int selectedTab) {
+    return GlobalEmptyState(
+      icon: Iconsax.box_remove,
+      title: selectedTab == 0
+          ? 'لا توجد طلبات جارية حالياً'
+          : 'لا توجد طلبات سابقة',
+      description: selectedTab == 0
+          ? 'أي طلب جديد تقوم بإنشائه سيظهر هنا لمتابعة خط سير التجهيز والشحن.'
+          : 'جميع طلباتك المكتملة أو الملغاة ستظهر هنا في سجلك الدائم.',
+      buttonText: selectedTab == 0 ? 'استكشف المنتجات' : null,
+      buttonIcon: Iconsax.shop,
+      onButtonPressed: () {
+        Navigator.of(context).maybePop();
+      },
     );
   }
 

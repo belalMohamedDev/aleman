@@ -14,7 +14,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+  final bool showCloseButton;
+
+  const LoginView({super.key, this.showCloseButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +138,7 @@ class LoginView extends StatelessWidget {
                             // Contact / Help Link (clean & subtle at bottom)
                             const AuthContactSupportLink(),
 
-                            SizedBox(height: 20.h),
+                            SizedBox(height: 90.h),
                           ],
                         ),
                       ),
@@ -144,28 +146,29 @@ class LoginView extends StatelessWidget {
                   ),
                 ),
 
-                // Fixed Close (X) Button on top-start
-                PositionedDirectional(
-                  top: MediaQuery.of(context).padding.top + 8.h,
-                  start: 16.w,
-                  child: InkWell(
-                    onTap: () => Navigator.of(context).maybePop(),
-                    borderRadius: BorderRadius.circular(50),
-                    child: Container(
-                      width: 36.w,
-                      height: 36.h,
-                      decoration: BoxDecoration(
-                        color: ColorManger.authBackBtnBg,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.close,
-                        size: 20,
-                        color: ColorManger.authBackBtnIcon,
+                // Fixed Close (X) Button on top-start (only when allowed and can pop)
+                if (showCloseButton && Navigator.of(context).canPop())
+                  PositionedDirectional(
+                    top: MediaQuery.of(context).padding.top + 8.h,
+                    start: 16.w,
+                    child: InkWell(
+                      onTap: () => Navigator.of(context).maybePop(),
+                      borderRadius: BorderRadius.circular(50),
+                      child: Container(
+                        width: 36.w,
+                        height: 36.h,
+                        decoration: BoxDecoration(
+                          color: ColorManger.authBackBtnBg,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          size: 20,
+                          color: ColorManger.authBackBtnIcon,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
           ),

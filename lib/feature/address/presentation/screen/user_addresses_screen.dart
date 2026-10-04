@@ -1,5 +1,8 @@
 import 'package:aleman/core/application/di.dart';
+import 'package:aleman/core/statsScreen/global_empty_state.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/address/data/model/user_address_model.dart';
 import 'package:aleman/feature/address/data/repository/address_repo.dart';
 import 'package:aleman/feature/address/logic/cubit/address_cubit.dart';
@@ -51,6 +54,8 @@ class _UserAddressesView extends StatelessWidget {
           ),
           body: state.status == AddressStatus.loading
               ? const AddressesShimmerLoading()
+              : state.status == AddressStatus.error && state.addresses.isEmpty
+              ? GlobalError(onRetry: cubit.loadAddresses)
               : state.addresses.isEmpty
               ? _buildEmptyState(context, cubit)
               : RefreshIndicator(
@@ -192,46 +197,10 @@ class _UserAddressesView extends StatelessWidget {
   }
 
   Widget _buildEmptyState(BuildContext context, AddressCubit cubit) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 32.w),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: EdgeInsets.all(24.r),
-              decoration: BoxDecoration(
-                color: ColorManger.primaryLight.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Iconsax.location_slash,
-                size: 56.sp,
-                color: ColorManger.primaryLight,
-              ),
-            ),
-            SizedBox(height: 18.h),
-            Text(
-              'لا توجد عناوين مسجلة',
-              style: TextStyle(
-                fontSize: 17.sp,
-                fontWeight: FontWeight.bold,
-                color: ColorManger.primary,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              'أضف عنوان مزرعتك أو مخزنك الآن لتسهيل الشحن والطلب المباشر من المصنع.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13.sp,
-                color: Colors.grey.shade600,
-                height: 1.4,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return GlobalEmptyState(
+      imageAsset: ImageAsset.noAddress,
+      title: 'لا توجد عناوين مسجلة',
+      description: 'أضف عنوان مزرعتك أو مخزنك الآن لتسهيل الشحن والطلب المباشر من المصنع.',
     );
   }
 

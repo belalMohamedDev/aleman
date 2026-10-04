@@ -8,11 +8,11 @@ class NetworkCubit extends Cubit<NetworkState> {
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   NetworkCubit() : super(const NetworkState.initial()) {
-    _checkInitialConnection();
+    checkConnection();
     _connectivitySubscription = _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
-  Future<void> _checkInitialConnection() async {
+  Future<void> checkConnection() async {
     final result = await _connectivity.checkConnectivity();
     _updateConnectionStatus(result);
   }

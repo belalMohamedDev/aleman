@@ -1,4 +1,5 @@
 import 'package:aleman/core/routing/routes.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
@@ -201,32 +202,10 @@ class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
     }
 
     if (state.productsStatus == RequestStatus.error) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.error_outline, size: 48.w, color: Colors.grey),
-            SizedBox(height: 12.h),
-            Text(
-              state.productsError ?? 'حدث خطأ أثناء تحميل المنتجات',
-              style: TextStyle(fontSize: 14.sp, color: ColorManger.grey),
-            ),
-            SizedBox(height: 16.h),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorManger.primary,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-              ),
-              onPressed: () {
-                context.read<HomeCuibtCubit>().fetchProducts();
-              },
-              child: const Text('إعادة المحاولة'),
-            ),
-          ],
-        ),
+      return GlobalError(
+        onRetry: () {
+          context.read<HomeCuibtCubit>().fetchProducts();
+        },
       );
     }
 

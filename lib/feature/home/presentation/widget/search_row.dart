@@ -60,12 +60,12 @@ class SearchRow extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: ColorManger.primary.withValues(alpha: 0.08),
+                color: ColorManger.primary.withValues(alpha: 0.0),
                 borderRadius: BorderRadius.circular(8.r),
               ),
               child: Icon(
                 Iconsax.setting_4,
-                size: 16.sp,
+                size: 18.sp,
                 color: ColorManger.primary,
               ),
             ),

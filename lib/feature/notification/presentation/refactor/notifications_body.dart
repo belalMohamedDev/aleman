@@ -1,5 +1,5 @@
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/core/style/fonts/styles_manger.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:aleman/feature/notification/logic/notification_state.dart';
 import 'package:aleman/feature/notification/presentation/widget/empty_notifications_view.dart';
@@ -8,7 +8,6 @@ import 'package:aleman/feature/notification/presentation/widget/notifications_sh
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
 
 class NotificationsBody extends StatelessWidget {
   final ScrollController? scrollController;
@@ -26,44 +25,10 @@ class NotificationsBody extends StatelessWidget {
 
         if (state.status == NotificationStatus.error &&
             state.notifications.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Iconsax.warning_2,
-                  size: 48.sp,
-                  color: ColorManger.redError,
-                ),
-                SizedBox(height: 12.h),
-                Text(
-                  state.errorMessage ?? 'تعذر تحميل الإشعارات',
-                  style: getRegularStyle(
-                    fontSize: 14.sp,
-                    color: ColorManger.grey,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 16.h),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<NotificationCubit>().getNotifications(
-                      refresh: true,
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorManger.buttonColor,
-                  ),
-                  child: Text(
-                    'إعادة المحاولة',
-                    style: getBoldStyle(
-                      fontSize: 13.sp,
-                      color: ColorManger.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          return GlobalError(
+            onRetry: () {
+              context.read<NotificationCubit>().getNotifications(refresh: true);
+            },
           );
         }
 

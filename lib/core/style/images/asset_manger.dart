@@ -34,4 +34,9 @@ class ImageAsset {
   static const String categoryPlante = '$imagePath/category_plante.png';
   static const String backgroundProduct = '$imagePath/background_item.png';
   static const String noProduct = '$imagePath/noProduct.png';
+  static const String emptyWhishlist = '$imagePath/fav.png';
+  static const String noAddress = '$imagePath/noAddress.png';
+  static const String noCar = '$imagePath/emptyCar.png';
+  static const String client = '$imagePath/client.png';
+  static const String emptyOrder = '$imagePath/order.png';
 }

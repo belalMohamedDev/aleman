@@ -5,9 +5,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class GlobalError extends StatelessWidget {
-  const GlobalError({super.key, required this.onTap});
+  final VoidCallback? onTap;
+  final VoidCallback? onRetry;
+  final String? imageAsset;
+  final String? title;
+  final String? message;
+  final String? retryText;
+  final bool isCompact;
+  final double? topPadding;
 
-  final Function()? onTap;
+  const GlobalError({
+    super.key,
+    this.onTap,
+    this.onRetry,
+    this.imageAsset,
+    this.title,
+    this.message,
+    this.retryText,
+    this.isCompact = false,
+    this.topPadding,
+  });
+
+  VoidCallback? get _effectiveAction => onRetry ?? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -15,100 +34,72 @@ class GlobalError extends StatelessWidget {
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 32.w),
+          padding: EdgeInsets.symmetric(
+            horizontal: 32.w,
+            vertical: topPadding ?? (isCompact ? 16.h : 24.h),
+          ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(ImageAsset.error, width: 280.w, height: 280.w),
-
+              Image.asset(
+                imageAsset ?? ImageAsset.error,
+                width: isCompact ? 180.w : 280.w,
+                height: isCompact ? 180.w : 220.w,
+                fit: BoxFit.contain,
+              ),
               SizedBox(height: 8.h),
               Text(
-                'حدث خطأ ما',
+                title ?? 'حدث خطأ ما',
                 style: getBoldStyle(
-                  fontSize: 18.sp,
+                  fontSize: isCompact ? 16.sp : 18.sp,
                   color: ColorManger.primary,
                 ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 5.h),
               Text(
-                'لم نتمكن من تنفيذ طلبك في الوقت الحالي. \nحدث خطأ غير متوقع أثناء معالجة العملية، \nيرجى المحاولة مرة أخرى بعد قليل.',
+                message ?? 'لم نتمكن من تنفيذ طلبك في الوقت الحالي. \nحدث خطأ غير متوقع أثناء معالجة العملية، \nيرجى المحاولة مرة أخرى بعد قليل.',
                 style: getRegularStyle(
-                  fontSize: 16.sp,
+                  fontSize: isCompact ? 13.sp : 15.sp,
                   color: ColorManger.grey,
+                  height: 1.4,
                 ),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 150.h),
-              // ElevatedButton.icon(
-              //   onPressed: onRefresh,
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: ColorManger.buttonColor,
-              //     foregroundColor: ColorManger.white,
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(12.r),
-              //     ),
-              //     padding: EdgeInsets.symmetric(
-              //       horizontal: 24.w,
-              //       vertical: 12.h,
-              //     ),
-              //   ),
-              //   icon: const Icon(Icons.refresh),
-              //   label: Text(
-              //     style: getBoldStyle(
-              //       fontSize: 14.sp,
-              //       color: ColorManger.white,
-              //     ),
-              //   ),
-              // ),
+              if (_effectiveAction != null) ...[
+                SizedBox(height: 24.h),
+                ElevatedButton.icon(
+                  onPressed: _effectiveAction,
+                  icon: const Icon(
+                    Icons.refresh,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                  label: Text(
+                    retryText ?? 'إعادة المحاولة',
+                    style: getBoldStyle(
+                      fontSize: 14.sp,
+                      color: ColorManger.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorManger.primaryLight.withValues(
+                      alpha: 0.9,
+                    ),
+                    foregroundColor: ColorManger.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
       ),
     );
-
-    // Padding(
-    //   padding: EdgeInsets.only(left: 45.w, right: 45.w, top: 100.h),
-    //   child: Column(
-    //     children: [
-    //       Image.asset(ImageAsset.error, width: 280.w, height: 280.w),
-    //       SizedBox(height: 25.h),
-
-    //       Container(
-    //         height: 10.h,
-    //         width: 10.w,
-
-    //         decoration: BoxDecoration(
-    //           color: ColorManger.primaryLight,
-    //           borderRadius: BorderRadius.circular(40.r),
-    //         ),
-    //       ),
-    //       SizedBox(height: 10.h),
-    //       Container(
-    //         height: 20.h,
-    //         width: 20.w,
-
-    //         decoration: BoxDecoration(
-    //           color: ColorManger.primaryLight,
-    //           borderRadius: BorderRadius.circular(40.r),
-    //         ),
-    //       ),
-    //       SizedBox(height: 10.h),
-    //       InkWell(
-    //         onTap: onTap,
-    //         child: Container(
-    //           height: 50.h,
-    //           width: 50.w,
-
-    //           decoration: BoxDecoration(
-    //             color: ColorManger.primaryLight,
-    //             borderRadius: BorderRadius.circular(40.r),
-    //           ),
-    //           child: Icon(Iconsax.refresh1, color: Colors.white),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }

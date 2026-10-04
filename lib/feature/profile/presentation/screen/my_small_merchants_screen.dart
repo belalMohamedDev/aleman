@@ -1,4 +1,6 @@
+import 'package:aleman/core/statsScreen/global_empty_state.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/order/presentation/screen/small_merchants_orders_screen.dart';
 import 'package:aleman/feature/profile/data/model/user_profile_model.dart';
 import 'package:aleman/feature/profile/logic/cubit/small_merchants_cubit.dart';
@@ -509,52 +511,14 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
   }
 
   Widget _buildEmptyState(String searchQuery) {
-    return Center(
-      child: Padding(
-        padding: EdgeInsets.all(24.r),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 80.w,
-              height: 80.w,
-              decoration: BoxDecoration(
-                color: ColorManger.primaryLight.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-              alignment: Alignment.center,
-              child: Icon(
-                Iconsax.people,
-                size: 38.sp,
-                color: ColorManger.primaryLight,
-              ),
-            ),
-            SizedBox(height: 16.h),
-            Text(
-              searchQuery.isEmpty
-                  ? 'لا يوجد تجار تابعين مسجلين حالياً'
-                  : 'لا توجد نتائج مطابقة لبحثك',
-              style: TextStyle(
-                fontSize: 15.sp,
-                fontWeight: FontWeight.bold,
-                color: const Color(0xFF0F172A),
-              ),
-            ),
-            SizedBox(height: 6.h),
-            Text(
-              searchQuery.isEmpty
-                  ? 'سيظهر هنا جميع الموزعين والتجار الصغار التابعين لحسابك التجاري'
-                  : 'يرجى التأكد من كتابة اسم التاجر أو رقم هاتفه بشكل صحيح',
-              style: TextStyle(
-                fontSize: 12.5.sp,
-                color: Colors.grey.shade500,
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+    return GlobalEmptyState(
+      imageAsset: ImageAsset.client,
+      title: searchQuery.isEmpty
+          ? 'لا يوجد تجار تابعين مسجلين حالياً'
+          : 'لا توجد نتائج مطابقة لبحثك',
+      description: searchQuery.isEmpty
+          ? 'سيظهر هنا جميع الموزعين والتجار الصغار التابعين لحسابك التجاري'
+          : 'يرجى التأكد من كتابة اسم التاجر أو رقم هاتفه بشكل صحيح',
     );
   }
 }

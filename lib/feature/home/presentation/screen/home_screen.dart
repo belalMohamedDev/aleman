@@ -1,6 +1,9 @@
+import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/utils/cart_animation_helper.dart';
+import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart';
+import 'package:aleman/feature/Authentication/presentation/screens/sign_in_view.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/bottomNavBar/custom_bottom_nav_bar.dart';
 import 'package:aleman/feature/bottomNavBar/logic/bottom_nav_cubit.dart';
@@ -67,17 +70,26 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.dark,
       ),
-      child: BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
+      child: BlocConsumer<HomeCuibtCubit, HomeCuibtState>(
+        listener: (context, state) {
+          if (!state.isLoggedIn && context.read<BottomNavCubit>().state > 2) {
+            context.read<BottomNavCubit>().goToHome();
+          }
+        },
         builder: (context, state) {
           final showLoginPrompt = state.showLoginPrompt;
 
           return Scaffold(
+            extendBody: true,
             body: Stack(
               children: [
                 BlocBuilder<BottomNavCubit, int>(
                   builder: (context, activeIndex) {
+                    final safeIndex = (!state.isLoggedIn && activeIndex > 2)
+                        ? 0
+                        : activeIndex;
                     return IndexedStack(
-                      index: activeIndex,
+                      index: safeIndex,
                       children: [
                         RefreshIndicator(
                           color: ColorManger.primary,
@@ -93,14 +105,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                   state.categoriesError != null &&
                                   state.productsError != null)
                               ? Padding(
-                                  padding: EdgeInsets.only(top: 120.h),
-                                  child: GlobalError(onTap: () {}),
+                                  padding: EdgeInsets.only(top: 80.h),
+                                  child: GlobalError(
+                                    onRetry: () {
+                                      context
+                                          .read<HomeCuibtCubit>()
+                                          .fetchHomeData();
+                                    },
+                                  ),
                                 )
                               : HomeBody(cartKey: _cartKey),
                         ),
                         const CategoriesScreen(),
-                        const WishlistScreen(),
-                        const ProfileView(),
+                        state.isLoggedIn
+                            ? const WishlistScreen()
+                            : BlocProvider(
+                                create: (context) => instance<LoginCubit>(),
+                                child: const LoginView(showCloseButton: false),
+                              ),
+                        state.isLoggedIn
+                            ? const ProfileView()
+                            : const SizedBox.shrink(),
                       ],
                     );
                   },

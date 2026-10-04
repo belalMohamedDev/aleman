@@ -1,5 +1,6 @@
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/services/user_role_helper.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/order/cubit/order_details_cubit.dart';
 import 'package:aleman/feature/order/cubit/order_details_state.dart';
@@ -157,6 +158,11 @@ class _OrderDetailsView extends StatelessWidget {
             body: (state.status == OrderDetailsStatus.loading &&
                     (order.createdAt == null || order.orderNumber.isEmpty))
                 ? const OrderDetailsShimmerLoading()
+                : (state.status == OrderDetailsStatus.error &&
+                        (order.createdAt == null || order.orderNumber.isEmpty))
+                ? GlobalError(
+                    onRetry: cubit.fetchOrderDetails,
+                  )
                 : RefreshIndicator(
                     onRefresh: cubit.fetchOrderDetails,
                     color: ColorManger.primaryLight,

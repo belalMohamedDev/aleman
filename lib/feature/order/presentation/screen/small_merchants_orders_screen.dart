@@ -1,5 +1,8 @@
 import 'package:aleman/core/application/di.dart';
+import 'package:aleman/core/statsScreen/global_empty_state.dart';
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/order/cubit/small_merchants_orders_cubit.dart';
 import 'package:aleman/feature/order/cubit/small_merchants_orders_state.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
@@ -402,33 +405,7 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
 
     if (state.status == SmallMerchantsOrdersStatus.error &&
         state.orders.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(24.r),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Iconsax.danger, size: 44.sp, color: Colors.red.shade400),
-              SizedBox(height: 12.h),
-              Text(
-                state.errorMessage ?? 'حدث خطأ أثناء جلب أوردرات العملاء',
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade700),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 14.h),
-              ElevatedButton.icon(
-                onPressed: () => cubit.loadOrders(refresh: true),
-                icon: const Icon(Icons.refresh, size: 16),
-                label: const Text('إعادة المحاولة'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorManger.primaryLight,
-                  foregroundColor: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
+      return GlobalError(onRetry: () => cubit.loadOrders(refresh: true));
     }
 
     final filtered = state.filteredOrders;
@@ -436,78 +413,16 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
     if (filtered.isEmpty) {
       final isMerchantFiltered =
           widget.merchantName != null && state.searchQuery.isNotEmpty;
-      return Center(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(24.r),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: EdgeInsets.all(20.r),
-                decoration: BoxDecoration(
-                  color: ColorManger.primaryLight.withValues(alpha: 0.08),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isMerchantFiltered ? Iconsax.shop : Iconsax.box,
-                  size: 42.sp,
-                  color: ColorManger.primaryLight,
-                ),
-              ),
-              SizedBox(height: 16.h),
-              Text(
-                isMerchantFiltered
-                    ? 'لا توجد طلبات مسجلة للتاجر\n«${widget.merchantName}»'
-                    : (state.searchQuery.isNotEmpty ||
-                              state.selectedStatus != null
-                          ? 'لا توجد أوردرات مطابقة للبحث أو الفلتر'
-                          : 'لا توجد أوردرات لعملائك حتى الآن'),
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
-                  color: ColorManger.primaryLight,
-                  height: 1.4,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 8.h),
-              Text(
-                isMerchantFiltered
-                    ? 'لم يقم هذا التاجر بإنشاء أي طلبات حتى الآن، أو لم يتم ربط طلباته بحسابه بعد.'
-                    : 'الطلبات المنشأة بواسطة التجار الصغار التابعين لك ستظهر هنا مباشرة.',
-                style: TextStyle(
-                  fontSize: 12.5.sp,
-                  color: Colors.grey.shade500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              // if (isMerchantFiltered ||
-              //     state.searchQuery.isNotEmpty ||
-              //     state.selectedStatus != null) ...[
-              //   SizedBox(height: 18.h),
-              //   OutlinedButton.icon(
-              //     onPressed: () {
-              //       _searchController.clear();
-              //       cubit.search('');
-              //       cubit.filterByStatus(null);
-              //     },
-              //     icon: const Icon(Icons.refresh_rounded, size: 16),
-              //     style: OutlinedButton.styleFrom(
-              //       foregroundColor: ColorManger.primaryLight,
-              //       side: BorderSide(color: ColorManger.primaryLight),
-              //       padding: EdgeInsets.symmetric(
-              //         horizontal: 16.w,
-              //         vertical: 10.h,
-              //       ),
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(10.r),
-              //       ),
-              //     ),
-              //   ),
-              // ],
-            ],
-          ),
-        ),
+      return GlobalEmptyState(
+        imageAsset: ImageAsset.emptyOrder,
+        title: isMerchantFiltered
+            ? 'لا توجد طلبات مسجلة للتاجر\n«${widget.merchantName}»'
+            : (state.searchQuery.isNotEmpty || state.selectedStatus != null
+                  ? 'لا توجد أوردرات مطابقة للبحث أو الفلتر'
+                  : 'لا توجد أوردرات لعملائك حتى الآن'),
+        description: isMerchantFiltered
+            ? 'لم يقم هذا التاجر بإنشاء أي طلبات حتى الآن، أو لم يتم ربط طلباته بحسابه بعد.'
+            : 'الطلبات المنشأة بواسطة التجار الصغار التابعين لك ستظهر هنا مباشرة.',
       );
     }
 

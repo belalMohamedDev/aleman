@@ -1,3 +1,4 @@
+import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/wishlist/logic/cubit/wishlist_cubit.dart';
 import 'package:aleman/feature/wishlist/logic/cubit/wishlist_state.dart';
@@ -73,47 +74,10 @@ class _WishlistScreenState extends State<WishlistScreen> {
             }
 
             if (state.status == WishlistStatus.error && state.items.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline_rounded,
-                        size: 48.sp,
-                        color: ColorManger.redError,
-                      ),
-                      SizedBox(height: 12.h),
-                      Text(
-                        state.errorMessage ?? 'حدث خطأ أثناء تحميل المفضلة',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade800,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 16.h),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          context.read<WishlistCubit>().getWishlist();
-                        },
-                        icon: const Icon(Icons.refresh, color: Colors.white),
-                        label: const Text(
-                          'إعادة المحاولة',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorManger.primary,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+              return GlobalError(
+                onRetry: () {
+                  context.read<WishlistCubit>().getWishlist();
+                },
               );
             }
 
@@ -128,7 +92,12 @@ class _WishlistScreenState extends State<WishlistScreen> {
                 await context.read<WishlistCubit>().getWishlist();
               },
               child: GridView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
+                padding: EdgeInsets.only(
+                  left: 14.w,
+                  right: 14.w,
+                  top: 14.h,
+                  bottom: 90.h,
+                ),
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: state.items.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
