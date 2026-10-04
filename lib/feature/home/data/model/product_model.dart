@@ -19,6 +19,7 @@ class ProductModel {
   int? feedForm;
   String? ingredients;
   String? additives;
+  bool? isFeatured;
   List<PackageModel>? packages;
 
   ProductModel({
@@ -30,6 +31,7 @@ class ProductModel {
     this.price,
     this.imageUrl,
     this.isActive,
+    this.isFeatured,
     this.createdAt,
     this.weightPerSackKg,
     this.pricePerTon,
@@ -45,10 +47,15 @@ class ProductModel {
     id = json['id'];
     categoryId = json['categoryId'];
     sapProductId = json['sapProductId'];
-    name = json['name'];
-    description = json['description'];
+    name = json['name'] ?? json['productName'];
+    description = json['description'] ??
+        json['productDescription'] ??
+        json['shortDescription'] ??
+        json['details'] ??
+        json['desc'];
     imageUrl = json['imageUrl'];
     isActive = json['isActive'];
+    isFeatured = json['isFeatured'];
     createdAt = json['createdAt'];
 
     proteinPercentage = json['proteinPercentage']?.toDouble();

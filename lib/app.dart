@@ -2,8 +2,10 @@ import 'package:aleman/core/application/applogicCubit/app_logic_cubit.dart';
 import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/language/app_localizations_setup.dart';
 import 'package:aleman/core/style/theme/theme_manger.dart';
+import 'package:aleman/feature/bottomNavBar/logic/bottom_nav_cubit.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
+import 'package:aleman/feature/wishlist/logic/cubit/wishlist_cubit.dart';
 
 import 'package:aleman/feature/splash/presentation/screen/splash_screen.dart';
 import 'package:aleman/core/routing/route_manger.dart';
@@ -31,6 +33,12 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) =>
               instance<NotificationCubit>()..getUnreadCount(),
+        ),
+        BlocProvider(
+          create: (context) => instance<BottomNavCubit>(),
+        ),
+        BlocProvider(
+          create: (context) => instance<WishlistCubit>()..loadWishlistIds(),
         ),
       ],
       child: ScreenUtilInit(

@@ -128,7 +128,7 @@ class ProfileView extends StatelessWidget {
                       SizedBox(height: 16.h),
 
                       ProfileMenuGroup(
-                        title: 'الطلبات',
+                        title: 'الطلبات والمفضلة',
                         items: [
                           ProfileMenuItem(
                             icon: Iconsax.box,
@@ -139,6 +139,16 @@ class ProfileView extends StatelessWidget {
                                 MaterialPageRoute(
                                   builder: (_) => const MyOrdersScreen(),
                                 ),
+                              );
+                            },
+                          ),
+                          ProfileMenuItem(
+                            icon: Iconsax.heart,
+                            title: 'قائمة المفضلة',
+                            onTap: () {
+                              Navigator.pushNamed(
+                                context,
+                                Routes.wishlistRoute,
                               );
                             },
                           ),

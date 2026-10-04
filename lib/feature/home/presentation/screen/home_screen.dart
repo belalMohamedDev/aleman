@@ -2,10 +2,15 @@ import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
+import 'package:aleman/feature/bottomNavBar/custom_bottom_nav_bar.dart';
+import 'package:aleman/feature/bottomNavBar/logic/bottom_nav_cubit.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
 import 'package:aleman/feature/home/presentation/widget/quick_login_card.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
+import 'package:aleman/feature/home/presentation/screen/categories_screen.dart';
+import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
+import 'package:aleman/feature/wishlist/presentation/screen/wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -69,24 +74,36 @@ class _HomeScreenState extends State<HomeScreen> {
           return Scaffold(
             body: Stack(
               children: [
-                RefreshIndicator(
-                  color: ColorManger.primary,
-                  backgroundColor: ColorManger.white,
-                  onRefresh: () async {
-                    await Future.wait([
-                      context.read<HomeCuibtCubit>().fetchHomeData(),
-                      context.read<CartCubit>().getCartCount(),
-                    ]);
+                BlocBuilder<BottomNavCubit, int>(
+                  builder: (context, activeIndex) {
+                    return IndexedStack(
+                      index: activeIndex,
+                      children: [
+                        RefreshIndicator(
+                          color: ColorManger.primary,
+                          backgroundColor: ColorManger.white,
+                          onRefresh: () async {
+                            await Future.wait([
+                              context.read<HomeCuibtCubit>().fetchHomeData(),
+                              context.read<CartCubit>().getCartCount(),
+                            ]);
+                          },
+                          child:
+                              (state.bannersError != null &&
+                                  state.categoriesError != null &&
+                                  state.productsError != null)
+                              ? Padding(
+                                  padding: EdgeInsets.only(top: 120.h),
+                                  child: GlobalError(onTap: () {}),
+                                )
+                              : HomeBody(cartKey: _cartKey),
+                        ),
+                        const CategoriesScreen(),
+                        const WishlistScreen(),
+                        const ProfileView(),
+                      ],
+                    );
                   },
-                  child:
-                      (state.bannersError != null &&
-                          state.categoriesError != null &&
-                          state.productsError != null)
-                      ? Padding(
-                          padding: EdgeInsets.only(top: 120.h),
-                          child: GlobalError(onTap: () {}),
-                        )
-                      : const HomeBody(),
                 ),
                 if (showLoginPrompt) ...[
                   Positioned.fill(
@@ -111,6 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ],
             ),
+            bottomNavigationBar: const CustomBottomNavBar(),
 
             // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
             // floatingActionButton: BlocBuilder<CartCubit, CartState>(

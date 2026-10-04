@@ -22,6 +22,10 @@ abstract class HomeCuibtState with _$HomeCuibtState {
     @Default([]) List<ProductEntity> products,
     String? productsError,
 
+    // Featured Products & Best Sellers
+    @Default([]) List<ProductEntity> featuredProducts,
+    @Default([]) List<ProductEntity> bestSellers,
+
     // Product Details Bottom Sheet
     @Default(1) double quantity,
     @Default(false) bool isTonMode,

@@ -12,6 +12,7 @@ import 'package:aleman/feature/Authentication/data/model/bodyRequest/login/verif
 import 'package:aleman/feature/Authentication/data/model/bodyRequest/logout/logout_body_request.dart';
 import 'package:aleman/feature/home/data/model/banner_model.dart';
 import 'package:aleman/feature/home/data/model/category_model.dart';
+import 'package:aleman/feature/home/data/model/home_response_model.dart';
 import 'package:aleman/feature/home/data/model/product_model.dart';
 import 'package:aleman/feature/cart/data/model/add_to_cart_request_body.dart';
 import 'package:aleman/feature/cart/data/model/cart_count_response.dart';
@@ -43,6 +44,9 @@ part 'app_api.g.dart';
 @RestApi(baseUrl: ApiConstants.baseUrl)
 abstract class AppServiceClient {
   factory AppServiceClient(Dio dio, {String baseUrl}) = _AppServiceClient;
+
+  @GET(ApiConstants.home)
+  Future<HomeResponseModel> getHomeDataService();
 
   @GET(ApiConstants.banner)
   Future<List<BannersModel>> getBannersService();
@@ -228,4 +232,25 @@ abstract class AppServiceClient {
     @Path('orderId') String orderId,
     @Body() MerchantReviewRequest body,
   );
+
+  @GET(ApiConstants.wishlist)
+  Future<dynamic> getWishlistService();
+
+  @POST('${ApiConstants.wishlistToggle}/{productId}')
+  Future<dynamic> toggleWishlistService(@Path('productId') int productId);
+
+  @POST('${ApiConstants.wishlist}/{productId}')
+  Future<dynamic> addToWishlistService(@Path('productId') int productId);
+
+  @DELETE('${ApiConstants.wishlist}/{productId}')
+  Future<dynamic> removeFromWishlistService(@Path('productId') int productId);
+
+  @GET(ApiConstants.wishlistIds)
+  Future<List<int>> getWishlistIdsService();
+
+  @GET(ApiConstants.wishlistCount)
+  Future<dynamic> getWishlistCountService();
+
+  @DELETE(ApiConstants.wishlist)
+  Future<dynamic> clearWishlistService();
 }

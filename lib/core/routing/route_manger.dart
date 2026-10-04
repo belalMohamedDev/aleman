@@ -20,6 +20,7 @@ import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
 import 'package:aleman/feature/profile/presentation/screen/change_password_screen.dart';
 import 'package:aleman/feature/order/presentation/screen/checkout_screen.dart';
 import 'package:aleman/feature/notification/presentation/screen/notifications_screen.dart';
+import 'package:aleman/feature/wishlist/presentation/screen/wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -129,6 +130,15 @@ class RouteGenerator {
           );
         }
         return unDefinedRoute();
+
+      case Routes.wishlistRoute:
+        return _buildFadeRoute(
+          BlocProvider(
+            create: (_) => instance<HomeCuibtCubit>(),
+            child: const WishlistScreen(),
+          ),
+          settings,
+        );
 
       // ---------------------- DEFAULT -----------------------
       case Routes.noRoute:

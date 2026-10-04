@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
@@ -39,12 +39,73 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
     _isFetchingHomeData = true;
 
     try {
-      await Future.wait([
-        fetchBanners(),
-        fetchCategories(),
-        fetchProducts(),
-        checkLoginStatus(),
-      ]);
+      checkLoginStatus();
+
+      emit(
+        state.copyWith(
+          bannersStatus: state.banners.isEmpty
+              ? RequestStatus.loading
+              : state.bannersStatus,
+          categoriesStatus: state.categories.isEmpty
+              ? RequestStatus.loading
+              : state.categoriesStatus,
+          productsStatus: state.products.isEmpty
+              ? RequestStatus.loading
+              : state.productsStatus,
+        ),
+      );
+
+      final response = await _homeRepository.getHomeDataRepo();
+
+      response.when(
+        success: (homeData) {
+          final activeBanners =
+              homeData.banners.where((b) => b.isActive).toList();
+          final activeCategories =
+              homeData.categories.where((c) => c.isActive).toList();
+          final activeFeatured =
+              homeData.featuredProducts.where((p) => p.isActive).toList();
+          final activeBestSellers =
+              homeData.bestSellers.where((p) => p.isActive).toList();
+
+          emit(
+            state.copyWith(
+              bannersStatus: RequestStatus.success,
+              banners: activeBanners,
+              bannersError: null,
+              categoriesStatus: RequestStatus.success,
+              categories: activeCategories,
+              categoriesError: null,
+              productsStatus: RequestStatus.success,
+              featuredProducts: activeFeatured,
+              bestSellers: activeBestSellers,
+              products: activeBestSellers.isNotEmpty
+                  ? activeBestSellers
+                  : activeFeatured,
+              productsError: null,
+            ),
+          );
+        },
+        failure: (error) {
+          final errorMsg = error.message ?? 'حدث خطأ أثناء تحميل البيانات';
+          emit(
+            state.copyWith(
+              bannersStatus: state.banners.isEmpty
+                  ? RequestStatus.error
+                  : state.bannersStatus,
+              bannersError: errorMsg,
+              categoriesStatus: state.categories.isEmpty
+                  ? RequestStatus.error
+                  : state.categoriesStatus,
+              categoriesError: errorMsg,
+              productsStatus: state.products.isEmpty
+                  ? RequestStatus.error
+                  : state.productsStatus,
+              productsError: errorMsg,
+            ),
+          );
+        },
+      );
     } finally {
       _isFetchingHomeData = false;
     }

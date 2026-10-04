@@ -1,6 +1,7 @@
 class ApiConstants {
   static const String baseUrl = 'https://alemanapp.runasp.net';
   //static const String baseUrl = 'http://10.0.2.2:5094';
+  static const String home = '/api/home';
   static const String banner = '/api/Banners';
   static const String category = '/api/Categories';
   static const String product = '/api/Products';
@@ -32,6 +33,10 @@ class ApiConstants {
   static const String markAllNotificationsRead =
       '/api/notifications/mark-all-read';
   static const String sendTestNotification = '/api/notifications/send-test';
+  static const String wishlist = '/api/wishlist';
+  static const String wishlistToggle = '/api/wishlist/toggle';
+  static const String wishlistIds = '/api/wishlist/ids';
+  static const String wishlistCount = '/api/wishlist/count';
 
   static const int apiTimeOut = 120 * 1000;
 }

@@ -209,17 +209,6 @@ class TokenInterceptor extends Interceptor {
         _showSessionExpiredMessage();
         return handler.reject(err);
       }
-    } else if (err.response?.statusCode == 500) {
-      try {
-        if (err.requestOptions.data is FormData) {
-          err.requestOptions.data = (err.requestOptions.data as FormData)
-              .clone();
-        }
-        final cloneReq = await dio.fetch(err.requestOptions);
-        return handler.resolve(cloneReq);
-      } catch (e) {
-        return handler.reject(err);
-      }
     }
 
     return handler.next(err);

@@ -1,94 +1,258 @@
-import 'package:aleman/core/utils/responsive_utils.dart';
+import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/feature/bottomNavBar/logic/bottom_nav_cubit.dart';
+import 'package:aleman/feature/wishlist/logic/cubit/wishlist_cubit.dart';
+import 'package:aleman/feature/wishlist/logic/cubit/wishlist_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 
-import '../../core/style/color/color_manger.dart';
-
 class CustomBottomNavBar extends StatelessWidget {
-  final int currentIndex;
-  final ValueChanged<int> onTabSelected;
+  final ValueChanged<int>? onTabSelected;
 
-  const CustomBottomNavBar({
-    super.key,
-    required this.currentIndex,
-    required this.onTabSelected,
-  });
+  const CustomBottomNavBar({super.key, this.onTabSelected});
+
+  // Color Palette Constants for Bottom Navigation
+  static const Color _navBg = Colors.white;
+  static const Color _activeItemColor = ColorManger.primaryLight;
+  static const Color _activePillBg = Color(0xFFEBF6EE);
+  static const Color _inactiveItemColor = Color(0xFF94A3B8);
+  static const Color _badgeBg = Color(0xFFE11D48);
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveUtils(context);
+    return BlocBuilder<BottomNavCubit, int>(
+      builder: (context, currentIndex) {
+        final bottomPadding = MediaQuery.of(context).padding.bottom;
 
-    return Padding(
-      padding: responsive.setPadding(left: 2, right: 2, bottom: 2),
-      child: Container(
-        decoration: BoxDecoration(
-          color: ColorManger.primary.withValues(alpha: 0.92),
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(20),
-            bottomRight: Radius.circular(20),
+        return Container(
+          color: Colors.transparent,
+          padding: EdgeInsets.only(
+            left: 16.w,
+            right: 16.w,
+            bottom: bottomPadding > 0 ? bottomPadding : 10.h,
+            top: 6.h,
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 2),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildNavItem(0, 'الرئيسية', Iconsax.home, Iconsax.home_14),
-              _buildNavItem(1, 'السلة', Iconsax.bag_happy, Iconsax.bag_happy4),
-              _buildNavItem(2, 'المنتجات', Iconsax.box, Iconsax.box4),
-              _buildNavItem(3, 'حسابي', Iconsax.user, Iconsax.user4),
-            ],
+          child: Container(
+            height: 60.h,
+            decoration: BoxDecoration(
+              color: _navBg,
+              borderRadius: BorderRadius.circular(22.r),
+              border: Border.all(color: const Color(0xFFEEF2F6), width: 0.0),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: ColorManger.primary.withValues(alpha: 0.03),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildNavItem(
+                  context: context,
+                  index: 0,
+                  label: 'الرئيسية',
+                  icon: Iconsax.home,
+                  activeIcon: Iconsax.home_15,
+                  isSelected: currentIndex == 0,
+                ),
+                _buildNavItem(
+                  context: context,
+                  index: 1,
+                  label: 'الأقسام',
+                  icon: Iconsax.category,
+                  activeIcon: Iconsax.category5,
+                  isSelected: currentIndex == 1,
+                ),
+                _buildWishlistNavItem(
+                  context: context,
+                  index: 2,
+                  isSelected: currentIndex == 2,
+                ),
+                _buildNavItem(
+                  context: context,
+                  index: 3,
+                  label: 'حسابي',
+                  icon: Iconsax.user,
+                  activeIcon: Iconsax.user4,
+                  isSelected: currentIndex == 3,
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildNavItem(
-    int index,
-    String label,
-    IconData icon,
-    IconData activeIcon,
-  ) {
-    bool isActive = currentIndex == index;
-
+  Widget _buildNavItem({
+    required BuildContext context,
+    required int index,
+    required String label,
+    required IconData icon,
+    required IconData activeIcon,
+    required bool isSelected,
+  }) {
     return GestureDetector(
-      onTap: () => onTabSelected(index),
+      onTap: () {
+        HapticFeedback.lightImpact();
+        context.read<BottomNavCubit>().changeTab(index);
+        onTabSelected?.call(index);
+      },
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutQuint,
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        duration: const Duration(milliseconds: 220),
+        curve: Curves.easeOutCubic,
+        padding: EdgeInsets.symmetric(
+          horizontal: isSelected ? 14.w : 10.w,
+          vertical: 5.h,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? _activePillBg : Colors.transparent,
+          borderRadius: BorderRadius.circular(16.r),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 200),
               transitionBuilder: (child, animation) =>
                   ScaleTransition(scale: animation, child: child),
               child: Icon(
-                isActive ? activeIcon : icon,
-                key: ValueKey(isActive),
-                color: isActive
-                    ? ColorManger.gold
-                    : ColorManger.white.withValues(alpha: 0.7),
-                size: 22,
+                isSelected ? activeIcon : icon,
+                key: ValueKey(isSelected),
+                color: isSelected ? _activeItemColor : _inactiveItemColor,
+                size: 20.sp,
               ),
             ),
-            const SizedBox(height: 6),
+            SizedBox(height: 3.h),
             Text(
               label,
               style: TextStyle(
-                color: isActive
-                    ? ColorManger.gold
-                    : ColorManger.white.withValues(alpha: 0.7),
-                fontSize: 10,
-                fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? _activeItemColor : _inactiveItemColor,
+                fontSize: 10.sp,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildWishlistNavItem({
+    required BuildContext context,
+    required int index,
+    required bool isSelected,
+  }) {
+    return BlocBuilder<WishlistCubit, WishlistState>(
+      buildWhen: (prev, curr) =>
+          prev.count != curr.count ||
+          prev.wishlistProductIds.length != curr.wishlistProductIds.length,
+      builder: (context, wishlistState) {
+        final count = wishlistState.count > 0
+            ? wishlistState.count
+            : wishlistState.wishlistProductIds.length;
+
+        return GestureDetector(
+          onTap: () {
+            HapticFeedback.lightImpact();
+            context.read<BottomNavCubit>().changeTab(index);
+            onTabSelected?.call(index);
+          },
+          behavior: HitTestBehavior.opaque,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            padding: EdgeInsets.symmetric(
+              horizontal: isSelected ? 14.w : 10.w,
+              vertical: 5.h,
+            ),
+            decoration: BoxDecoration(
+              color: isSelected ? _activePillBg : Colors.transparent,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 200),
+                      transitionBuilder: (child, animation) =>
+                          ScaleTransition(scale: animation, child: child),
+                      child: Icon(
+                        isSelected ? Iconsax.heart5 : Iconsax.heart,
+                        key: ValueKey(isSelected),
+                        color: isSelected
+                            ? _activeItemColor
+                            : _inactiveItemColor,
+                        size: 20.sp,
+                      ),
+                    ),
+                    if (count > 0)
+                      Positioned(
+                        top: -5.h,
+                        right: -7.w,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 4.w,
+                            vertical: 1.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _badgeBg,
+                            borderRadius: BorderRadius.circular(8.r),
+                            boxShadow: [
+                              BoxShadow(
+                                color: _badgeBg,
+                                blurRadius: 0,
+                                offset: const Offset(0, 0),
+                              ),
+                            ],
+                          ),
+                          constraints: BoxConstraints(
+                            minWidth: 16.w,
+                            minHeight: 16.h,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$count',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9.sp,
+                              fontWeight: FontWeight.bold,
+                              height: 1.1,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                SizedBox(height: 3.h),
+                Text(
+                  'المفضلة',
+                  style: TextStyle(
+                    color: isSelected ? _activeItemColor : _inactiveItemColor,
+                    fontSize: 10.sp,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

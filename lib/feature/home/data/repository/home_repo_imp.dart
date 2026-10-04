@@ -3,6 +3,7 @@ import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/network/error_handler/api_error_handler.dart';
 import 'package:aleman/feature/home/data/mapper/banner_mapper.dart';
 import 'package:aleman/feature/home/data/mapper/category_mapper.dart';
+import 'package:aleman/feature/home/data/mapper/home_mapper.dart';
 import 'package:aleman/feature/home/data/mapper/product_mapper.dart';
 import 'package:aleman/feature/home/data/repository/home_repo.dart';
 
@@ -10,6 +11,16 @@ class HomeRepositoryImplement implements HomeRepository {
   HomeRepositoryImplement(this._apiService);
 
   final AppServiceClient _apiService;
+
+  @override
+  Future<ApiResult<HomeEntity>> getHomeDataRepo() async {
+    try {
+      final response = await _apiService.getHomeDataService();
+      return ApiResult.success(response.toDomain());
+    } catch (error) {
+      return ApiResult.failure(ApiErrorHandler.handle(error));
+    }
+  }
 
   @override
   Future<ApiResult<List<BannerEntity>>> getBannerRepo() async {

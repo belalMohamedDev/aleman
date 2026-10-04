@@ -2,19 +2,24 @@ import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/core/utils/responsive_utils.dart';
-import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/widget/banner_carousel_slider.dart';
 import 'package:aleman/feature/home/presentation/widget/category_list_view_builder.dart';
+import 'package:aleman/feature/home/presentation/widget/home_products_section.dart';
 import 'package:aleman/feature/home/presentation/widget/search_row.dart';
 import 'package:aleman/feature/notification/presentation/widget/notification_badge_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
+import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 
 class HomeBody extends StatelessWidget {
-  const HomeBody({super.key});
+  final GlobalKey? cartKey;
+
+  const HomeBody({super.key, this.cartKey});
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +42,39 @@ class HomeBody extends StatelessWidget {
 
                   responsive.setSizeBox(height: 2),
                   const SearchRow(),
-                  responsive.setSizeBox(height: 3),
+                  responsive.setSizeBox(height: 2),
                   const BannerCarouselSlider(),
 
                   const CategoryListViewBuilder(),
-                  // responsive.setSizeBox(height: 2),
-                  // const BannerCarouselSlider(),
+                  BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
+                    buildWhen: (prev, curr) =>
+                        prev.bestSellers != curr.bestSellers ||
+                        prev.productsStatus != curr.productsStatus,
+                    builder: (context, state) {
+                      return HomeProductsSection(
+                        title: 'الأكثر طلباً',
 
-                  // const NewProductGrideView(),
-                  // responsive.setSizeBox(height: 10),
+                        products: state.bestSellers,
+                        isLoading:
+                            state.productsStatus == RequestStatus.loading,
+                      );
+                    },
+                  ),
+                  BlocBuilder<HomeCuibtCubit, HomeCuibtState>(
+                    buildWhen: (prev, curr) =>
+                        prev.featuredProducts != curr.featuredProducts ||
+                        prev.productsStatus != curr.productsStatus,
+                    builder: (context, state) {
+                      return HomeProductsSection(
+                        title: 'منتجات مميزة',
+
+                        products: state.featuredProducts,
+                        isLoading:
+                            state.productsStatus == RequestStatus.loading,
+                      );
+                    },
+                  ),
+                  SizedBox(height: 16.h),
                 ],
               ),
             ),
@@ -118,27 +147,73 @@ class HomeBody extends StatelessWidget {
                   SizedBox(width: 8.w),
                 ],
                 _buildHeaderButton(
-                  onTap: () async {
-                    if (state.isLoggedIn) {
+                  key: cartKey,
+                  onTap: () {
+                    final isLoggedIn = context
+                        .read<HomeCuibtCubit>()
+                        .state
+                        .isLoggedIn;
+                    if (isLoggedIn) {
                       Navigator.of(
                         context,
                         rootNavigator: true,
-                      ).pushNamed(Routes.profileRoute);
+                      ).pushNamed(Routes.cartRoute);
                     } else {
-                      final result = await Navigator.of(
+                      Navigator.of(
                         context,
                         rootNavigator: true,
                       ).pushNamed(Routes.loginRoute);
-                      if (result == true && context.mounted) {
-                        context.read<HomeCuibtCubit>().fetchHomeData();
-                        context.read<CartCubit>().getCartCount();
-                      }
                     }
                   },
-                  child: Icon(
-                    state.isLoggedIn ? Icons.settings : Iconsax.login,
-                    size: 22.sp,
-                    color: ColorManger.primaryLight,
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: CartAnimationHelper.cartBounceNotifier,
+                    builder: (context, scale, childWidget) {
+                      return Transform.scale(scale: scale, child: childWidget);
+                    },
+                    child: BlocBuilder<CartCubit, CartState>(
+                      buildWhen: (previous, current) =>
+                          previous.totalItemsCount != current.totalItemsCount,
+                      builder: (context, cartState) {
+                        final count = cartState.totalItemsCount;
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Iconsax.bag_happy,
+                              color: ColorManger.primaryLight,
+                              size: 20.sp,
+                            ),
+                            if (count > 0)
+                              PositionedDirectional(
+                                top: -11,
+                                end: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: const BoxDecoration(
+                                    color: ColorManger.chipProtein,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    count > 99 ? '99+' : '$count',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -149,8 +224,13 @@ class HomeBody extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderButton({required Widget child, VoidCallback? onTap}) {
+  Widget _buildHeaderButton({
+    Key? key,
+    required Widget child,
+    VoidCallback? onTap,
+  }) {
     return Material(
+      key: key,
       color: ColorManger.backgroundItem,
       borderRadius: BorderRadius.circular(12.r),
       child: InkWell(

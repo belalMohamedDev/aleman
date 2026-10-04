@@ -1,9 +1,11 @@
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/feature/home/data/mapper/banner_mapper.dart';
 import 'package:aleman/feature/home/data/mapper/category_mapper.dart';
+import 'package:aleman/feature/home/data/mapper/home_mapper.dart';
 import 'package:aleman/feature/home/data/mapper/product_mapper.dart';
 
 abstract class HomeRepository {
+  Future<ApiResult<HomeEntity>> getHomeDataRepo();
   Future<ApiResult<List<BannerEntity>>> getBannerRepo();
   Future<ApiResult<List<CategoryEntity>>> getCategoryRepo();
   Future<ApiResult<List<ProductEntity>>> getProductRepo();

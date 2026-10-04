@@ -95,9 +95,13 @@ class CartAnimationHelper {
       endOffset = targetRenderBox.localToGlobal(Offset.zero);
       endSize = targetRenderBox.size;
     } else {
-      // Fallback to bottom start (FloatingActionButtonLocation.miniStartFloat)
+      // Fallback to top header cart button (on the left in RTL Arabic, right in LTR)
       final media = MediaQuery.of(context);
-      endOffset = Offset(20, media.size.height - 90);
+      final isRtl = Directionality.of(context) == TextDirection.rtl;
+      final targetX = isRtl ? 24.0 : media.size.width - 66.0;
+      final targetY = media.padding.top + 16.0;
+      endOffset = Offset(targetX, targetY);
+      endSize = const Size(42, 42);
     }
 
     // Target center coordinates
@@ -156,12 +160,12 @@ class _FlyingImageWidgetState extends State<_FlyingImageWidget>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 650),
     );
 
     _curveAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeInOutCubic,
+      curve: Curves.fastOutSlowIn,
     );
 
     _controller.forward();
@@ -189,27 +193,36 @@ class _FlyingImageWidgetState extends State<_FlyingImageWidget>
       builder: (context, child) {
         final t = _curveAnimation.value;
 
-        // Parabolic curved trajectory: lifts slightly before falling to cart
-        final double currentX =
-            widget.startOffset.dx +
-            (widget.targetCenter.dx - widget.startOffset.dx) * t;
+        // Smooth parabolic arc factor (0 at t=0, 1 at t=0.5, 0 at t=1)
+        final double arcFactor = 4 * t * (1 - t);
 
-        final double linearY =
-            widget.startOffset.dy +
+        // Linear interpolation components
+        final double linearX = widget.startOffset.dx +
+            (widget.targetCenter.dx - widget.startOffset.dx) * t;
+        final double linearY = widget.startOffset.dy +
             (widget.targetCenter.dy - widget.startOffset.dy) * t;
 
-        // Quadratic arc peak in the middle
-        final double arcPeak = -60.0 * (1 - (2 * t - 1) * (2 * t - 1));
-        final double currentY = linearY + (t < 0.8 ? arcPeak : 0);
+        // Outward horizontal bow for organic flight path
+        final double bowDirection =
+            (widget.targetCenter.dx <= widget.startOffset.dx) ? -28.0 : 28.0;
+        final double currentX = linearX + bowDirection * arcFactor;
 
-        // Scale down from original size to miniature
-        final double currentWidth = widget.initialSize.width * (1.0 - 0.75 * t);
-        final double currentHeight =
-            widget.initialSize.height * (1.0 - 0.75 * t);
+        // Parabolic vertical lift (negative in Flutter coordinate system)
+        final double arcLift = -48.0 * arcFactor;
+        final double currentY = linearY + arcLift;
 
-        // Subtle rotation & fade
-        final double rotation = t * 0.4;
-        final double opacity = (1.0 - 0.2 * t).clamp(0.0, 1.0);
+        // Scale down smoothly from initial size to cart-ready miniature (24px)
+        const double targetDim = 24.0;
+        final double currentWidth = widget.initialSize.width +
+            (targetDim - widget.initialSize.width) * t;
+        final double currentHeight = widget.initialSize.height +
+            (targetDim - widget.initialSize.height) * t;
+
+        // Subtle rotation & soft landing fade
+        final double rotation = t * 0.35;
+        final double opacity = t > 0.85
+            ? (1.0 - ((t - 0.85) / 0.15)).clamp(0.0, 1.0)
+            : 1.0;
 
         return Positioned(
           left: currentX - currentWidth / 2,

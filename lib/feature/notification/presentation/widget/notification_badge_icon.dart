@@ -52,7 +52,7 @@ class NotificationBadgeIcon extends StatelessWidget {
                           .pushNamed(Routes.notificationsRoute);
                     },
                 child: Icon(
-                  Iconsax.notification5,
+                  Iconsax.notification,
                   color: ColorManger.primaryLight,
                   size: 24,
                 ),
