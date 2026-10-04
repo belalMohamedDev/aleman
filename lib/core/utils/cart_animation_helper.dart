@@ -8,6 +8,28 @@ class CartAnimationHelper {
 
   static GlobalKey? cartSearchKey;
 
+  static final List<GlobalKey> _cartKeysStack = [];
+
+  static void registerCartKey(GlobalKey key) {
+    _cartKeysStack.remove(key);
+    _cartKeysStack.add(key);
+  }
+
+  static void unregisterCartKey(GlobalKey key) {
+    _cartKeysStack.remove(key);
+  }
+
+  static GlobalKey? get activeCartKey {
+    for (int i = _cartKeysStack.length - 1; i >= 0; i--) {
+      final key = _cartKeysStack[i];
+      final renderBox = key.currentContext?.findRenderObject() as RenderBox?;
+      if (renderBox != null && renderBox.hasSize && renderBox.attached) {
+        return key;
+      }
+    }
+    return null;
+  }
+
   static final ValueNotifier<int> cartEggsCountNotifier = ValueNotifier<int>(0);
   static final ValueNotifier<double> cartBounceNotifier =
       ValueNotifier<double>(1.0);
@@ -52,10 +74,19 @@ class CartAnimationHelper {
     Offset endOffset;
     Size endSize = const Size(48, 48);
 
-    RenderBox? targetRenderBox =
-        cartSearchKey?.currentContext?.findRenderObject() as RenderBox?;
+    RenderBox? targetRenderBox;
 
-    if (targetRenderBox == null || !targetRenderBox.hasSize) {
+    final topKey = activeCartKey;
+    if (topKey != null) {
+      targetRenderBox = topKey.currentContext?.findRenderObject() as RenderBox?;
+    }
+
+    if (targetRenderBox == null || !targetRenderBox.hasSize || !targetRenderBox.attached) {
+      targetRenderBox =
+          cartSearchKey?.currentContext?.findRenderObject() as RenderBox?;
+    }
+
+    if (targetRenderBox == null || !targetRenderBox.hasSize || !targetRenderBox.attached) {
       targetRenderBox =
           cartKey?.currentContext?.findRenderObject() as RenderBox?;
     }
@@ -87,6 +118,7 @@ class CartAnimationHelper {
           if (overlayEntry.mounted) {
             overlayEntry.remove();
           }
+          triggerCartBounce();
         },
       ),
     );

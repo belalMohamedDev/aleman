@@ -35,6 +35,16 @@ class _SearchRowState extends State<SearchRow> {
   void initState() {
     super.initState();
     CartAnimationHelper.cartKey = _cartKey;
+    CartAnimationHelper.registerCartKey(_cartKey);
+  }
+
+  @override
+  void dispose() {
+    CartAnimationHelper.unregisterCartKey(_cartKey);
+    if (CartAnimationHelper.cartKey == _cartKey) {
+      CartAnimationHelper.cartKey = null;
+    }
+    super.dispose();
   }
 
   @override

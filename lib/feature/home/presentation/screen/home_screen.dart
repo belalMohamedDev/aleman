@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     CartAnimationHelper.cartKey = _cartKey;
+    CartAnimationHelper.registerCartKey(_cartKey);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         context.read<CartCubit>().getCartCount();
@@ -34,6 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void dispose() {
+    CartAnimationHelper.unregisterCartKey(_cartKey);
     if (CartAnimationHelper.cartKey == _cartKey) {
       CartAnimationHelper.cartKey = null;
     }

@@ -1,5 +1,6 @@
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/utils/cart_animation_helper.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
 import 'package:aleman/feature/home/data/mapper/category_mapper.dart';
@@ -20,10 +21,29 @@ class CategoryProductsArgs {
   const CategoryProductsArgs({required this.category, this.cubit});
 }
 
-class CategoryProductsScreen extends StatelessWidget {
+class CategoryProductsScreen extends StatefulWidget {
   final CategoryEntity category;
 
   const CategoryProductsScreen({super.key, required this.category});
+
+  @override
+  State<CategoryProductsScreen> createState() => _CategoryProductsScreenState();
+}
+
+class _CategoryProductsScreenState extends State<CategoryProductsScreen> {
+  final GlobalKey _cartKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    CartAnimationHelper.registerCartKey(_cartKey);
+  }
+
+  @override
+  void dispose() {
+    CartAnimationHelper.unregisterCartKey(_cartKey);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +56,7 @@ class CategoryProductsScreen extends StatelessWidget {
         final currentCategoryId = state.selectedCategoryId;
         final selectedCat = state.categories.firstWhere(
           (c) => c.id == currentCategoryId,
-          orElse: () => category,
+          orElse: () => widget.category,
         );
 
         final filteredProducts = state.products
@@ -50,7 +70,11 @@ class CategoryProductsScreen extends StatelessWidget {
             elevation: 0.5,
             centerTitle: true,
             leading: IconButton(
-              icon: Icon(Iconsax.arrow_right_3, color: ColorManger.primary),
+              icon: Icon(
+                Icons.arrow_back,
+                color: ColorManger.primary,
+                size: 22.r,
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
             title: Text(
@@ -64,7 +88,11 @@ class CategoryProductsScreen extends StatelessWidget {
             ),
             actions: [
               IconButton(
-                icon: Icon(Iconsax.search_normal_1, color: ColorManger.primary),
+                icon: Icon(
+                  Iconsax.search_normal_1,
+                  color: ColorManger.primary,
+                  size: 22.r,
+                ),
                 tooltip: 'بحث',
                 onPressed: () {
                   showSearch(
@@ -82,47 +110,69 @@ class CategoryProductsScreen extends StatelessWidget {
                     prev.totalItemsCount != curr.totalItemsCount,
                 builder: (context, cartState) {
                   final count = cartState.totalItemsCount;
-                  return Padding(
-                    padding: EdgeInsetsDirectional.only(end: 8.w),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Iconsax.bag_happy,
-                            color: ColorManger.primary,
+                  return ValueListenableBuilder<double>(
+                    valueListenable: CartAnimationHelper.cartBounceNotifier,
+                    builder: (context, bounceScale, child) {
+                      return Transform.scale(scale: bounceScale, child: child);
+                    },
+                    child: Padding(
+                      padding: EdgeInsetsDirectional.only(end: 8.w),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          IconButton(
+                            key: _cartKey,
+                            icon: Icon(
+                              Iconsax.bag_happy,
+                              color: ColorManger.primary,
+                              size: 22.r,
+                            ),
+                            tooltip: 'السلة',
+                            onPressed: () {
+                              final homeCubit = context.read<HomeCuibtCubit>();
+                              final isLoggedIn = homeCubit.state.isLoggedIn;
+                              if (isLoggedIn) {
+                                Navigator.pushNamed(context, Routes.cartRoute);
+                              } else {
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pushNamed(Routes.loginRoute).then((result) {
+                                  if (result == true && context.mounted) {
+                                    homeCubit.fetchHomeData();
+                                    context.read<CartCubit>().getCartCount();
+                                  }
+                                });
+                              }
+                            },
                           ),
-                          tooltip: 'السلة',
-                          onPressed: () {
-                            Navigator.pushNamed(context, Routes.cartRoute);
-                          },
-                        ),
-                        if (count > 0)
-                          PositionedDirectional(
-                            top: 6.h,
-                            start: 6.w,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: const BoxDecoration(
-                                color: ColorManger.chipProtein,
-                                shape: BoxShape.circle,
-                              ),
-                              constraints: BoxConstraints(
-                                minWidth: 16.w,
-                                minHeight: 16.w,
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                '$count',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10.sp,
-                                  fontWeight: FontWeight.bold,
+                          if (count > 0)
+                            PositionedDirectional(
+                              top: 6.h,
+                              start: 6.w,
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: ColorManger.chipProtein,
+                                  shape: BoxShape.circle,
+                                ),
+                                constraints: BoxConstraints(
+                                  minWidth: 16.w,
+                                  minHeight: 16.w,
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  '$count',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   );
                 },

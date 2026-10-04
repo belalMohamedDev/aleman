@@ -27,6 +27,7 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
     required this.homeCubit,
   }) {
     CartAnimationHelper.cartSearchKey = _searchCartKey;
+    CartAnimationHelper.registerCartKey(_searchCartKey);
   }
 
   @override
@@ -76,7 +77,20 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
                 IconButton(
                   key: _searchCartKey,
                   onPressed: () {
-                    Navigator.of(context).pushNamed(Routes.cartRoute);
+                    final isLoggedIn = homeCubit.state.isLoggedIn;
+                    if (isLoggedIn) {
+                      Navigator.of(context).pushNamed(Routes.cartRoute);
+                    } else {
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(Routes.loginRoute).then((result) {
+                        if (result == true && context.mounted) {
+                          homeCubit.fetchHomeData();
+                          cartCubit.getCartCount();
+                        }
+                      });
+                    }
                   },
                   icon: SizedBox(
                     height: 50.h,
@@ -146,6 +160,7 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
 
   @override
   void close(BuildContext context, ProductEntity? result) {
+    CartAnimationHelper.unregisterCartKey(_searchCartKey);
     if (CartAnimationHelper.cartSearchKey == _searchCartKey) {
       CartAnimationHelper.cartSearchKey = null;
     }

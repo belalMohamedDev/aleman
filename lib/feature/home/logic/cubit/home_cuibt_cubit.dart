@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/services/app_storage_key.dart';
@@ -89,7 +89,7 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
         emit(
           state.copyWith(
             bannersStatus: RequestStatus.error,
-            bannersError: error.message ?? 'حدث خطأ غير معروف',
+            bannersError: error.message ?? 'ط­ط¯ط« ط®ط·ط£ ط؛ظٹط± ظ…ط¹ط±ظˆظپ',
           ),
         );
       },
@@ -108,9 +108,6 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
     response.when(
       success: (categories) {
         final activeCategories = categories.where((c) => c.isActive).toList();
-        activeCategories.sort(
-          (a, b) => a.id.compareTo(b.id),
-        ); // Sort by ID ascending
         emit(
           state.copyWith(
             categoriesStatus: RequestStatus.success,
@@ -122,7 +119,7 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
         emit(
           state.copyWith(
             categoriesStatus: RequestStatus.error,
-            categoriesError: error.message ?? 'حدث خطأ غير معروف',
+            categoriesError: error.message ?? 'ط­ط¯ط« ط®ط·ط£ ط؛ظٹط± ظ…ط¹ط±ظˆظپ',
           ),
         );
       },
@@ -152,7 +149,7 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
         emit(
           state.copyWith(
             productsStatus: RequestStatus.error,
-            productsError: error.message ?? 'حدث خطأ غير معروف',
+            productsError: error.message ?? 'ط­ط¯ط« ط®ط·ط£ ط؛ظٹط± ظ…ط¹ط±ظˆظپ',
           ),
         );
       },
@@ -194,3 +191,4 @@ class HomeCuibtCubit extends Cubit<HomeCuibtState> {
     emit(state.copyWith(selectedPackageIndex: index));
   }
 }
+
