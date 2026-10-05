@@ -23,4 +23,5 @@ class PrefKeys {
   static const String prefsKeyFirstRun = 'prefsKeyFirstRun';
   static const String hasDismissedLoginPrompt = 'hasDismissedLoginPrompt';
   static const String fcmDeviceToken = 'FCM_DEVICE_TOKEN';
+  static const String localWishlist = 'LOCAL_WISHLIST';
 }

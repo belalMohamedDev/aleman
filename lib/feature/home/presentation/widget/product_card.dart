@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:aleman/feature/wishlist/data/mapper/wishlist_mapper.dart';
 import 'package:aleman/feature/wishlist/logic/cubit/wishlist_cubit.dart';
 import 'package:aleman/feature/wishlist/logic/cubit/wishlist_state.dart';
 
@@ -172,6 +173,7 @@ class ProductCard extends StatelessWidget {
                           HapticFeedback.lightImpact();
                           context.read<WishlistCubit>().toggleWishlist(
                             product.id,
+                            itemToAdd: product.toWishlistItemEntity(),
                           );
                         },
                         child: Container(
@@ -389,6 +391,7 @@ class ProductCard extends StatelessWidget {
                           HapticFeedback.lightImpact();
                           context.read<WishlistCubit>().toggleWishlist(
                             product.id,
+                            itemToAdd: product.toWishlistItemEntity(),
                           );
                         },
                         child: Container(

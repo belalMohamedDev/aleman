@@ -23,6 +23,7 @@ import 'package:aleman/feature/order/data/repository/order_repo.dart';
 import 'package:aleman/feature/order/cubit/checkout_cubit.dart';
 import 'package:aleman/feature/order/cubit/orders_cubit.dart';
 import 'package:aleman/feature/vehicle/data/repository/vehicle_repo.dart';
+import 'package:aleman/feature/wishlist/data/datasource/wishlist_local_data_source.dart';
 import 'package:aleman/feature/wishlist/data/repository/wishlist_repo.dart';
 import 'package:aleman/feature/wishlist/data/repository/wishlist_repo_imp.dart';
 import 'package:aleman/feature/wishlist/logic/cubit/wishlist_cubit.dart';
@@ -209,8 +210,14 @@ Future<void> _initNotification() async {
 }
 
 Future<void> _initWishlist() async {
+  instance.registerLazySingleton<WishlistLocalDataSource>(
+    () => WishlistLocalDataSourceImpl(),
+  );
   instance.registerLazySingleton<WishlistRepository>(
-    () => WishlistRepositoryImplement(instance<AppServiceClient>()),
+    () => WishlistRepositoryImplement(
+      instance<AppServiceClient>(),
+      instance<WishlistLocalDataSource>(),
+    ),
   );
   instance.registerLazySingleton<WishlistCubit>(
     () => WishlistCubit(instance<WishlistRepository>()),

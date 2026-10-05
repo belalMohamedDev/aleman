@@ -61,7 +61,67 @@ class WishlistItemEntity {
       packages: packages,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'productId': productId,
+      'productName': productName,
+      'productDescription': productDescription,
+      'productImageUrl': productImageUrl,
+      'categoryId': categoryId,
+      'categoryName': categoryName,
+      'price': price,
+      'minPrice': minPrice,
+      'maxPrice': maxPrice,
+      'proteinPercentage': proteinPercentage,
+      'weightPerSackKg': weightPerSackKg,
+      'pricePerTon': pricePerTon,
+      'isFeatured': isFeatured,
+      'isActive': isActive,
+      'packages': packages
+          .map((p) => {
+                'id': p.id,
+                'productId': p.productId,
+                'weightKg': p.weightKg,
+                'price': p.price,
+                'pricePerTon': p.pricePerTon,
+                'isActive': p.isActive,
+              })
+          .toList(),
+      'createdAt': createdAt,
+    };
+  }
+
+  factory WishlistItemEntity.fromJson(Map<String, dynamic> json) {
+    return WishlistItemModel.fromJson(json).toEntity();
+  }
 }
+
+extension ProductToWishlistItemMapper on ProductEntity {
+  WishlistItemEntity toWishlistItemEntity() {
+    return WishlistItemEntity(
+      id: id,
+      productId: id,
+      productName: name,
+      productDescription: description,
+      productImageUrl: imageUrl,
+      categoryId: categoryId,
+      categoryName: null,
+      price: price,
+      minPrice: null,
+      maxPrice: null,
+      proteinPercentage: proteinPercentage,
+      weightPerSackKg: weightPerSackKg,
+      pricePerTon: pricePerTon,
+      isFeatured: isFeatured,
+      isActive: isActive,
+      packages: packages,
+      createdAt: DateTime.now().toIso8601String(),
+    );
+  }
+}
+
 
 extension WishlistMapper on WishlistItemModel? {
   WishlistItemEntity toEntity() {

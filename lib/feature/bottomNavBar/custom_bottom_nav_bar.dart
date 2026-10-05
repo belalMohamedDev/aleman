@@ -37,8 +37,8 @@ class CustomBottomNavBar extends StatelessWidget {
               curve: Curves.easeOutCubic,
               color: Colors.transparent,
               padding: EdgeInsets.only(
-                left: isLoggedIn ? 36.w : 66.w,
-                right: isLoggedIn ? 36.w : 66.w,
+                left: 16.w,
+                right: 16.w,
                 bottom: bottomPadding > 0 ? bottomPadding : 10.h,
                 top: 6.h,
               ),
@@ -75,6 +75,8 @@ class CustomBottomNavBar extends StatelessWidget {
                       activeIcon: Iconsax.home_15,
                       isSelected: currentIndex == 0,
                     ),
+                    SizedBox(width: 4.w),
+
                     _buildNavItem(
                       context: context,
                       index: 1,
@@ -83,12 +85,13 @@ class CustomBottomNavBar extends StatelessWidget {
                       activeIcon: Iconsax.category5,
                       isSelected: currentIndex == 1,
                     ),
-                    if (isLoggedIn)
-                      _buildWishlistNavItem(
-                        context: context,
-                        index: 2,
-                        isSelected: currentIndex == 2,
-                      ),
+                    SizedBox(width: 4.w),
+                    _buildWishlistNavItem(
+                      context: context,
+                      index: 2,
+                      isSelected: currentIndex == 2,
+                    ),
+                    SizedBox(width: 4.w),
                     if (isLoggedIn)
                       _buildNavItem(
                         context: context,
@@ -101,11 +104,11 @@ class CustomBottomNavBar extends StatelessWidget {
                     else
                       _buildNavItem(
                         context: context,
-                        index: 2,
+                        index: 3,
                         label: 'تسجيل الدخول',
-                        icon: Iconsax.login_1,
-                        activeIcon: Iconsax.login,
-                        isSelected: currentIndex == 2,
+                        icon: Iconsax.user,
+                        activeIcon: Iconsax.user4,
+                        isSelected: currentIndex == 3,
                       ),
                   ],
                 ),
@@ -158,7 +161,7 @@ class CustomBottomNavBar extends StatelessWidget {
                 size: 20.sp,
               ),
             ),
-            SizedBox(height: 3.h),
+            SizedBox(height: 5.h),
             Text(
               label,
               style: TextStyle(
@@ -192,6 +195,7 @@ class CustomBottomNavBar extends StatelessWidget {
             HapticFeedback.lightImpact();
             context.read<BottomNavCubit>().changeTab(index);
             onTabSelected?.call(index);
+            context.read<WishlistCubit>().getWishlist();
           },
           behavior: HitTestBehavior.opaque,
           child: AnimatedContainer(

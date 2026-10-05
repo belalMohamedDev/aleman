@@ -27,35 +27,35 @@ class _WishlistScreenState extends State<WishlistScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final canPop = Navigator.of(context).canPop();
     return Scaffold(
       backgroundColor: const Color(0xFFF9FAF8),
-      // appBar: AppBar(
-      //   title: Text(
-      //     'قائمة المفضلة',
-      //     style: TextStyle(
-      //       fontSize: 16.sp,
-      //       fontWeight: FontWeight.bold,
-      //       color: ColorManger.primary,
-      //     ),
-      //   ),
-      //   centerTitle: true,
-      //   backgroundColor: Colors.white,
-      //   elevation: 0.5,
-      //   surfaceTintColor: Colors.transparent,
-      //   leading: Navigator.of(context).canPop()
-      //       ? IconButton(
-      //           icon: Icon(
-      //             Icons.arrow_back,
-      //             color: ColorManger.primary,
-      //             size: 22.sp,
-      //           ),
-      //           onPressed: () => Navigator.of(context).pop(),
-      //         )
-      //       : null,
-      // ),
-
+      appBar: canPop
+          ? AppBar(
+              title: Text(
+                'قائمة المفضلة',
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.bold,
+                  color: ColorManger.primary,
+                ),
+              ),
+              centerTitle: true,
+              backgroundColor: Colors.white,
+              elevation: 0.5,
+              surfaceTintColor: Colors.transparent,
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: ColorManger.primary,
+                  size: 22.sp,
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            )
+          : null,
       body: Padding(
-        padding: EdgeInsets.only(top: 45.h),
+        padding: EdgeInsets.only(top: canPop ? 0 : 45.h),
         child: BlocConsumer<WishlistCubit, WishlistState>(
           listener: (context, state) {
             if (state.errorMessage != null) {

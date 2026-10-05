@@ -30,25 +30,25 @@ class CartScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,
-                          fontSize: 16.sp,
+                          fontSize: 14.sp,
                         ),
                       ),
                 centerTitle: true,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
                 iconTheme: IconThemeData(color: ColorManger.primary),
-                actions: isEmpty
-                    ? null
-                    : [
-                        IconButton(
-                          onPressed: () {
-                            context.read<CartCubit>().clearCart();
-                          },
-                          icon: Icon(Icons.delete, color: ColorManger.primaryLight),
-                          tooltip: 'حذف السلة',
-                        ),
-                        const SizedBox(width: 8),
-                      ],
+                // actions: isEmpty
+                //     ? null
+                //     : [
+                //         IconButton(
+                //           onPressed: () {
+                //             context.read<CartCubit>().clearCart();
+                //           },
+                //           icon: Icon(Icons.delete, color: ColorManger.primaryLight),
+                //           tooltip: 'حذف السلة',
+                //         ),
+                //         const SizedBox(width: 8),
+                //       ],
               ),
               body: const CartBody(),
             ),

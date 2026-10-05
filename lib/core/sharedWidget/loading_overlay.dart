@@ -1,4 +1,5 @@
 import 'dart:ui';
+
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:flutter/material.dart';
 
@@ -6,11 +7,7 @@ class LoadingOverlay extends StatelessWidget {
   final bool isLoading;
   final String? message;
 
-  const LoadingOverlay({
-    super.key,
-    required this.isLoading,
-    this.message,
-  });
+  const LoadingOverlay({super.key, required this.isLoading, this.message});
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +37,7 @@ class LoadingOverlay extends StatelessWidget {
                       duration: const Duration(milliseconds: 280),
                       curve: Curves.easeOutBack,
                       builder: (context, scale, child) {
-                        return Transform.scale(
-                          scale: scale,
-                          child: child,
-                        );
+                        return Transform.scale(scale: scale, child: child);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -70,32 +64,15 @@ class LoadingOverlay extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             SizedBox(
-                              width: 44,
-                              height: 44,
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  SizedBox(
-                                    width: 42,
-                                    height: 42,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        ColorManger.buttonColor,
-                                      ),
-                                    ),
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.5,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  ColorManger.primaryLight.withValues(
+                                    alpha: 0.6,
                                   ),
-                                  SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2.5,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        ColorManger.primaryLight.withValues(alpha: 0.6),
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
                             ),
                             if (message != null) ...[

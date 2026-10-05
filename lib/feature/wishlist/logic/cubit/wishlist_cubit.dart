@@ -14,12 +14,13 @@ class WishlistCubit extends Cubit<WishlistState> {
   StreamSubscription<AuthEvent>? _authSubscription;
 
   WishlistCubit(this._wishlistRepository) : super(const WishlistState()) {
-    _authSubscription = AuthEventBus.stream.listen((event) {
+    _authSubscription = AuthEventBus.stream.listen((event) async {
       if (!isClosed) {
         if (event == AuthEvent.loggedIn) {
-          loadWishlistIds();
+          await syncLocalWishlistWithRemote();
         } else if (event == AuthEvent.loggedOut) {
-          emit(const WishlistState());
+          // When logged out, reload local wishlist for the guest
+          await getWishlist();
         }
       }
     });
@@ -39,9 +40,61 @@ class WishlistCubit extends Cubit<WishlistState> {
     return token.isNotEmpty;
   }
 
-  /// Load only wishlist product IDs (very lightweight, perfect for coloring hearts across app)
-  Future<void> loadWishlistIds() async {
+  /// Sync local wishlist items with backend upon user login
+  Future<void> syncLocalWishlistWithRemote() async {
     if (!await _isLoggedIn()) return;
+
+    try {
+      final localItems = await _wishlistRepository.getLocalWishlist();
+      if (localItems.isNotEmpty) {
+        // Fetch current remote IDs to avoid redundant add calls
+        final remoteIdsResult = await _wishlistRepository.getWishlistIds();
+        final Set<int> remoteIds = remoteIdsResult.when(
+          success: (ids) => ids.toSet(),
+          failure: (_) => <int>{},
+        );
+
+        // Upload items not yet in remote wishlist
+        for (final item in localItems) {
+          if (!remoteIds.contains(item.productId)) {
+            final addResult =
+                await _wishlistRepository.addToWishlist(item.productId);
+            addResult.when(
+              success: (_) {},
+              failure: (_) async {
+                // Fallback to toggleWishlist if addToWishlist returns error
+                await _wishlistRepository.toggleWishlist(item.productId);
+              },
+            );
+          }
+        }
+
+        // Clear local wishlist after successful synchronization
+        await _wishlistRepository.clearLocalWishlist();
+      }
+    } catch (_) {
+      // Sync errors shouldn't crash the cubit
+    }
+
+    // Load full wishlist from server
+    await getWishlist();
+  }
+
+  /// Load only wishlist product IDs (for coloring heart icons across app)
+  Future<void> loadWishlistIds() async {
+    final loggedIn = await _isLoggedIn();
+
+    if (!loggedIn) {
+      // Load local IDs for guest
+      final localIds = await _wishlistRepository.getLocalWishlistIds();
+      emit(
+        state.copyWith(
+          wishlistProductIds: localIds.toSet(),
+          count: localIds.length,
+        ),
+      );
+      return;
+    }
 
     final result = await _wishlistRepository.getWishlistIds();
     result.when(
@@ -59,17 +112,28 @@ class WishlistCubit extends Cubit<WishlistState> {
 
   /// Load full wishlist items for WishlistScreen
   Future<void> getWishlist() async {
-    if (!await _isLoggedIn()) {
+    final loggedIn = await _isLoggedIn();
+
+    if (!loggedIn) {
+      // Load local wishlist for guest user
+      final localItems = await _wishlistRepository.getLocalWishlist();
+      final ids = localItems.map((e) => e.productId).toSet();
       emit(
         state.copyWith(
-          status: WishlistStatus.error,
-          errorMessage: 'يرجى تسجيل الدخول لعرض المفضلة',
+          status: WishlistStatus.success,
+          items: localItems,
+          wishlistProductIds: ids,
+          count: localItems.length,
+          errorMessage: null,
         ),
       );
       return;
     }
 
-    emit(state.copyWith(status: WishlistStatus.loading, errorMessage: null));
+    // Only set loading if items are empty to prevent screen flicker
+    if (state.items.isEmpty) {
+      emit(state.copyWith(status: WishlistStatus.loading, errorMessage: null));
+    }
 
     final result = await _wishlistRepository.getWishlist();
     result.when(
@@ -81,35 +145,71 @@ class WishlistCubit extends Cubit<WishlistState> {
             items: items,
             wishlistProductIds: ids,
             count: items.length,
+            errorMessage: null,
           ),
         );
       },
       failure: (error) {
-        emit(
-          state.copyWith(
-            status: WishlistStatus.error,
-            errorMessage: error.message ?? 'فشل في تحميل قائمة المفضلة',
-          ),
-        );
+        if (state.items.isEmpty) {
+          emit(
+            state.copyWith(
+              status: WishlistStatus.error,
+              errorMessage: error.message ?? 'فشل في تحميل قائمة المفضلة',
+            ),
+          );
+        }
       },
     );
   }
 
-  /// Toggle item in wishlist (Optimistic UI update)
+  /// Toggle item in wishlist (immediate UI update, supports both guest & logged in)
   Future<bool> toggleWishlist(
     int productId, {
     WishlistItemEntity? itemToAdd,
   }) async {
-    if (!await _isLoggedIn()) {
-      emit(
-        state.copyWith(
-          errorMessage: 'يرجى تسجيل الدخول أولاً لإضافة المنتج للمفضلة',
-        ),
-      );
-      return false;
+    final loggedIn = await _isLoggedIn();
+    final isCurrentlyWishlisted = state.isProductWishlisted(productId);
+
+    if (!loggedIn) {
+      // ----------------- GUEST USER (LOCAL STORAGE) -----------------
+      final updatedIds = Set<int>.from(state.wishlistProductIds);
+      final updatedItems = List<WishlistItemEntity>.from(state.items);
+
+      if (isCurrentlyWishlisted) {
+        await _wishlistRepository.removeFromLocalWishlist(productId);
+        updatedIds.remove(productId);
+        updatedItems.removeWhere((item) => item.productId == productId);
+
+        emit(
+          state.copyWith(
+            wishlistProductIds: updatedIds,
+            items: updatedItems,
+            count: updatedIds.length,
+            successMessage: 'تمت إزالة المنتج من المفضلة',
+          ),
+        );
+        return false;
+      } else {
+        if (itemToAdd != null) {
+          await _wishlistRepository.addToLocalWishlist(itemToAdd);
+          updatedItems.removeWhere((item) => item.productId == productId);
+          updatedItems.insert(0, itemToAdd);
+        }
+        updatedIds.add(productId);
+
+        emit(
+          state.copyWith(
+            wishlistProductIds: updatedIds,
+            items: updatedItems,
+            count: updatedIds.length,
+            successMessage: 'تمت إضافة المنتج إلى المفضلة',
+          ),
+        );
+        return true;
+      }
     }
 
-    final isCurrentlyWishlisted = state.isProductWishlisted(productId);
+    // ----------------- LOGGED IN USER (SERVER SYNC) -----------------
     final previousIds = Set<int>.from(state.wishlistProductIds);
     final previousItems = List<WishlistItemEntity>.from(state.items);
     final previousCount = state.count;
@@ -124,6 +224,7 @@ class WishlistCubit extends Cubit<WishlistState> {
     } else {
       updatedIds.add(productId);
       if (itemToAdd != null) {
+        updatedItems.removeWhere((item) => item.productId == productId);
         updatedItems.insert(0, itemToAdd);
       }
     }
@@ -141,16 +242,24 @@ class WishlistCubit extends Cubit<WishlistState> {
 
     return result.when(
       success: (isWishlisted) {
-        // Ensure server state matches
         final finalIds = Set<int>.from(state.wishlistProductIds);
+        final finalItems = List<WishlistItemEntity>.from(state.items);
+
         if (isWishlisted) {
           finalIds.add(productId);
+          if (itemToAdd != null &&
+              !finalItems.any((it) => it.productId == productId)) {
+            finalItems.insert(0, itemToAdd);
+          }
         } else {
           finalIds.remove(productId);
+          finalItems.removeWhere((it) => it.productId == productId);
         }
+
         emit(
           state.copyWith(
             wishlistProductIds: finalIds,
+            items: finalItems,
             count: finalIds.length,
             isToggling: false,
             successMessage: isWishlisted
@@ -178,6 +287,25 @@ class WishlistCubit extends Cubit<WishlistState> {
 
   /// Remove item explicitly
   Future<void> removeFromWishlist(int productId) async {
+    final loggedIn = await _isLoggedIn();
+
+    if (!loggedIn) {
+      await _wishlistRepository.removeFromLocalWishlist(productId);
+      final updatedIds = Set<int>.from(state.wishlistProductIds)..remove(productId);
+      final updatedItems = List<WishlistItemEntity>.from(state.items)
+        ..removeWhere((item) => item.productId == productId);
+
+      emit(
+        state.copyWith(
+          wishlistProductIds: updatedIds,
+          items: updatedItems,
+          count: updatedIds.length,
+          successMessage: 'تم حذف المنتج من المفضلة',
+        ),
+      );
+      return;
+    }
+
     final previousIds = Set<int>.from(state.wishlistProductIds);
     final previousItems = List<WishlistItemEntity>.from(state.items);
 
@@ -218,6 +346,21 @@ class WishlistCubit extends Cubit<WishlistState> {
 
   /// Clear entire wishlist
   Future<void> clearWishlist() async {
+    final loggedIn = await _isLoggedIn();
+
+    if (!loggedIn) {
+      await _wishlistRepository.clearLocalWishlist();
+      emit(
+        state.copyWith(
+          wishlistProductIds: const {},
+          items: const [],
+          count: 0,
+          successMessage: 'تم تفريغ المفضلة بالكامل',
+        ),
+      );
+      return;
+    }
+
     final previousIds = Set<int>.from(state.wishlistProductIds);
     final previousItems = List<WishlistItemEntity>.from(state.items);
 

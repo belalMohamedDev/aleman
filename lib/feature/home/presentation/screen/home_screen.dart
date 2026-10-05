@@ -13,6 +13,7 @@ import 'package:aleman/feature/home/presentation/widget/quick_login_card.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:aleman/feature/home/presentation/screen/categories_screen.dart';
 import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
+import 'package:aleman/feature/wishlist/logic/cubit/wishlist_cubit.dart';
 import 'package:aleman/feature/wishlist/presentation/screen/wishlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -85,9 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 BlocBuilder<BottomNavCubit, int>(
                   builder: (context, activeIndex) {
-                    final safeIndex = (!state.isLoggedIn && activeIndex > 2)
-                        ? 0
-                        : activeIndex;
+                    final safeIndex = activeIndex.clamp(0, 3);
                     return IndexedStack(
                       index: safeIndex,
                       children: [
@@ -117,15 +116,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               : HomeBody(cartKey: _cartKey),
                         ),
                         const CategoriesScreen(),
+                        const WishlistScreen(),
                         state.isLoggedIn
-                            ? const WishlistScreen()
+                            ? const ProfileView()
                             : BlocProvider(
                                 create: (context) => instance<LoginCubit>(),
                                 child: const LoginView(showCloseButton: false),
                               ),
-                        state.isLoggedIn
-                            ? const ProfileView()
-                            : const SizedBox.shrink(),
                       ],
                     );
                   },
@@ -148,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       context.read<HomeCuibtCubit>().fetchHomeData();
                       context.read<CartCubit>().getCartCount();
                       context.read<NotificationCubit>().getUnreadCount();
+                      context.read<WishlistCubit>().syncLocalWishlistWithRemote();
                     },
                   ),
                 ],

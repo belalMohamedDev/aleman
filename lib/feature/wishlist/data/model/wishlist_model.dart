@@ -139,4 +139,26 @@ class WishlistItemModel {
       createdAt: json['createdAt'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'productId': productId,
+      'productName': productName,
+      'productDescription': productDescription,
+      'productImageUrl': productImageUrl,
+      'categoryId': categoryId,
+      'categoryName': categoryName,
+      'price': price,
+      'minPrice': minPrice,
+      'maxPrice': maxPrice,
+      'proteinPercentage': proteinPercentage,
+      'weightPerSackKg': weightPerSackKg,
+      'pricePerTon': pricePerTon,
+      'isFeatured': isFeatured,
+      'isActive': isActive,
+      'packages': packages.map((p) => p.toJson()).toList(),
+      'createdAt': createdAt,
+    };
+  }
 }

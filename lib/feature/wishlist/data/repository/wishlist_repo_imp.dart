@@ -1,14 +1,16 @@
 import 'package:aleman/core/network/api/app_api.dart';
 import 'package:aleman/core/network/apiResult/api_reuslt.dart';
 import 'package:aleman/core/network/error_handler/api_error_handler.dart';
+import 'package:aleman/feature/wishlist/data/datasource/wishlist_local_data_source.dart';
 import 'package:aleman/feature/wishlist/data/mapper/wishlist_mapper.dart';
 import 'package:aleman/feature/wishlist/data/model/wishlist_model.dart';
 import 'package:aleman/feature/wishlist/data/repository/wishlist_repo.dart';
 
 class WishlistRepositoryImplement implements WishlistRepository {
   final AppServiceClient _apiService;
+  final WishlistLocalDataSource _localDataSource;
 
-  WishlistRepositoryImplement(this._apiService);
+  WishlistRepositoryImplement(this._apiService, this._localDataSource);
 
   @override
   Future<ApiResult<List<WishlistItemEntity>>> getWishlist() async {
@@ -45,6 +47,16 @@ class WishlistRepositoryImplement implements WishlistRepository {
         isWishlisted = response;
       }
       return ApiResult.success(isWishlisted);
+    } catch (error) {
+      return ApiResult.failure(ApiErrorHandler.handle(error));
+    }
+  }
+
+  @override
+  Future<ApiResult<bool>> addToWishlist(int productId) async {
+    try {
+      await _apiService.addToWishlistService(productId);
+      return ApiResult.success(true);
     } catch (error) {
       return ApiResult.failure(ApiErrorHandler.handle(error));
     }
@@ -95,4 +107,29 @@ class WishlistRepositoryImplement implements WishlistRepository {
       return ApiResult.failure(ApiErrorHandler.handle(error));
     }
   }
+
+  // Local Wishlist Implementations
+  @override
+  Future<List<WishlistItemEntity>> getLocalWishlist() =>
+      _localDataSource.getLocalWishlist();
+
+  @override
+  Future<void> saveLocalWishlist(List<WishlistItemEntity> items) =>
+      _localDataSource.saveLocalWishlist(items);
+
+  @override
+  Future<void> addToLocalWishlist(WishlistItemEntity item) =>
+      _localDataSource.addToLocalWishlist(item);
+
+  @override
+  Future<void> removeFromLocalWishlist(int productId) =>
+      _localDataSource.removeFromLocalWishlist(productId);
+
+  @override
+  Future<void> clearLocalWishlist() =>
+      _localDataSource.clearLocalWishlist();
+
+  @override
+  Future<List<int>> getLocalWishlistIds() =>
+      _localDataSource.getLocalWishlistIds();
 }
