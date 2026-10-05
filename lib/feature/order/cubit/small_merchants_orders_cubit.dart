@@ -99,6 +99,10 @@ class SmallMerchantsOrdersCubit extends Cubit<SmallMerchantsOrdersState> {
     }
   }
 
+  void changeTab(int index) {
+    emit(state.copyWith(selectedTab: index));
+  }
+
   void search(String query) {
     emit(state.copyWith(searchQuery: query));
   }

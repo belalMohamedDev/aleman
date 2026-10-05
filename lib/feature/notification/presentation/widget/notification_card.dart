@@ -111,7 +111,7 @@ class NotificationCard extends StatelessWidget {
           children: [
             Icon(
               Icons.check_circle_outline,
-              color: const Color(0xFF059669),
+              color: ColorManger.primaryLight,
               size: 24.sp,
             ),
             SizedBox(width: 8.w),
@@ -137,7 +137,7 @@ class NotificationCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF059669),
+              backgroundColor: ColorManger.primaryLight,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -165,7 +165,9 @@ class NotificationCard extends StatelessWidget {
                   ? 'تم اعتماد الطلب بنجاح وإرساله لإدارة المبيعات'
                   : 'حدث خطأ أثناء اعتماد الطلب',
             ),
-            backgroundColor: success ? const Color(0xFF059669) : Colors.red,
+            backgroundColor: success
+                ? ColorManger.primaryLight
+                : const Color(0xFFDC2626),
           ),
         );
       }
@@ -184,7 +186,11 @@ class NotificationCard extends StatelessWidget {
         ),
         title: Row(
           children: [
-            Icon(Icons.cancel_outlined, color: Colors.red, size: 24.sp),
+            Icon(
+              Icons.cancel_outlined,
+              color: const Color(0xFFDC2626),
+              size: 24.sp,
+            ),
             SizedBox(width: 8.w),
             Text(
               'رفض الطلب',
@@ -237,7 +243,7 @@ class NotificationCard extends StatelessWidget {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: const Color(0xFFDC2626),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -265,7 +271,9 @@ class NotificationCard extends StatelessWidget {
             content: Text(
               success ? 'تم رفض الطلب بنجاح' : 'حدث خطأ أثناء رفض الطلب',
             ),
-            backgroundColor: success ? Colors.orange : Colors.red,
+            backgroundColor: success
+                ? const Color(0xFFD97706)
+                : const Color(0xFFDC2626),
           ),
         );
       }
@@ -282,32 +290,30 @@ class NotificationCard extends StatelessWidget {
     final bool isApproval = _isApprovalNotification(orderId);
 
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 6.h),
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 5.h),
       decoration: BoxDecoration(
-        color: isUnread ? ColorManger.primary.withAlpha(2) : ColorManger.white,
-        borderRadius: BorderRadius.circular(16.r),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.r),
         border: Border.all(
           color: isApproval
-              ? const Color(0xFFF59E0B).withAlpha(120)
+              ? const Color(0xFFFDE68A)
               : isUnread
-              ? ColorManger.buttonColor.withAlpha(80)
-              : Colors.grey.withAlpha(30),
-          width: isApproval ? 1.5 : 1.2,
+              ? ColorManger.primaryLight.withValues(alpha: 0.25)
+              : Colors.grey.shade200,
+          width: 0.08,
         ),
         boxShadow: [
           BoxShadow(
-            color: isApproval
-                ? const Color(0xFFF59E0B).withAlpha(20)
-                : Colors.black.withAlpha(isUnread ? 8 : 6),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(14.r),
           onTap: () {
             if (isUnread) {
               context.read<NotificationCubit>().markAsRead(notification.id);
@@ -349,34 +355,34 @@ class NotificationCard extends StatelessWidget {
                             child: Text(
                               notification.title,
                               style: getBoldStyle(
-                                fontSize: 14.sp,
+                                fontSize: 13.5.sp,
                                 color: ColorManger.primary,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          // if (isUnread) ...[
-                          //   SizedBox(width: 6.w),
-                          //   Container(
-                          //     width: 8.w,
-                          //     height: 8.w,
-                          //     decoration: BoxDecoration(
-                          //       color: isApproval
-                          //           ? const Color(0xFFF59E0B)
-                          //           : ColorManger.buttonColor,
-                          //       shape: BoxShape.circle,
-                          //     ),
-                          //   ),
-                          // ],
+                          if (isUnread) ...[
+                            SizedBox(width: 6.w),
+                            Container(
+                              width: 8.r,
+                              height: 8.r,
+                              decoration: BoxDecoration(
+                                color: isApproval
+                                    ? const Color(0xFFD97706)
+                                    : ColorManger.primaryLight,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                          ],
                         ],
                       ),
-                      SizedBox(height: 6.h),
+                      SizedBox(height: 5.h),
                       Text(
                         notification.body,
                         style: getRegularStyle(
-                          fontSize: 12.5.sp,
-                          color: ColorManger.grey,
+                          fontSize: 12.sp,
+                          color: ColorManger.authSubtitleGrey,
                         ),
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
@@ -387,15 +393,15 @@ class NotificationCard extends StatelessWidget {
                           children: [
                             Icon(
                               Iconsax.clock,
-                              size: 13.sp,
-                              color: Colors.grey,
+                              size: 12.sp,
+                              color: ColorManger.authHintGrey,
                             ),
                             SizedBox(width: 4.w),
                             Text(
                               _formatTime(notification.createdAt!),
                               style: getRegularStyle(
                                 fontSize: 11.sp,
-                                color: Colors.grey,
+                                color: ColorManger.authHintGrey,
                               ),
                             ),
                           ],
@@ -438,20 +444,27 @@ class NotificationCard extends StatelessWidget {
         margin: EdgeInsets.only(top: 10.h),
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: const Color(0xFFECFDF5),
+          color: ColorManger.primaryLight.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: const Color(0xFF059669).withAlpha(80)),
+          border: Border.all(
+            color: ColorManger.primaryLight.withValues(alpha: 0.25),
+            width: 0.8,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle, color: Color(0xFF059669), size: 16),
+            Icon(
+              Icons.check_circle,
+              color: ColorManger.primaryLight,
+              size: 16.sp,
+            ),
             SizedBox(width: 6.w),
             Text(
               'تم اعتماد الطلب وإرساله للمبيعات',
               style: getBoldStyle(
                 fontSize: 11.5.sp,
-                color: const Color(0xFF059669),
+                color: ColorManger.primaryLight,
               ),
             ),
           ],
@@ -464,18 +477,24 @@ class NotificationCard extends StatelessWidget {
         margin: EdgeInsets.only(top: 10.h),
         padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: const Color(0xFFFEF2F2),
+          color: const Color(0xFFDC2626).withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(color: Colors.red.withAlpha(80)),
+          border: Border.all(
+            color: const Color(0xFFDC2626).withValues(alpha: 0.25),
+            width: 0.8,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cancel, color: Colors.red, size: 16),
+            Icon(Icons.cancel, color: const Color(0xFFDC2626), size: 16.sp),
             SizedBox(width: 6.w),
             Text(
               'تم رفض الطلب',
-              style: getBoldStyle(fontSize: 11.5.sp, color: Colors.red),
+              style: getBoldStyle(
+                fontSize: 11.5.sp,
+                color: const Color(0xFFDC2626),
+              ),
             ),
           ],
         ),
@@ -492,7 +511,9 @@ class NotificationCard extends StatelessWidget {
               height: 16.w,
               child: const CircularProgressIndicator(
                 strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF059669)),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  ColorManger.primaryLight,
+                ),
               ),
             ),
             SizedBox(width: 8.w),
@@ -522,7 +543,7 @@ class NotificationCard extends StatelessWidget {
                 style: getBoldStyle(fontSize: 11.5.sp, color: Colors.white),
               ),
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF059669),
+                backgroundColor: ColorManger.primaryLight,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 shape: RoundedRectangleBorder(
@@ -549,6 +570,7 @@ class NotificationCard extends StatelessWidget {
                 ),
               ),
               style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFFDC2626),
                 side: const BorderSide(color: Color(0xFFDC2626), width: 1.2),
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 shape: RoundedRectangleBorder(
@@ -564,44 +586,182 @@ class NotificationCard extends StatelessWidget {
 
   Widget _buildLeadingIcon(String type, bool isApproval) {
     if (isApproval) {
-      return Container(
-        width: 42.w,
-        height: 42.w,
-        decoration: const BoxDecoration(
-          color: Color(0xFFFEF3C7),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Icon(
-            Iconsax.task_square,
-            color: const Color(0xFFD97706),
-            size: 20.sp,
-          ),
-        ),
+      return _buildIconContainer(
+        mainIcon: Iconsax.task_square,
+        mainColor: const Color(0xFFD97706),
+        bgColor: const Color(0xFFFEF3C7),
+        borderColor: const Color(0xFFFDE68A),
+        badgeIcon: Iconsax.timer_1,
+        badgeColor: const Color(0xFFD97706),
       );
     }
 
-    IconData iconData = Iconsax.notification;
-    Color iconColor = ColorManger.buttonColor;
-    Color bgColor = ColorManger.iconsBackgroundColor;
-
     if (type.contains('order')) {
-      iconData = Iconsax.box;
-      iconColor = const Color(0xFF2E7D32);
-      bgColor = const Color(0xFFE8F5E9);
-    } else if (type.contains('promotion') || type.contains('discount')) {
-      iconData = Iconsax.discount_shape;
-      iconColor = const Color(0xFFE65100);
-      bgColor = const Color(0xFFFFF3E0);
+      return _buildOrderLeadingIcon();
     }
 
-    return Container(
-      width: 42.w,
-      height: 42.w,
-      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-      child: Center(
-        child: Icon(iconData, color: iconColor, size: 20.sp),
-      ),
+    if (type.contains('promotion') || type.contains('discount')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.discount_shape,
+        mainColor: const Color(0xFFD97706),
+        bgColor: const Color(0xFFFEF3C7),
+        borderColor: const Color(0xFFFDE68A),
+      );
+    }
+
+    return _buildIconContainer(
+      mainIcon: Iconsax.notification,
+      mainColor: ColorManger.primaryLight,
+      bgColor: ColorManger.primaryLight.withValues(alpha: 0.08),
+      borderColor: ColorManger.primaryLight.withValues(alpha: 0.15),
+    );
+  }
+
+  Widget _buildOrderLeadingIcon() {
+    final data = notification.data;
+    final rawStatus = (data['statusCode'] ?? data['status'] ?? '').toString();
+    final text = '${notification.title} ${notification.body}'.toLowerCase();
+
+    // 1. تم التسليم / مكتمل
+    if (rawStatus == '6' ||
+        text.contains('تسليم') ||
+        text.contains('مكتمل') ||
+        text.contains('استلام') ||
+        text.contains('delivered') ||
+        text.contains('completed')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.box_tick,
+        mainColor: const Color(0xFF15803D),
+        bgColor: const Color(0xFF15803D).withValues(alpha: 0.08),
+        borderColor: const Color(0xFF15803D).withValues(alpha: 0.2),
+        badgeIcon: Icons.check,
+        badgeColor: const Color(0xFF15803D),
+      );
+    }
+
+    // 2. ملغي / مرفوض
+    if (rawStatus == '7' ||
+        rawStatus == '10' ||
+        rawStatus == '11' ||
+        text.contains('إلغاء') ||
+        text.contains('الغاء') ||
+        text.contains('ملغي') ||
+        text.contains('رفض') ||
+        text.contains('مرفوض') ||
+        text.contains('cancelled') ||
+        text.contains('rejected')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.box_remove,
+        mainColor: const Color(0xFFDC2626),
+        bgColor: const Color(0xFFDC2626).withValues(alpha: 0.08),
+        borderColor: const Color(0xFFDC2626).withValues(alpha: 0.2),
+        badgeIcon: Icons.close,
+        badgeColor: const Color(0xFFDC2626),
+      );
+    }
+
+    // 3. شحن / في الطريق / جاري التوصيل
+    if (rawStatus == '4' ||
+        rawStatus == '5' ||
+        text.contains('شحن') ||
+        text.contains('طريق') ||
+        text.contains('توصيل') ||
+        text.contains('shipped') ||
+        text.contains('shipping') ||
+        text.contains('transit')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.truck_fast,
+        mainColor: ColorManger.primaryLight,
+        bgColor: ColorManger.primaryLight.withValues(alpha: 0.08),
+        borderColor: ColorManger.primaryLight.withValues(alpha: 0.2),
+        badgeIcon: Iconsax.truck_fast,
+        badgeColor: ColorManger.primaryLight,
+      );
+    }
+
+    // 4. قيد الانتظار / موافقة
+    if (rawStatus == '1' ||
+        rawStatus == '8' ||
+        rawStatus == '9' ||
+        text.contains('انتظار') ||
+        text.contains('موافقة') ||
+        text.contains('مراجعة') ||
+        text.contains('pending')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.box_time,
+        mainColor: const Color(0xFFD97706),
+        bgColor: const Color(0xFFFEF3C7),
+        borderColor: const Color(0xFFFDE68A),
+        badgeIcon: Iconsax.timer_1,
+        badgeColor: const Color(0xFFD97706),
+      );
+    }
+
+    // 5. جاري التجهيز / تأكيد
+    if (rawStatus == '2' ||
+        rawStatus == '3' ||
+        text.contains('تجهيز') ||
+        text.contains('تأكيد') ||
+        text.contains('قبول') ||
+        text.contains('processing') ||
+        text.contains('confirmed')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.box_search,
+        mainColor: ColorManger.primaryLight,
+        bgColor: ColorManger.primaryLight.withValues(alpha: 0.08),
+        borderColor: ColorManger.primaryLight.withValues(alpha: 0.2),
+        badgeIcon: Icons.autorenew,
+        badgeColor: ColorManger.primaryLight,
+      );
+    }
+
+    // 6. طلب عام
+    return _buildIconContainer(
+      mainIcon: Iconsax.box,
+      mainColor: ColorManger.primaryLight,
+      bgColor: ColorManger.primaryLight.withValues(alpha: 0.08),
+      borderColor: ColorManger.primaryLight.withValues(alpha: 0.15),
+    );
+  }
+
+  Widget _buildIconContainer({
+    required IconData mainIcon,
+    required Color mainColor,
+    required Color bgColor,
+    required Color borderColor,
+    IconData? badgeIcon,
+    Color? badgeColor,
+  }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: 44.r,
+          height: 44.r,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: borderColor, width: 0.1),
+          ),
+          child: Center(
+            child: Icon(mainIcon, color: mainColor, size: 21.sp),
+          ),
+        ),
+        if (badgeIcon != null && badgeColor != null)
+          Positioned(
+            bottom: -2.r,
+            left: -2.r,
+            child: Container(
+              padding: EdgeInsets.all(2.5.r),
+              decoration: BoxDecoration(
+                color: badgeColor,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+              child: Icon(badgeIcon, size: 8.5.sp, color: Colors.white),
+            ),
+          ),
+      ],
     );
   }
 

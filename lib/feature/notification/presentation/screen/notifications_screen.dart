@@ -1,12 +1,8 @@
 import 'package:aleman/core/style/color/color_manger.dart';
-import 'package:aleman/core/style/fonts/styles_manger.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
 import 'package:aleman/feature/notification/presentation/refactor/notifications_body.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:iconsax/iconsax.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -42,45 +38,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAF8),
+      backgroundColor: const Color(0xFFF9F9FB),
       appBar: AppBar(
-        backgroundColor: ColorManger.white,
-        elevation: 0.5,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Iconsax.arrow_right_3, color: ColorManger.primary),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(
+        title: const Text(
           'مركز الإشعارات',
-          style: getBoldStyle(fontSize: 17.sp, color: ColorManger.primary),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        // actions: [
-        //   BlocBuilder<NotificationCubit, NotificationState>(
-        //     buildWhen: (prev, curr) => prev.unreadCount != curr.unreadCount,
-        //     builder: (context, state) {
-        //       if (state.unreadCount > 0) {
-        //         return TextButton.icon(
-        //           onPressed: () {
-        //             context.read<NotificationCubit>().markAllAsRead();
-        //           },
-        //           icon: Icon(
-        //             Icons.done_all,
-        //             size: 16.sp,
-        //             color: ColorManger.buttonColor,
-        //           ),
-        //           label: Text(
-        //             style: getBoldStyle(
-        //               fontSize: 12.sp,
-        //               color: ColorManger.buttonColor,
-        //             ),
-        //           ),
-        //         );
-        //       }
-        //       return const SizedBox.shrink();
-        //     },
-        //   ),
-        // ],
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: ColorManger.authTitleDark),
+          onPressed: () => Navigator.of(context).maybePop(),
+        ),
       ),
       body: NotificationsBody(scrollController: _scrollController),
     );

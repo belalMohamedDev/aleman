@@ -186,6 +186,7 @@ class EmailPasswordFormView extends StatelessWidget {
                         .withValues(alpha: 0.35),
                     disabledForegroundColor: Colors.white70,
                     elevation: 0,
+
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.r),
                     ),
@@ -201,7 +202,8 @@ class EmailPasswordFormView extends StatelessWidget {
                         )
                       : Text(
                           'تسجيل الدخول',
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeightManger.bold,
                                 color: ColorManger.white,

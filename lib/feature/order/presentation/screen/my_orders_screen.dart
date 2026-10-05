@@ -126,7 +126,7 @@ class _MyOrdersView extends StatelessWidget {
           child: _buildStatCard(
             title: 'الطلبات المعلقة',
             count: state.activeOrdersCount,
-            color: const Color(0xFFB45309),
+            color: const Color(0xFFD97706),
             bgColor: const Color(0xFFFEF3C7),
           ),
         ),
@@ -144,7 +144,7 @@ class _MyOrdersView extends StatelessWidget {
           child: _buildStatCard(
             title: 'الطلبات الملغاة',
             count: state.cancelledOrdersCount,
-            color: const Color(0xFFB91C1C),
+            color: const Color(0xFFDC2626),
             bgColor: const Color(0xFFFEE2E2),
           ),
         ),
@@ -394,38 +394,7 @@ class _MyOrdersView extends StatelessWidget {
                     ),
                   ],
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
-                  decoration: BoxDecoration(
-                    color: order.isWesal
-                        ? Colors.blue.shade50
-                        : Colors.orange.shade50,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        order.isWesal ? Iconsax.car5 : Iconsax.building_35,
-                        size: 12.sp,
-                        color: order.isWesal
-                            ? Colors.blue.shade700
-                            : Colors.orange.shade800,
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        order.orderTypeName,
-                        style: TextStyle(
-                          fontSize: 11.sp,
-                          fontWeight: FontWeight.bold,
-                          color: order.isWesal
-                              ? Colors.blue.shade700
-                              : Colors.orange.shade800,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildDeliveryTypeBadge(order),
               ],
             ),
             Divider(height: 18.h, color: Colors.grey.shade100),
@@ -487,9 +456,12 @@ class _MyOrdersView extends StatelessWidget {
                       vertical: 4.h,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF0FDF4),
+                      color: ColorManger.primaryLight.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: const Color(0xFFBBF7D0)),
+                      border: Border.all(
+                        color: ColorManger.primaryLight.withValues(alpha: 0.25),
+                        width: 0.8,
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -497,7 +469,7 @@ class _MyOrdersView extends StatelessWidget {
                         Icon(
                           Iconsax.shield_tick,
                           size: 13.sp,
-                          color: const Color(0xFF16A34A),
+                          color: ColorManger.primaryLight,
                         ),
                         SizedBox(width: 4.w),
                         Text(
@@ -505,7 +477,7 @@ class _MyOrdersView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 11.sp,
                             fontWeight: FontWeight.bold,
-                            color: const Color(0xFF15803D),
+                            color: ColorManger.primaryLight,
                           ),
                         ),
                       ],
@@ -524,16 +496,17 @@ class _MyOrdersView extends StatelessWidget {
                     vertical: 4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: statusColor.withValues(alpha: 0.1),
+                    color: statusColor.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8.r),
                     border: Border.all(
-                      color: statusColor.withValues(alpha: 0.3),
+                      color: statusColor.withValues(alpha: 0.28),
+                      width: 0.8,
                     ),
                   ),
                   child: Text(
                     order.status,
                     style: TextStyle(
-                      fontSize: 12.sp,
+                      fontSize: 11.5.sp,
                       fontWeight: FontWeight.bold,
                       color: statusColor,
                     ),
@@ -565,6 +538,39 @@ class _MyOrdersView extends StatelessWidget {
     );
   }
 
+  Widget _buildDeliveryTypeBadge(OrderResponseModel order) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.5.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF1F5F9),
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(
+          color: const Color(0xFFE2E8F0),
+          width: 0.8,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            order.isWesal ? Iconsax.truck_fast : Iconsax.building_3,
+            size: 13.sp,
+            color: ColorManger.primaryLight,
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            order.orderTypeName,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.bold,
+              color: ColorManger.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildEmptyOrdersState(BuildContext context, int selectedTab) {
     return GlobalEmptyState(
       icon: Iconsax.box_remove,
@@ -585,26 +591,22 @@ class _MyOrdersView extends StatelessWidget {
   Color _getStatusColor(int statusCode) {
     switch (statusCode) {
       case 8:
-        return const Color(0xFFD97706);
-      case 9:
-        return const Color(0xFF0284C7);
       case 1:
+      case 9:
         return const Color(0xFFD97706);
       case 2:
-        return const Color(0xFF2563EB);
       case 3:
-        return const Color(0xFF7C3AED);
       case 4:
       case 5:
-        return const Color(0xFF0D9488);
+        return ColorManger.primaryLight;
       case 6:
-        return const Color(0xFF16A34A);
+        return const Color(0xFF15803D);
       case 7:
       case 10:
       case 11:
         return const Color(0xFFDC2626);
       default:
-        return Colors.grey.shade700;
+        return const Color(0xFF64748B);
     }
   }
 }

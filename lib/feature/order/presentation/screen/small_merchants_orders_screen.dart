@@ -61,10 +61,14 @@ class _SmallMerchantsOrdersView extends StatefulWidget {
 class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
   final ScrollController _scrollController = ScrollController();
   late final TextEditingController _searchController;
+  bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
+    _isSearching =
+        widget.initialSearchQuery != null &&
+        widget.initialSearchQuery!.isNotEmpty;
     _searchController = TextEditingController(
       text: widget.initialSearchQuery ?? '',
     );
@@ -85,283 +89,346 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
     }
   }
 
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    SmallMerchantsOrdersCubit cubit,
+    SmallMerchantsOrdersState state,
+  ) {
+    if (_isSearching) {
+      return AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: ColorManger.authTitleDark),
+          onPressed: () {
+            setState(() => _isSearching = false);
+            _searchController.clear();
+            cubit.search('');
+          },
+        ),
+        title: SizedBox(
+          height: 42.h,
+          child: TextField(
+            controller: _searchController,
+            autofocus: true,
+            onChanged: (val) {
+              cubit.search(val);
+              setState(() {});
+            },
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: ColorManger.authTitleDark,
+              fontWeight: FontWeight.w600,
+            ),
+            decoration: InputDecoration(
+              hintText: 'ابحث باسم التاجر أو رقم الطلب...',
+              hintStyle: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF94A3B8),
+              ),
+              prefixIcon: const Icon(
+                Iconsax.search_normal,
+                size: 18,
+                color: Color(0xFF64748B),
+              ),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        _searchController.clear();
+                        cubit.search('');
+                        setState(() {});
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: const Color(0xFFF8F9FA),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12.w,
+                vertical: 10.h,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(
+                  color: Color(0xFFE2E8F0),
+                  width: 0.08,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(
+                  color: Color(0xFFE2E8F0),
+                  width: 0.08,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(
+                  color: ColorManger.primaryLight,
+                  width: 1.5,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final titleText = widget.merchantName != null
+        ? 'أوردرات: ${widget.merchantName}'
+        : 'أوردرات العملاء';
+
+    return AppBar(
+      title: Text(
+        titleText,
+        style: TextStyle(
+          color: ColorManger.authTitleDark,
+          fontWeight: FontWeight.bold,
+          fontSize: 16.sp,
+        ),
+      ),
+      centerTitle: true,
+      backgroundColor: Colors.white,
+      elevation: 0,
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: ColorManger.authTitleDark),
+        onPressed: () => Navigator.of(context).maybePop(),
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(
+            Iconsax.search_normal_1,
+            color: ColorManger.primaryLight,
+            size: 20.sp,
+          ),
+          tooltip: 'بحث',
+          onPressed: () => setState(() => _isSearching = true),
+        ),
+        SizedBox(width: 4.w),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SmallMerchantsOrdersCubit>();
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
-      appBar: AppBar(
-        title: Text(
-          'أوردرات العملاء',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-            fontSize: 16.sp,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
-      ),
-      body: BlocBuilder<SmallMerchantsOrdersCubit, SmallMerchantsOrdersState>(
-        builder: (context, state) {
-          return Column(
+    return BlocBuilder<SmallMerchantsOrdersCubit, SmallMerchantsOrdersState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF9F9FB),
+          appBar: _buildAppBar(context, cubit, state),
+          body: Column(
             children: [
-              Container(
-                color: Colors.white,
-                padding: EdgeInsets.fromLTRB(16.w, 10.h, 16.w, 10.h),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (val) => cubit.search(val),
-                  decoration: InputDecoration(
-                    hintText: 'ابحث باسم التاجر أو رقم الطلب...',
-                    hintStyle: TextStyle(
-                      fontSize: 12.5.sp,
-                      color: Colors.grey.shade400,
-                    ),
-                    prefixIcon: Icon(
-                      Iconsax.search_normal_1,
-                      size: 18.sp,
-                      color: ColorManger.primaryLight,
-                    ),
-                    suffixIcon: state.searchQuery.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.close_rounded, size: 18),
-                            onPressed: () {
-                              _searchController.clear();
-                              cubit.search('');
-                            },
-                          )
-                        : null,
-                    filled: true,
-                    fillColor: const Color(0xFFF8FAFC),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 14.w,
-                      vertical: 10.h,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                      borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                      borderSide: BorderSide(
-                        color: ColorManger.primaryLight,
-                        width: 1.5,
-                      ),
-                    ),
-                  ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 10.h),
+                child: Column(
+                  children: [
+                    _buildStatsRow(state),
+                    SizedBox(height: 14.h),
+                    _buildTabsToggle(context, state, cubit),
+                  ],
                 ),
               ),
-
-              Container(
-                color: Colors.white,
-                padding: EdgeInsets.only(bottom: 12.h),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  physics: const BouncingScrollPhysics(),
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: Row(
-                    children: [
-                      _buildFilterChip(
-                        label: 'الكل',
-                        icon: Iconsax.element_4,
-                        count: state.totalFilteredCount,
-                        isSelected: state.selectedStatus == null,
-                        onTap: () => cubit.filterByStatus(null),
-                      ),
-                      SizedBox(width: 8.w),
-                      _buildFilterChip(
-                        label: 'بانتظار موافقتك',
-                        icon: Iconsax.timer_1,
-                        count: state.pendingMerchantApprovalCount,
-                        isSelected: state.selectedStatus == 8,
-                        onTap: () => cubit.filterByStatus(8),
-                      ),
-                      SizedBox(width: 8.w),
-                      _buildFilterChip(
-                        label: 'جديدة',
-                        icon: Iconsax.clock,
-                        count: state.pendingCount,
-                        isSelected: state.selectedStatus == 1,
-                        onTap: () => cubit.filterByStatus(1),
-                      ),
-                      SizedBox(width: 8.w),
-                      _buildFilterChip(
-                        label: 'قيد التنفيذ',
-                        icon: Iconsax.box_time,
-                        count: state.inProgressCount,
-                        isSelected: state.selectedStatus == 2,
-
-                        onTap: () => cubit.filterByStatus(2),
-                      ),
-                      SizedBox(width: 8.w),
-                      _buildFilterChip(
-                        label: 'مكتملة',
-                        icon: Iconsax.tick_circle,
-                        count: state.completedCount,
-                        isSelected: state.selectedStatus == 6,
-
-                        onTap: () => cubit.filterByStatus(6),
-                      ),
-                      SizedBox(width: 8.w),
-                      _buildFilterChip(
-                        label: 'ملغاة',
-                        icon: Iconsax.close_circle,
-                        count: state.cancelledCount,
-                        isSelected: state.selectedStatus == 7,
-
-                        onTap: () => cubit.filterByStatus(7),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              // if (widget.merchantName != null && state.searchQuery.isNotEmpty)
-              //   Container(
-              //     color: Colors.white,
-              //     padding: EdgeInsets.fromLTRB(16.w, 0, 16.w, 10.h),
-              //     child: Container(
-              //       padding: EdgeInsets.symmetric(
-              //         horizontal: 12.w,
-              //         vertical: 8.h,
-              //       ),
-              //       decoration: BoxDecoration(
-              //         color: ColorManger.primaryLight.withValues(alpha: 0.08),
-              //         borderRadius: BorderRadius.circular(10.r),
-              //         border: Border.all(
-              //           color: ColorManger.primaryLight.withValues(alpha: 0.25),
-              //         ),
-              //       ),
-              //       child: Row(
-              //         children: [
-              //           Icon(
-              //             Iconsax.shop,
-              //             size: 16.sp,
-              //             color: ColorManger.primaryLight,
-              //           ),
-              //           SizedBox(width: 8.w),
-              //           Expanded(
-              //             child: Text(
-              //               style: TextStyle(
-              //                 fontSize: 12.sp,
-              //                 fontWeight: FontWeight.bold,
-              //                 color: ColorManger.primaryLight,
-              //               ),
-              //               maxLines: 1,
-              //               overflow: TextOverflow.ellipsis,
-              //             ),
-              //           ),
-              //           InkWell(
-              //             onTap: () {
-              //               _searchController.clear();
-              //               cubit.search('');
-              //             },
-              //             child: Container(
-              //               padding: EdgeInsets.symmetric(
-              //                 horizontal: 8.w,
-              //                 vertical: 3.h,
-              //               ),
-              //               decoration: BoxDecoration(
-              //                 color: Colors.white,
-              //                 borderRadius: BorderRadius.circular(6.r),
-              //                 border: Border.all(color: Colors.grey.shade300),
-              //               ),
-              //               child: Row(
-              //                 mainAxisSize: MainAxisSize.min,
-              //                 children: [
-              //                   Icon(
-              //                     Icons.close_rounded,
-              //                     size: 13.sp,
-              //                     color: Colors.grey.shade700,
-              //                   ),
-              //                   SizedBox(width: 3.w),
-              //                   Text(
-              //                     style: TextStyle(
-              //                       fontSize: 11.sp,
-              //                       fontWeight: FontWeight.bold,
-              //                       color: Colors.grey.shade700,
-              //                     ),
-              //                   ),
-              //                 ],
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              Divider(height: 1, color: Colors.grey.shade200),
 
               Expanded(child: _buildBody(state, cubit)),
             ],
-          );
-        },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildStatsRow(SmallMerchantsOrdersState state) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildStatCard(
+            title: 'بانتظار موافقتك',
+            count: state.pendingMerchantApprovalCount,
+            color: const Color(0xFFB45309),
+            bgColor: const Color(0xFFFEF3C7),
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: _buildStatCard(
+            title: 'الطلبات المُسلّمة',
+            count: state.completedCount,
+            color: const Color(0xFF15803D),
+            bgColor: const Color(0xFFDCFCE7),
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: _buildStatCard(
+            title: 'الطلبات الملغاة',
+            count: state.cancelledCount,
+            color: const Color(0xFFB91C1C),
+            bgColor: const Color(0xFFFEE2E2),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatCard({
+    required String title,
+    required int count,
+    required Color color,
+    required Color bgColor,
+  }) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 11.sp,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: 6.h),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
+            decoration: BoxDecoration(
+              color: bgColor,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Text(
+              '$count',
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildFilterChip({
-    required String label,
+  Widget _buildTabsToggle(
+    BuildContext context,
+    SmallMerchantsOrdersState state,
+    SmallMerchantsOrdersCubit cubit,
+  ) {
+    final pendingCount = state.pendingMerchantApprovalCount;
+    final otherCount = state.otherOrdersCount;
+
+    return Container(
+      height: 48.h,
+      padding: EdgeInsets.all(4.r),
+      decoration: BoxDecoration(
+        color: const Color(0xFFE9ECEF),
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(color: Colors.grey.shade300, width: 0.8),
+      ),
+      child: Stack(
+        children: [
+          // Animated sliding pill indicator
+          AnimatedAlign(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.fastOutSlowIn,
+            alignment: state.selectedTab == 0
+                ? AlignmentDirectional.centerStart
+                : AlignmentDirectional.centerEnd,
+            child: FractionallySizedBox(
+              widthFactor: 0.5,
+              heightFactor: 1.0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: ColorManger.primaryLight,
+                  borderRadius: BorderRadius.circular(10.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorManger.primary.withValues(alpha: 0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // Interactive tab buttons
+          Row(
+            children: [
+              Expanded(
+                child: _buildTabButton(
+                  title: 'بانتظار موافقتي',
+                  icon: Iconsax.timer_1,
+                  count: pendingCount,
+                  isSelected: state.selectedTab == 0,
+                  onTap: () => cubit.changeTab(0),
+                ),
+              ),
+              Expanded(
+                child: _buildTabButton(
+                  title: 'باقي الأوردرات',
+                  icon: Iconsax.document_text,
+                  count: otherCount,
+                  isSelected: state.selectedTab == 1,
+                  onTap: () => cubit.changeTab(1),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabButton({
+    required String title,
     required IconData icon,
     required int count,
     required bool isSelected,
     required VoidCallback onTap,
-    Color? accentColor,
   }) {
-    final activeColor = accentColor ?? ColorManger.primaryLight;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(24.r),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: EdgeInsets.symmetric(horizontal: 13.w, vertical: 7.h),
-          decoration: BoxDecoration(
-            color: isSelected ? activeColor : Colors.white,
-            borderRadius: BorderRadius.circular(24.r),
-            border: Border.all(
-              color: isSelected ? activeColor : const Color(0xFFE2E8F0),
-              width: 1.2,
-            ),
-            boxShadow: isSelected
-                ? [
-                    BoxShadow(
-                      color: activeColor.withValues(alpha: 0.25),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ]
-                : [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.02),
-                      blurRadius: 3,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-          ),
+        borderRadius: BorderRadius.circular(10.r),
+        child: Container(
+          alignment: Alignment.center,
+          padding: EdgeInsets.symmetric(horizontal: 8.w),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
                 icon,
-                size: 14.sp,
-                color: isSelected ? Colors.white : const Color(0xFF64748B),
+                size: 16.sp,
+                color: isSelected ? Colors.white : Colors.grey.shade600,
               ),
-              SizedBox(width: 5.w),
+              SizedBox(width: 6.w),
               Text(
-                label,
+                title,
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: 12.5.sp,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                  color: isSelected ? Colors.white : const Color(0xFF334155),
+                  color: isSelected ? Colors.white : Colors.grey.shade700,
                 ),
               ),
               if (count > 0) ...[
@@ -371,18 +438,16 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
                   padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? Colors.white.withValues(alpha: 0.25)
-                        : const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(10.r),
+                        ? Colors.white.withValues(alpha: 0.22)
+                        : Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                   child: Text(
                     '$count',
                     style: TextStyle(
                       fontSize: 10.5.sp,
                       fontWeight: FontWeight.bold,
-                      color: isSelected
-                          ? Colors.white
-                          : (accentColor ?? ColorManger.primaryLight),
+                      color: isSelected ? Colors.white : Colors.grey.shade800,
                     ),
                   ),
                 ),
@@ -417,12 +482,16 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
         imageAsset: ImageAsset.emptyOrder,
         title: isMerchantFiltered
             ? 'لا توجد طلبات مسجلة للتاجر\n«${widget.merchantName}»'
-            : (state.searchQuery.isNotEmpty || state.selectedStatus != null
-                  ? 'لا توجد أوردرات مطابقة للبحث أو الفلتر'
-                  : 'لا توجد أوردرات لعملائك حتى الآن'),
+            : (state.searchQuery.isNotEmpty
+                  ? 'لا توجد أوردرات مطابقة للبحث'
+                  : (state.selectedTab == 0
+                        ? 'لا توجد طلبات بانتظار موافقتك حالياً'
+                        : 'لا توجد أوردرات مسجلة')),
         description: isMerchantFiltered
             ? 'لم يقم هذا التاجر بإنشاء أي طلبات حتى الآن، أو لم يتم ربط طلباته بحسابه بعد.'
-            : 'الطلبات المنشأة بواسطة التجار الصغار التابعين لك ستظهر هنا مباشرة.',
+            : (state.selectedTab == 0
+                  ? 'أي طلب جديد يُنشئه عملاؤك سيظهر هنا لتتمكن من مراجعته وقبوله أو رفضه.'
+                  : 'الطلبات المعتمدة وقيد التنفيذ أو المكتملة ستظهر هنا مباشرة.'),
       );
     }
 
@@ -454,14 +523,13 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
 
   Widget _buildOrderCard(OrderResponseModel order) {
     final statusColor = _getStatusColor(order.statusCode);
-    final statusBgColor = _getStatusBgColor(order.statusCode);
 
     final displayCustomerName =
         (order.customerName != null &&
             order.customerName!.trim().isNotEmpty &&
             order.customerName!.toLowerCase() != 'string')
         ? order.customerName!
-        : (widget.merchantName ?? 'تاجر محلي');
+        : (widget.merchantName ?? 'عميل فرعي');
 
     final displayOrderNum =
         (order.orderNumber.isNotEmpty &&
@@ -479,21 +547,21 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
           ),
         );
       },
-      borderRadius: BorderRadius.circular(16.r),
+      borderRadius: BorderRadius.circular(14.r),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(14.r),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
           ],
           border: Border.all(color: Colors.grey.shade200),
         ),
-        padding: EdgeInsets.all(14.r),
+        padding: EdgeInsets.all(14.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -506,15 +574,19 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
                       vertical: 4.h,
                     ),
                     decoration: BoxDecoration(
-                      color: ColorManger.primaryLight.withValues(alpha: 0.1),
+                      color: const Color(0xFFF1F5F9),
                       borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(
+                        color: const Color(0xFFE2E8F0),
+                        width: 0.8,
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
                           Iconsax.user,
-                          size: 14.sp,
+                          size: 13.sp,
                           color: ColorManger.primaryLight,
                         ),
                         SizedBox(width: 5.w),
@@ -522,9 +594,9 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
                           child: Text(
                             displayCustomerName,
                             style: TextStyle(
-                              fontSize: 12.sp,
+                              fontSize: 11.5.sp,
                               fontWeight: FontWeight.bold,
-                              color: ColorManger.primaryLight,
+                              color: ColorManger.primary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -542,8 +614,12 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
                     vertical: 4.h,
                   ),
                   decoration: BoxDecoration(
-                    color: statusBgColor,
-                    borderRadius: BorderRadius.circular(20.r),
+                    color: statusColor.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(
+                      color: statusColor.withValues(alpha: 0.28),
+                      width: 0.8,
+                    ),
                   ),
                   child: Text(
                     order.status,
@@ -591,32 +667,21 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
               spacing: 8.w,
               runSpacing: 6.h,
               children: [
-                _buildInfoBadge(
-                  icon: order.isWesal ? Iconsax.car : Iconsax.buildings,
-                  text: order.orderTypeName,
-                  color: Colors.grey.shade700,
-                  bgColor: Colors.grey.shade100,
-                ),
+                _buildDeliveryTypeBadge(order),
                 if (order.truckName != null && order.truckName!.isNotEmpty)
                   _buildInfoBadge(
                     icon: Icons.local_shipping_outlined,
                     text: order.truckName!,
-                    color: const Color(0xFF2563EB),
-                    bgColor: const Color(0xFFEFF6FF),
                   ),
                 if (order.totalWeightTons > 0)
                   _buildInfoBadge(
                     icon: Iconsax.weight_1,
                     text: '${order.totalWeightTons.toStringAsFixed(1)} طن',
-                    color: const Color(0xFF059669),
-                    bgColor: const Color(0xFFECFDF5),
                   ),
                 if (order.totalItemsCount > 0)
                   _buildInfoBadge(
                     icon: Iconsax.box,
                     text: '${order.totalItemsCount} صنف',
-                    color: Colors.grey.shade700,
-                    bgColor: Colors.grey.shade100,
                   ),
               ],
             ),
@@ -681,7 +746,7 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF059669),
+                        backgroundColor: ColorManger.primaryLight,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(vertical: 8.h),
                         shape: RoundedRectangleBorder(
@@ -748,7 +813,7 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
               await cubit.reviewOrder(orderId: order.id, isApproved: true);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF059669),
+              backgroundColor: ColorManger.primaryLight,
             ),
             child: const Text(
               'تأكيد الاعتماد',
@@ -820,29 +885,55 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
     );
   }
 
-  Widget _buildInfoBadge({
-    required IconData icon,
-    required String text,
-    required Color color,
-    required Color bgColor,
-  }) {
+  Widget _buildDeliveryTypeBadge(OrderResponseModel order) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.h),
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.5.h),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: const Color(0xFFF1F5F9),
         borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 0.8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13.sp, color: color),
+          Icon(
+            order.isWesal ? Iconsax.truck_fast : Iconsax.building_3,
+            size: 13.sp,
+            color: ColorManger.primaryLight,
+          ),
+          SizedBox(width: 4.w),
+          Text(
+            order.orderTypeName,
+            style: TextStyle(
+              fontSize: 10.5.sp,
+              fontWeight: FontWeight.bold,
+              color: ColorManger.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoBadge({required IconData icon, required String text}) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.5.h),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8F9FA),
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(color: const Color(0xFFE2E8F0), width: 0.8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12.5.sp, color: ColorManger.primaryLight),
           SizedBox(width: 4.w),
           Text(
             text,
             style: TextStyle(
-              fontSize: 11.sp,
+              fontSize: 10.5.sp,
               fontWeight: FontWeight.w600,
-              color: color,
+              color: const Color(0xFF334155),
             ),
           ),
         ],
@@ -853,48 +944,22 @@ class _SmallMerchantsOrdersViewState extends State<_SmallMerchantsOrdersView> {
   Color _getStatusColor(int statusCode) {
     switch (statusCode) {
       case 8:
-        return const Color(0xFFD97706);
-      case 9:
-        return const Color(0xFF0284C7);
       case 1:
+      case 9:
         return const Color(0xFFD97706);
       case 2:
       case 3:
       case 4:
       case 5:
-        return const Color(0xFF2563EB);
+        return ColorManger.primaryLight;
       case 6:
-        return const Color(0xFF059669);
+        return const Color(0xFF15803D);
       case 7:
       case 10:
       case 11:
         return const Color(0xFFDC2626);
       default:
-        return Colors.grey.shade700;
-    }
-  }
-
-  Color _getStatusBgColor(int statusCode) {
-    switch (statusCode) {
-      case 8:
-        return const Color(0xFFFEF3C7);
-      case 9:
-        return const Color(0xFFE0F2FE);
-      case 1:
-        return const Color(0xFFFEF3C7);
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-        return const Color(0xFFEFF6FF);
-      case 6:
-        return const Color(0xFFECFDF5);
-      case 7:
-      case 10:
-      case 11:
-        return const Color(0xFFFEE2E2);
-      default:
-        return Colors.grey.shade100;
+        return const Color(0xFF64748B);
     }
   }
 }

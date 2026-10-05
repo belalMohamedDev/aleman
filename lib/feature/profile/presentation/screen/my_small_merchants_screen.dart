@@ -34,6 +34,7 @@ class _MySmallMerchantsView extends StatefulWidget {
 
 class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
   late final TextEditingController _searchController;
+  bool _isSearching = false;
 
   @override
   void initState() {
@@ -52,202 +53,146 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
     final cubit = context.read<SmallMerchantsCubit>();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text(
-          'عملائي (التجار والموزعين)',
-          style: TextStyle(
-            color: const Color(0xFF0F172A),
-            fontWeight: FontWeight.bold,
-            fontSize: 16.sp,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A)),
-          onPressed: () => Navigator.of(context).maybePop(),
-        ),
-      ),
+      backgroundColor: const Color(0xFFF9F9FB),
+      appBar: _buildAppBar(context, cubit),
       body: BlocBuilder<SmallMerchantsCubit, SmallMerchantsState>(
         builder: (context, state) {
           final filtered = state.filteredMerchants;
 
-          return Column(
-            children: [
-              // Container(
-              //   width: double.infinity,
-              //   margin: EdgeInsets.fromLTRB(16.w, 14.h, 16.w, 8.h),
-              //   padding: EdgeInsets.all(16.r),
-              //   decoration: BoxDecoration(
-              //     // gradient: LinearGradient(
-              //     //   colors: [ColorManger.goldDark, ColorManger.gold],
-              //     //   begin: Alignment.topRight,
-              //     //   end: Alignment.bottomLeft,
-              //     // ),
-              //     color: ColorManger.primaryLight,
-              //     borderRadius: BorderRadius.circular(20.r),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: ColorManger.primary.withValues(alpha: 0.25),
-              //         blurRadius: 16,
-              //         offset: const Offset(0, 6),
-              //       ),
-              //     ],
-              //   ),
-              //   child: Row(
-              //     children: [
-              //       // Container(
-              //       //   width: 52.w,
-              //       //   height: 52.w,
-              //       //   decoration: BoxDecoration(
-              //       //     color: Colors.white.withValues(alpha: 0.18),
-              //       //     borderRadius: BorderRadius.circular(16.r),
-              //       //     border: Border.all(
-              //       //       color: Colors.white.withValues(alpha: 0.25),
-              //       //     ),
-              //       //   ),
-              //       //   alignment: Alignment.center,
-              //       //   child: Icon(
-              //       //     Iconsax.people5,
-              //       //     color: Colors.white,
-              //       //     size: 26.sp,
-              //       //   ),
-              //       // ),
-              //       SizedBox(width: 14.w),
-              //       Expanded(
-              //         child: Column(
-              //           crossAxisAlignment: CrossAxisAlignment.start,
-              //           children: [
-              //             Text(
-              //               style: TextStyle(
-              //                 fontSize: 15.sp,
-              //                 fontWeight: FontWeight.bold,
-              //                 color: Colors.white,
-              //               ),
-              //             ),
-              //             SizedBox(height: 3.h),
-              //             Text(
-              //               style: TextStyle(
-              //                 fontSize: 11.5.sp,
-              //                 color: Colors.white.withValues(alpha: 0.85),
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //       Container(
-              //         padding: EdgeInsets.symmetric(
-              //           horizontal: 10.w,
-              //           vertical: 6.h,
-              //         ),
-              //         decoration: BoxDecoration(
-              //           color: Colors.white,
-              //           borderRadius: BorderRadius.circular(14.r),
-              //           boxShadow: [
-              //             BoxShadow(
-              //               color: Colors.black.withValues(alpha: 0.08),
-              //               blurRadius: 6,
-              //               offset: const Offset(0, 2),
-              //             ),
-              //           ],
-              //         ),
-              //         child: Column(
-              //           mainAxisSize: MainAxisSize.min,
-              //           children: [
-              //             Text(
-              //               '${state.allMerchants.length}',
-              //               style: TextStyle(
-              //                 fontSize: 16.sp,
-              //                 fontWeight: FontWeight.bold,
-              //                 color: ColorManger.primaryLight,
-              //                 height: 1.1,
-              //               ),
-              //             ),
-              //             Text(
-              //               style: TextStyle(
-              //                 fontSize: 10.sp,
-              //                 fontWeight: FontWeight.w600,
-              //                 color: Colors.grey.shade600,
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
+          if (filtered.isEmpty) {
+            return _buildEmptyState(state.searchQuery);
+          }
 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 12,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                    border: Border.all(color: Colors.grey.shade200),
-                  ),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (val) => cubit.search(val),
-                    decoration: InputDecoration(
-                      hintText: 'ابحث باسم التاجر، المحل، أو رقم الهاتف...',
-                      hintStyle: TextStyle(
-                        fontSize: 12.5.sp,
-                        color: Colors.grey.shade400,
-                      ),
-                      prefixIcon: Icon(
-                        Iconsax.search_normal_1,
-                        size: 18.sp,
-                        color: ColorManger.primaryLight,
-                      ),
-                      suffixIcon: state.searchQuery.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.close_rounded,
-                                size: 18.sp,
-                                color: Colors.grey.shade600,
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                                cubit.clearSearch();
-                              },
-                            )
-                          : null,
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 13.h,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              Expanded(
-                child: filtered.isEmpty
-                    ? _buildEmptyState(state.searchQuery)
-                    : ListView.separated(
-                        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 20.h),
-                        itemCount: filtered.length,
-                        separatorBuilder: (_, _) => SizedBox(height: 14.h),
-                        itemBuilder: (context, index) {
-                          final merchant = filtered[index];
-                          return _buildMerchantCard(context, merchant);
-                        },
-                      ),
-              ),
-            ],
+          return ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+            itemCount: filtered.length,
+            separatorBuilder: (_, _) => SizedBox(height: 12.h),
+            itemBuilder: (context, index) {
+              final merchant = filtered[index];
+              return _buildMerchantCard(context, merchant);
+            },
           );
         },
       ),
+    );
+  }
+
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    SmallMerchantsCubit cubit,
+  ) {
+    if (_isSearching) {
+      return AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: ColorManger.authTitleDark),
+          onPressed: () {
+            setState(() => _isSearching = false);
+            _searchController.clear();
+            cubit.clearSearch();
+          },
+        ),
+        title: SizedBox(
+          height: 42.h,
+          child: TextField(
+            controller: _searchController,
+            autofocus: true,
+            onChanged: (val) {
+              cubit.search(val);
+              setState(() {});
+            },
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: ColorManger.authTitleDark,
+              fontWeight: FontWeight.w600,
+            ),
+            decoration: InputDecoration(
+              hintText: 'ابحث باسم التاجر أو رقم الهاتف...',
+              hintStyle: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF94A3B8),
+              ),
+              prefixIcon: const Icon(
+                Iconsax.search_normal,
+                color: Color(0xFF64748B),
+                size: 18,
+              ),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(
+                        Icons.clear,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        _searchController.clear();
+                        cubit.clearSearch();
+                        setState(() {});
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: const Color(0xFFF8F9FA),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12.w,
+                vertical: 10.h,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(
+                  color: Color(0xFFE2E8F0),
+                  width: 0.08,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(
+                  color: Color(0xFFE2E8F0),
+                  width: 0.08,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(
+                  color: ColorManger.primaryLight,
+                  width: 1.5,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.white,
+      centerTitle: true,
+      title: Text(
+        'عملائي (التجار والموزعين)',
+        style: TextStyle(
+          color: ColorManger.authTitleDark,
+          fontWeight: FontWeight.bold,
+          fontSize: 16.sp,
+        ),
+      ),
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back, color: ColorManger.authTitleDark),
+        onPressed: () => Navigator.of(context).maybePop(),
+      ),
+      actions: [
+        IconButton(
+          icon: Icon(
+            Iconsax.search_normal_1,
+            color: ColorManger.primaryLight,
+            size: 20.sp,
+          ),
+          tooltip: 'بحث',
+          onPressed: () => setState(() => _isSearching = true),
+        ),
+        SizedBox(width: 4.w),
+      ],
     );
   }
 
@@ -255,253 +200,164 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18.r),
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(color: Colors.grey.shade200, width: 0.01),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF0F172A).withValues(alpha: 0.05),
-            blurRadius: 16,
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
-        border: Border.all(color: const Color(0xFFE2E8F0)),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(18.r),
+      child: Padding(
+        padding: EdgeInsets.all(16.w),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.all(16.r),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 40.w,
-                        height: 40.w,
-                        decoration: BoxDecoration(
-                          color: ColorManger.primaryLight.withValues(
-                            alpha: 0.1,
-                          ),
-                          borderRadius: BorderRadius.circular(14.r),
-                          border: Border.all(
-                            color: ColorManger.primaryLight.withValues(
-                              alpha: 0.2,
-                            ),
-                          ),
-                        ),
-                        alignment: Alignment.center,
-                        child: Icon(
-                          Iconsax.shop,
-                          color: ColorManger.primaryLight,
-                          size: 24.sp,
-                        ),
-                      ),
-                      SizedBox(width: 5.w),
-
-                      Expanded(
-                        child: Text(
-                          merchant.name,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFF0F172A),
-                            height: 1.3,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+            // Top Row: Shop Icon, Merchant Name
+            Row(
+              children: [
+                Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    color: ColorManger.primaryLight.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10.r),
                   ),
-                  SizedBox(height: 14.h),
-
-                  Container(
-                    padding: EdgeInsets.all(12.r),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8FAFC),
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                  child: Icon(
+                    Iconsax.shop,
+                    color: ColorManger.primaryLight,
+                    size: 20.sp,
+                  ),
+                ),
+                SizedBox(width: 12.w),
+                Expanded(
+                  child: Text(
+                    merchant.name,
+                    style: TextStyle(
+                      fontSize: 14.5.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              padding: EdgeInsets.all(6.r),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.r),
-                                border: Border.all(color: Colors.grey.shade200),
-                              ),
-                              child: Icon(
-                                Iconsax.call,
-                                size: 15.sp,
-                                color: ColorManger.primaryLight,
-                              ),
-                            ),
-                            SizedBox(width: 10.w),
-                            Expanded(
-                              child: Text(
-                                merchant.phoneNumber,
-                                style: TextStyle(
-                                  fontSize: 13.sp,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF1E293B),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                Clipboard.setData(
-                                  ClipboardData(text: merchant.phoneNumber),
-                                );
-                              },
-                              borderRadius: BorderRadius.circular(8.r),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w,
-                                  vertical: 4.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  border: Border.all(
-                                    color: ColorManger.primaryLight.withValues(
-                                      alpha: 0.3,
-                                    ),
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Iconsax.copy,
-                                      size: 13.sp,
-                                      color: ColorManger.primaryLight,
-                                    ),
-                                    SizedBox(width: 4.w),
-                                    Text(
-                                      'نسخ',
-                                      style: TextStyle(
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.bold,
-                                        color: ColorManger.primaryLight,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
 
-                        if (merchant.email.isNotEmpty) ...[
-                          SizedBox(height: 8.h),
-                          Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(6.r),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  border: Border.all(
-                                    color: Colors.grey.shade200,
-                                  ),
-                                ),
-                                child: Icon(
-                                  Iconsax.sms,
-                                  size: 15.sp,
-                                  color: Colors.grey.shade600,
-                                ),
-                              ),
-                              SizedBox(width: 10.w),
-                              Expanded(
-                                child: Text(
-                                  merchant.email,
-                                  style: TextStyle(
-                                    fontSize: 12.sp,
-                                    color: Colors.grey.shade600,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
+            Divider(height: 18, color: Colors.grey.shade100),
+
+            // Phone Row with Copy Button
+            Row(
+              children: [
+                const Icon(Iconsax.call, size: 15, color: Colors.black54),
+                SizedBox(width: 6.w),
+                Text(
+                  merchant.phoneNumber,
+                  style: TextStyle(
+                    fontSize: 12.5.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const Spacer(),
+                InkWell(
+                  onTap: () {
+                    Clipboard.setData(
+                      ClipboardData(text: merchant.phoneNumber),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(6.r),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 8.w,
+                      vertical: 3.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: ColorManger.primaryLight.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Iconsax.copy,
+                          size: 12.sp,
+                          color: ColorManger.primaryLight,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'نسخ',
+                          style: TextStyle(
+                            fontSize: 10.5.sp,
+                            fontWeight: FontWeight.bold,
+                            color: ColorManger.primaryLight,
                           ),
-                        ],
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(height: 14.h),
+                ),
+              ],
+            ),
 
-                  Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => SmallMerchantsOrdersScreen(
-                              merchantName: merchant.name,
-                              merchantId: merchant.id,
-                            ),
-                          ),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(12.r),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 11.h),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              ColorManger.primaryLight,
-                              ColorManger.primaryLight,
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(12.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: ColorManger.primaryLight.withValues(
-                                alpha: 0.25,
-                              ),
-                              blurRadius: 8,
-                              offset: const Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Iconsax.task_square,
-                              size: 18.sp,
-                              color: Colors.white,
-                            ),
-                            SizedBox(width: 8.w),
-                            Text(
-                              'عرض أوردرات هذا التاجر',
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            SizedBox(width: 6.w),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              size: 12.sp,
-                              color: Colors.white70,
-                            ),
-                          ],
-                        ),
+            // Email Row (if available)
+            if (merchant.email.isNotEmpty) ...[
+              SizedBox(height: 8.h),
+              Row(
+                children: [
+                  const Icon(Iconsax.sms, size: 15, color: Colors.black54),
+                  SizedBox(width: 6.w),
+                  Expanded(
+                    child: Text(
+                      merchant.email,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: Colors.grey.shade700,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
+              ),
+            ],
+
+            SizedBox(height: 14.h),
+
+            // Action Button
+            SizedBox(
+              width: double.infinity,
+              height: 42.h,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => SmallMerchantsOrdersScreen(
+                        merchantName: merchant.name,
+                        merchantId: merchant.id,
+                      ),
+                    ),
+                  );
+                },
+                icon: Icon(Iconsax.task_square, size: 17.sp),
+                label: Text(
+                  'عرض أوردرات هذا التاجر',
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ColorManger.primaryLight,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  elevation: 0,
+                ),
               ),
             ),
           ],
@@ -512,7 +368,7 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
 
   Widget _buildEmptyState(String searchQuery) {
     return GlobalEmptyState(
-      imageAsset: ImageAsset.client,
+      imageAsset: searchQuery.isEmpty ? ImageAsset.client : ImageAsset.search,
       title: searchQuery.isEmpty
           ? 'لا يوجد تجار تابعين مسجلين حالياً'
           : 'لا توجد نتائج مطابقة لبحثك',

@@ -41,7 +41,7 @@ class NotificationsBody extends StatelessWidget {
         }
 
         return RefreshIndicator(
-          color: ColorManger.buttonColor,
+          color: ColorManger.primaryLight,
           onRefresh: () async {
             await context.read<NotificationCubit>().getNotifications(
               refresh: true,
@@ -64,7 +64,7 @@ class NotificationsBody extends StatelessWidget {
                   child: Center(
                     child: CircularProgressIndicator(
                       strokeWidth: 2.5,
-                      color: ColorManger.buttonColor,
+                      color: ColorManger.primaryLight,
                     ),
                   ),
                 );

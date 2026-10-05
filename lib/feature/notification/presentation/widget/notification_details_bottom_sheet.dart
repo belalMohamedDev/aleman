@@ -123,7 +123,7 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
           children: [
             Icon(
               Icons.check_circle_outline,
-              color: const Color(0xFF059669),
+              color: ColorManger.primaryLight,
               size: 24.sp,
             ),
             SizedBox(width: 8.w),
@@ -148,7 +148,7 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF059669),
+              backgroundColor: ColorManger.primaryLight,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -176,7 +176,8 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
                   ? 'تم اعتماد الطلب بنجاح وإرساله لإدارة المبيعات'
                   : 'حدث خطأ أثناء اعتماد الطلب',
             ),
-            backgroundColor: success ? const Color(0xFF059669) : Colors.red,
+            backgroundColor:
+                success ? ColorManger.primaryLight : const Color(0xFFDC2626),
           ),
         );
       }
@@ -195,7 +196,11 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
         ),
         title: Row(
           children: [
-            Icon(Icons.cancel_outlined, color: Colors.red, size: 24.sp),
+            Icon(
+              Icons.cancel_outlined,
+              color: const Color(0xFFDC2626),
+              size: 24.sp,
+            ),
             SizedBox(width: 8.w),
             const Text(
               'رفض الطلب',
@@ -247,7 +252,7 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
           ElevatedButton(
             onPressed: () => Navigator.pop(ctx, true),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: const Color(0xFFDC2626),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.r),
               ),
@@ -275,7 +280,8 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
             content: Text(
               success ? 'تم رفض الطلب بنجاح' : 'حدث خطأ أثناء رفض الطلب',
             ),
-            backgroundColor: success ? Colors.orange : Colors.red,
+            backgroundColor:
+                success ? const Color(0xFFD97706) : const Color(0xFFDC2626),
           ),
         );
       }
@@ -565,7 +571,8 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
               height: 20.w,
               child: const CircularProgressIndicator(
                 strokeWidth: 2.2,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF059669)),
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(ColorManger.primaryLight),
               ),
             ),
             SizedBox(width: 12.w),
@@ -593,7 +600,7 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
               style: getBoldStyle(fontSize: 13.sp, color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF059669),
+              backgroundColor: ColorManger.primaryLight,
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(vertical: 12.h),
               shape: RoundedRectangleBorder(
@@ -634,44 +641,186 @@ class NotificationDetailsBottomSheet extends StatelessWidget {
 
   Widget _buildLeadingIcon(String type, bool isApproval) {
     if (isApproval) {
-      return Container(
-        width: 44.w,
-        height: 44.w,
-        decoration: const BoxDecoration(
-          color: Color(0xFFFEF3C7),
-          shape: BoxShape.circle,
-        ),
-        child: Center(
-          child: Icon(
-            Iconsax.task_square,
-            color: const Color(0xFFD97706),
-            size: 22.sp,
-          ),
-        ),
+      return _buildIconContainer(
+        mainIcon: Iconsax.task_square,
+        mainColor: const Color(0xFFD97706),
+        bgColor: const Color(0xFFFEF3C7),
+        borderColor: const Color(0xFFFDE68A),
+        badgeIcon: Iconsax.timer_1,
+        badgeColor: const Color(0xFFD97706),
       );
     }
 
-    IconData iconData = Iconsax.notification;
-    Color iconColor = ColorManger.buttonColor;
-    Color bgColor = ColorManger.iconsBackgroundColor;
-
     if (type.contains('order')) {
-      iconData = Iconsax.box;
-      iconColor = const Color(0xFF2E7D32);
-      bgColor = const Color(0xFFE8F5E9);
-    } else if (type.contains('promotion') || type.contains('discount')) {
-      iconData = Iconsax.discount_shape;
-      iconColor = const Color(0xFFE65100);
-      bgColor = const Color(0xFFFFF3E0);
+      return _buildOrderLeadingIcon();
     }
 
-    return Container(
-      width: 44.w,
-      height: 44.w,
-      decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
-      child: Center(
-        child: Icon(iconData, color: iconColor, size: 22.sp),
-      ),
+    if (type.contains('promotion') || type.contains('discount')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.discount_shape,
+        mainColor: const Color(0xFFD97706),
+        bgColor: const Color(0xFFFEF3C7),
+        borderColor: const Color(0xFFFDE68A),
+      );
+    }
+
+    return _buildIconContainer(
+      mainIcon: Iconsax.notification,
+      mainColor: ColorManger.primaryLight,
+      bgColor: ColorManger.primaryLight.withValues(alpha: 0.08),
+      borderColor: ColorManger.primaryLight.withValues(alpha: 0.15),
+    );
+  }
+
+  Widget _buildOrderLeadingIcon() {
+    final data = notification.data;
+    final rawStatus = (data['statusCode'] ?? data['status'] ?? '').toString();
+    final text = '${notification.title} ${notification.body}'.toLowerCase();
+
+    // 1. تم التسليم / مكتمل
+    if (rawStatus == '6' ||
+        text.contains('تسليم') ||
+        text.contains('مكتمل') ||
+        text.contains('استلام') ||
+        text.contains('delivered') ||
+        text.contains('completed')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.box_tick,
+        mainColor: const Color(0xFF15803D),
+        bgColor: const Color(0xFF15803D).withValues(alpha: 0.08),
+        borderColor: const Color(0xFF15803D).withValues(alpha: 0.2),
+        badgeIcon: Icons.check,
+        badgeColor: const Color(0xFF15803D),
+      );
+    }
+
+    // 2. ملغي / مرفوض
+    if (rawStatus == '7' ||
+        rawStatus == '10' ||
+        rawStatus == '11' ||
+        text.contains('إلغاء') ||
+        text.contains('الغاء') ||
+        text.contains('ملغي') ||
+        text.contains('رفض') ||
+        text.contains('مرفوض') ||
+        text.contains('cancelled') ||
+        text.contains('rejected')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.box_remove,
+        mainColor: const Color(0xFFDC2626),
+        bgColor: const Color(0xFFDC2626).withValues(alpha: 0.08),
+        borderColor: const Color(0xFFDC2626).withValues(alpha: 0.2),
+        badgeIcon: Icons.close,
+        badgeColor: const Color(0xFFDC2626),
+      );
+    }
+
+    // 3. شحن / في الطريق / جاري التوصيل
+    if (rawStatus == '4' ||
+        rawStatus == '5' ||
+        text.contains('شحن') ||
+        text.contains('طريق') ||
+        text.contains('توصيل') ||
+        text.contains('shipped') ||
+        text.contains('shipping') ||
+        text.contains('transit')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.truck_fast,
+        mainColor: ColorManger.primaryLight,
+        bgColor: ColorManger.primaryLight.withValues(alpha: 0.08),
+        borderColor: ColorManger.primaryLight.withValues(alpha: 0.2),
+        badgeIcon: Iconsax.truck_fast,
+        badgeColor: ColorManger.primaryLight,
+      );
+    }
+
+    // 4. قيد الانتظار / موافقة
+    if (rawStatus == '1' ||
+        rawStatus == '8' ||
+        rawStatus == '9' ||
+        text.contains('انتظار') ||
+        text.contains('موافقة') ||
+        text.contains('مراجعة') ||
+        text.contains('pending')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.box_time,
+        mainColor: const Color(0xFFD97706),
+        bgColor: const Color(0xFFFEF3C7),
+        borderColor: const Color(0xFFFDE68A),
+        badgeIcon: Iconsax.timer_1,
+        badgeColor: const Color(0xFFD97706),
+      );
+    }
+
+    // 5. جاري التجهيز / تأكيد
+    if (rawStatus == '2' ||
+        rawStatus == '3' ||
+        text.contains('تجهيز') ||
+        text.contains('تأكيد') ||
+        text.contains('قبول') ||
+        text.contains('processing') ||
+        text.contains('confirmed')) {
+      return _buildIconContainer(
+        mainIcon: Iconsax.box_search,
+        mainColor: ColorManger.primaryLight,
+        bgColor: ColorManger.primaryLight.withValues(alpha: 0.08),
+        borderColor: ColorManger.primaryLight.withValues(alpha: 0.2),
+        badgeIcon: Icons.autorenew,
+        badgeColor: ColorManger.primaryLight,
+      );
+    }
+
+    // 6. طلب عام
+    return _buildIconContainer(
+      mainIcon: Iconsax.box,
+      mainColor: ColorManger.primaryLight,
+      bgColor: ColorManger.primaryLight.withValues(alpha: 0.08),
+      borderColor: ColorManger.primaryLight.withValues(alpha: 0.15),
+    );
+  }
+
+  Widget _buildIconContainer({
+    required IconData mainIcon,
+    required Color mainColor,
+    required Color bgColor,
+    required Color borderColor,
+    IconData? badgeIcon,
+    Color? badgeColor,
+  }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          width: 44.r,
+          height: 44.r,
+          decoration: BoxDecoration(
+            color: bgColor,
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: borderColor, width: 0.8),
+          ),
+          child: Center(
+            child: Icon(mainIcon, color: mainColor, size: 21.sp),
+          ),
+        ),
+        if (badgeIcon != null && badgeColor != null)
+          Positioned(
+            bottom: -2.r,
+            left: -2.r,
+            child: Container(
+              padding: EdgeInsets.all(2.5.r),
+              decoration: BoxDecoration(
+                color: badgeColor,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+              child: Icon(
+                badgeIcon,
+                size: 8.5.sp,
+                color: Colors.white,
+              ),
+            ),
+          ),
+      ],
     );
   }
 
