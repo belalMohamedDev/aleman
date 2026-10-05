@@ -27,14 +27,11 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   ) : super(const CheckoutState());
 
   void initFromCart({required double totalWeightTons}) {
-    final defaultTruck = totalWeightTons > 0
-        ? TruckType.fromWeight(totalWeightTons)
-        : TruckType.dababa;
-
     emit(
       state.copyWith(
         totalWeightTons: totalWeightTons,
-        selectedTruckType: state.selectedTruckType ?? defaultTruck,
+        clearSelectedTruckType: true,
+        shippingFee: 0.0,
       ),
     );
   }
@@ -134,21 +131,14 @@ class CheckoutCubit extends Cubit<CheckoutState> {
         ),
       );
     } else {
-      final recommendedTruck = state.selectedTruckType ??
-          (state.totalWeightTons > 0
-              ? TruckType.fromWeight(state.totalWeightTons)
-              : TruckType.dababa);
-
       emit(
         state.copyWith(
           orderType: type,
           currentStep: 1,
-          selectedTruckType: recommendedTruck,
+          shippingFee: 0.0,
+          clearSelectedTruckType: true,
         ),
       );
-      if (state.selectedAddress != null) {
-        calculateShipping();
-      }
     }
   }
 
@@ -192,11 +182,12 @@ class CheckoutCubit extends Cubit<CheckoutState> {
         final singleFee = response.singleTruckFeeAfterDiscount > 0
             ? response.singleTruckFeeAfterDiscount
             : (response.requiredTrucksCount > 0
-                ? (response.shippingFee / response.requiredTrucksCount)
-                : response.shippingFee);
+                  ? (response.shippingFee / response.requiredTrucksCount)
+                  : response.shippingFee);
 
-        final updatedPromos =
-            Map<int, ShippingPromotionInfo>.from(state.truckPromotions);
+        final updatedPromos = Map<int, ShippingPromotionInfo>.from(
+          state.truckPromotions,
+        );
 
         for (final p in response.activePromotions) {
           if (p.truckType != null) {
@@ -229,10 +220,9 @@ class CheckoutCubit extends Cubit<CheckoutState> {
       },
       failure: (_) {
         final capacity = state.selectedTruckType!.maxCapacityTons;
-        final int calculatedCount =
-            (state.totalWeightTons > 0 && capacity > 0)
-                ? (state.totalWeightTons / capacity).ceil()
-                : 1;
+        final int calculatedCount = (state.totalWeightTons > 0 && capacity > 0)
+            ? (state.totalWeightTons / capacity).ceil()
+            : 1;
         final int trucksCount = calculatedCount > 0 ? calculatedCount : 1;
 
         double baseFeePerTruck = 250.0;
@@ -312,9 +302,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
 
     result.when(
       success: (url) {
-        emit(
-          state.copyWith(isUploadingReceipt: false, paymentReceiptUrl: url),
-        );
+        emit(state.copyWith(isUploadingReceipt: false, paymentReceiptUrl: url));
       },
       failure: (error) {
         emit(
@@ -440,8 +428,7 @@ class CheckoutCubit extends Cubit<CheckoutState> {
           );
           return false;
         }
-      } else if (state.currentStep == 2) {
-      }
+      } else if (state.currentStep == 2) {}
     }
 
     if (state.currentStep < state.totalSteps) {

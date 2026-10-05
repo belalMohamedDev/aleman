@@ -297,255 +297,173 @@ class _CheckoutScreenContent extends StatelessWidget {
     }
 
     final isSubmitting = state.status == CheckoutStatus.submitting;
-    final shipping = state.isFactoryPickup ? 0.0 : state.shippingFee;
+    final isWesalBeforeTruck = state.isWesal && state.currentStep == 1;
+    final shipping =
+        (state.isFactoryPickup || isWesalBeforeTruck) ? 0.0 : state.shippingFee;
     final finalTotal = (cartSubtotal - state.discount + shipping).clamp(
       0.0,
       double.infinity,
     );
 
-    if (state.isLastStep) {
-      return Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -3),
-            ),
-          ],
-        ),
-        child: SafeArea(
-          child: Row(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'الإجمالي النهائي',
-                    style: TextStyle(fontSize: 11.sp, color: Colors.black54),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    '$finalTotal ج.م',
-                    style: TextStyle(
-                      fontSize: 15.sp,
-                      fontWeight: FontWeight.bold,
-                      color: ColorManger.primary,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 16.w),
-              Expanded(
-                child: SizedBox(
-                  height: 48.h,
-                  child: ElevatedButton(
-                    onPressed: isSubmitting ? null : cubit.submitOrder,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorManger.primaryLight,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: isSubmitting
-                        ? SizedBox(
-                            width: 22.w,
-                            height: 22.w,
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 2.5,
-                              color: Colors.white,
-                            ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.check_circle_outline, size: 20.sp),
-                              SizedBox(width: 6.w),
-                              Text(
-                                'تأكيد وإرسال الطلب',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    final cart = context.read<CartCubit>().state.cart;
+    final totalWeightStr = cart != null
+        ? (cart.totalWeightTons > 0
+              ? '${cart.totalWeightTons.toStringAsFixed(1)} طن'
+              : (cart.totalWeightKg > 0
+                    ? '${cart.totalWeightKg.toStringAsFixed(1)} كجم'
+                    : ''))
+        : (state.totalWeightTons > 0
+              ? '${state.totalWeightTons.toStringAsFixed(1)} طن'
+              : '');
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 14.h),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 10,
-            offset: const Offset(0, -3),
+            offset: const Offset(0, -4),
           ),
         ],
       ),
       child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        top: false,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'سعر الطلبات',
-                  style: TextStyle(fontSize: 13.sp, color: Colors.black54),
-                ),
-                Text(
-                  '$cartSubtotal ج.م',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.bold,
-                    color: ColorManger.primary,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 6.h),
-
-            state.isFactoryPickup
-                ? const SizedBox.shrink()
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Total Price Section
+            IntrinsicWidth(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'سعر الشحن',
+                        'المجموع',
                         style: TextStyle(
                           fontSize: 13.sp,
-                          color: Colors.black54,
+                          color: const Color(0xFF64748B),
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Text(
-                        (state.currentStep == 1
-                            ? 'في الخطوة التالية'
-                            : (state.status ==
-                                      CheckoutStatus.calculatingShipping
-                                  ? 'جاري الحساب...'
-                                  : (state.selectedTruckType == null
-                                        ? 'اختر سيارة الشحن'
-                                        : '${state.shippingFee} ج.م'))),
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.bold,
-                          color:
-                              state.currentStep == 1 ||
-                                  state.selectedTruckType == null
-                              ? Colors.grey.shade600
-                              : ColorManger.goldDark,
+                      if (totalWeightStr.isNotEmpty) ...[
+                        Text(
+                          ' ($totalWeightStr)',
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: const Color(0xFF94A3B8),
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
-
-            if (state.totalWeightTons > 0) ...[
-              SizedBox(height: 6.h),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                  SizedBox(height: 2.h),
                   Text(
-                    'إجمالي الكمية (الوزن)',
-                    style: TextStyle(fontSize: 13.sp, color: Colors.black54),
-                  ),
-                  Text(
-                    '${state.totalWeightTons} طن',
+                    '${_formatPrice(finalTotal)} ج.م.',
                     style: TextStyle(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      fontSize: 19.sp,
+                      fontWeight: FontWeight.w800,
+                      color: const Color(0xFF0F172A),
+                      letterSpacing: -0.5,
                     ),
+                  ),
+                  SizedBox(height: 3.h),
+                  CustomPaint(
+                    size: Size(double.infinity, 2.h),
+                    painter: const _DottedLinePainter(color: Color(0xFF94A3B8)),
                   ),
                 ],
               ),
-            ],
-
-            Divider(height: 16.h, color: Colors.grey.shade300),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'الإجمالي',
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                    color: ColorManger.primary,
-                  ),
-                ),
-                Text(
-                  '$finalTotal ج.م',
-                  style: TextStyle(
-                    fontSize: 17.sp,
-                    fontWeight: FontWeight.bold,
-                    color: ColorManger.goldDark,
-                  ),
-                ),
-              ],
             ),
-            SizedBox(height: 12.h),
 
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 48.h,
-                    child: ElevatedButton(
-                      onPressed: isSubmitting
-                          ? null
-                          : () {
-                              if (!state.isLastStep) {
-                                cubit.nextStep();
-                              } else {
-                                cubit.submitOrder();
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorManger.primaryLight,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: isSubmitting
-                          ? SizedBox(
-                              width: 22.w,
-                              height: 22.w,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: Colors.white,
-                              ),
-                            )
-                          : Text(
-                              !state.isLastStep ? 'احفظ واستمر' : 'تقديم الطلب',
-                              style: TextStyle(
-                                fontSize: 15.sp,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+            SizedBox(width: 20.w),
+
+            // Next Step / Submit Order Button
+            Expanded(
+              child: SizedBox(
+                height: 48.h,
+                child: ElevatedButton(
+                  onPressed: isSubmitting
+                      ? null
+                      : () {
+                          if (!state.isLastStep) {
+                            cubit.nextStep();
+                          } else {
+                            cubit.submitOrder();
+                          }
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorManger.primaryLight,
+                    foregroundColor: Colors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.r),
                     ),
                   ),
+                  child: isSubmitting
+                      ? SizedBox(
+                          width: 22.w,
+                          height: 22.w,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: Colors.white,
+                          ),
+                        )
+                      : Text(
+                          !state.isLastStep
+                              ? 'احفظ واستمر'
+                              : 'تأكيد وإرسال الطلب',
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
       ),
     );
   }
+
+  String _formatPrice(double price) {
+    final parts = price.toStringAsFixed(2).split('.');
+    final wholePart = parts[0].replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
+    return '$wholePart.${parts[1]}';
+  }
+}
+
+class _DottedLinePainter extends CustomPainter {
+  final Color color;
+
+  const _DottedLinePainter({this.color = const Color(0xFF94A3B8)});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeCap = StrokeCap.round;
+
+    const dotRadius = 0.8;
+    const dotSpacing = 3.0;
+    double currentX = 0;
+
+    while (currentX < size.width) {
+      canvas.drawCircle(Offset(currentX, size.height / 2), dotRadius, paint);
+      currentX += dotSpacing;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

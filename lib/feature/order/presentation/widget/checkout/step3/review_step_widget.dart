@@ -132,7 +132,7 @@ class ReviewStepWidget extends StatelessWidget {
               SizedBox(height: 6.h),
               _buildInfoRow(
                 'إجمالي الكمية (الوزن)',
-                '${state.totalWeightTons} طن',
+                '${state.totalWeightTons.toStringAsFixed(1)} طن',
               ),
             ],
             SizedBox(height: 6.h),
@@ -140,8 +140,8 @@ class ReviewStepWidget extends StatelessWidget {
               'نوع سيارة الشحن',
               state.selectedTruckType != null
                   ? (state.requiredTrucksCount > 1
-                      ? '${state.selectedTruckType!.title} (${state.requiredTrucksCount} سيارات مطلوبة)'
-                      : state.selectedTruckType!.title)
+                        ? '${state.selectedTruckType!.title} (${state.requiredTrucksCount} سيارات مطلوبة)'
+                        : state.selectedTruckType!.title)
                   : 'غير محدد',
             ),
             SizedBox(height: 6.h),
@@ -241,7 +241,7 @@ class ReviewStepWidget extends StatelessWidget {
           if (state.totalWeightTons > 0) ...[
             _buildSummaryRow(
               'إجمالي وزن الطلبات',
-              '${state.totalWeightTons} طن',
+              '${state.totalWeightTons.toStringAsFixed(1)} طن',
             ),
             SizedBox(height: 8.h),
           ],
