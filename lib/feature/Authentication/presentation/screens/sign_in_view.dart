@@ -8,6 +8,7 @@ import 'package:aleman/feature/Authentication/presentation/refactors/signIn/auth
 import 'package:aleman/feature/Authentication/presentation/refactors/signIn/email_password_form_view.dart';
 import 'package:aleman/feature/Authentication/presentation/refactors/signIn/phone_otp_form_view.dart';
 import 'package:aleman/feature/Authentication/presentation/sharedWidgetBetweenScreen/auth_contact_support_link.dart';
+import 'package:aleman/feature/bottomNavBar/logic/bottom_nav_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,10 +35,7 @@ class LoginView extends StatelessWidget {
                 state.error != null) {
               AppToast.showError(context, message: state.error!);
             } else if (state.status == LoginRequestStatus.success) {
-              // AppToast.showSuccess(
-              //   context,
-              //   message: 'تم تسجيل الدخول بنجاح! أهلاً بك في الإيمان 🌾',
-              // );
+              context.read<BottomNavCubit>().goToHome();
               if (Navigator.of(context).canPop()) {
                 Navigator.of(context).pop(true);
               } else {

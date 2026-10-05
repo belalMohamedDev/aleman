@@ -40,6 +40,8 @@ class ProfileView extends StatelessWidget {
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
         ),
         body: BlocConsumer<ProfileCubit, ProfileState>(
           listener: (context, state) {
@@ -193,6 +195,45 @@ class ProfileView extends StatelessWidget {
                         ),
                         SizedBox(height: 16.h),
                       ],
+
+                      ProfileMenuGroup(
+                        title: 'المساعدة ومعلومات التطبيق',
+                        items: [
+                          ProfileMenuItem(
+                            icon: Iconsax.headphone,
+                            title: 'خدمة العملاء والدعم الفني',
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              Routes.contactSupportRoute,
+                            ),
+                          ),
+                          ProfileMenuItem(
+                            icon: Iconsax.info_circle,
+                            title: 'عن شركة الإيمان للأعلاف',
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              Routes.aboutUsRoute,
+                            ),
+                          ),
+                          ProfileMenuItem(
+                            icon: Iconsax.document_text,
+                            title: 'الشروط والأحكام',
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              Routes.termsAndConditionsRoute,
+                            ),
+                          ),
+                          ProfileMenuItem(
+                            icon: Iconsax.shield_tick,
+                            title: 'سياسة الخصوصية',
+                            onTap: () => Navigator.pushNamed(
+                              context,
+                              Routes.privacyPolicyRoute,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.h),
 
                       ProfileMenuGroup(
                         items: [

@@ -66,7 +66,7 @@ class _MySmallMerchantsViewState extends State<_MySmallMerchantsView> {
           ),
         ),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFF0F172A)),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF0F172A)),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
       ),

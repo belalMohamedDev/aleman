@@ -12,5 +12,9 @@ class Routes {
   static const String changePasswordRoute = 'changePasswordScreen';
   static const String categoryProductsRoute = 'categoryProductsScreen';
   static const String wishlistRoute = 'wishlistScreen';
+  static const String aboutUsRoute = 'aboutUsScreen';
+  static const String termsAndConditionsRoute = 'termsAndConditionsScreen';
+  static const String privacyPolicyRoute = 'privacyPolicyScreen';
+  static const String contactSupportRoute = 'contactSupportScreen';
   static const String noRoute = 'noRoute';
 }

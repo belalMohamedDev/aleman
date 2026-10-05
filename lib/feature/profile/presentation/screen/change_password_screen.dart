@@ -25,16 +25,18 @@ class ChangePasswordScreen extends StatelessWidget {
           title: Text(
             'تغيير كلمة المرور',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.sp,
-                ),
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+              fontSize: 16.sp,
+            ),
           ),
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
+            icon: const Icon(Icons.arrow_back, color: Colors.black87),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
         ),
@@ -44,13 +46,13 @@ class ChangePasswordScreen extends StatelessWidget {
             if (state.status == ChangePasswordStatus.error) {
               AppToast.showError(
                 context,
-                message: state.errorMessage ?? 'حدث خطأ أثناء تغيير كلمة المرور',
+                message:
+                    state.errorMessage ?? 'حدث خطأ أثناء تغيير كلمة المرور',
               );
             } else if (state.status == ChangePasswordStatus.success) {
               AppToast.showSuccess(
                 context,
-                message:
-                    state.successMessage ?? 'تم تغيير كلمة المرور بنجاح',
+                message: state.successMessage ?? 'تم تغيير كلمة المرور بنجاح',
               );
               Navigator.of(context).maybePop();
             }

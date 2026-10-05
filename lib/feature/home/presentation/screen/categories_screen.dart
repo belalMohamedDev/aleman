@@ -176,7 +176,7 @@ class CategoriesScreen extends StatelessWidget {
       case 3:
         return 128.h;
       case 4:
-        return 150.h;
+        return 180.h;
       case 5:
         return 134.h;
       default:
@@ -220,7 +220,7 @@ class CategoriesScreen extends StatelessWidget {
               color: bgColor.withValues(alpha: 0.7),
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
-                color: borderColor.withValues(alpha: 0.7),
+                color: borderColor.withValues(alpha: 0.2),
                 width: 0.0,
               ),
               boxShadow: [
@@ -232,7 +232,7 @@ class CategoriesScreen extends StatelessWidget {
               ],
             ),
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 1.w, vertical: 3.h),
+              padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 3.h),
               child: CachedNetworkImage(
                 imageUrl: "${ApiConstants.baseUrl}${category.imageUrl}",
                 fit: BoxFit.contain,

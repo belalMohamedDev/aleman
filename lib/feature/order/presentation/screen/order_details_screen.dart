@@ -88,7 +88,7 @@ class _OrderDetailsView extends StatelessWidget {
               elevation: 0,
               leading: IconButton(
                 icon: const Icon(
-                  Icons.arrow_back_ios_new,
+                  Icons.arrow_back,
                   color: Colors.black87,
                 ),
                 onPressed: () =>

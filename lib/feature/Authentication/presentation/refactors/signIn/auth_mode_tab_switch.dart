@@ -18,12 +18,12 @@ class AuthModeTabSwitch extends StatelessWidget {
         final cubit = context.read<LoginCubit>();
 
         return Container(
-          height: 52.h,
+          height: 50.h,
           padding: EdgeInsets.all(4.r),
           decoration: BoxDecoration(
             color: ColorManger.authFieldBg,
-            borderRadius: BorderRadius.circular(18.r),
-            border: Border.all(color: ColorManger.authFieldBorder, width: 1.2),
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(color: ColorManger.authFieldBorder, width: 0.2),
           ),
           child: Stack(
             fit: StackFit.expand,
@@ -41,10 +41,10 @@ class AuthModeTabSwitch extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(14.r),
+                      borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(
                         color: ColorManger.authFieldBorder,
-                        width: 1,
+                        width: 0.2,
                       ),
                       boxShadow: [
                         BoxShadow(
@@ -139,13 +139,13 @@ class _TabContent extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontSize: 13.sp,
+                fontSize: 11.sp,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                 color: activeColor,
               ),
             ),
             SizedBox(width: 6.w),
-            Icon(icon, size: 17.sp, color: activeColor),
+            Icon(icon, size: 14.sp, color: activeColor),
           ],
         );
       },

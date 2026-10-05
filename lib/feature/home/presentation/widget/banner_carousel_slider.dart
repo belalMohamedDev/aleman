@@ -60,7 +60,7 @@ class BannerCarouselSlider extends StatelessWidget {
               children: [
                 CarouselSlider(
                   options: CarouselOptions(
-                    height: responsive.setHeight(16),
+                    height: responsive.setHeight(14),
                     enableInfiniteScroll: banners.length > 1,
                     autoPlay: banners.length > 1,
                     viewportFraction: 0.98,

@@ -38,7 +38,7 @@ class AppBackButton extends StatelessWidget {
           child: InkWell(
             onTap: onTap ?? () => Navigator.of(context).maybePop(),
             child: Icon(
-              icon ?? Icons.arrow_back_ios_new,
+              icon ?? Icons.arrow_back,
               size: iconS,
               color: iconColor ?? ColorManger.authBackBtnIcon,
             ),

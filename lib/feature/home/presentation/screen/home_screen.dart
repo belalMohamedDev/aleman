@@ -1,17 +1,15 @@
-import 'package:aleman/core/application/di.dart';
 import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/core/utils/cart_animation_helper.dart';
-import 'package:aleman/feature/Authentication/logic/loginCubit/login_cubit.dart';
-import 'package:aleman/feature/Authentication/presentation/screens/sign_in_view.dart';
-import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/bottomNavBar/custom_bottom_nav_bar.dart';
 import 'package:aleman/feature/bottomNavBar/logic/bottom_nav_cubit.dart';
+import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/refactor/home_body.dart';
+import 'package:aleman/feature/home/presentation/screen/categories_screen.dart';
 import 'package:aleman/feature/home/presentation/widget/quick_login_card.dart';
 import 'package:aleman/feature/notification/logic/notification_cubit.dart';
-import 'package:aleman/feature/home/presentation/screen/categories_screen.dart';
+import 'package:aleman/feature/profile/presentation/screen/guest_profile_view.dart';
 import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
 import 'package:aleman/feature/wishlist/logic/cubit/wishlist_cubit.dart';
 import 'package:aleman/feature/wishlist/presentation/screen/wishlist_screen.dart';
@@ -72,8 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
         statusBarBrightness: Brightness.dark,
       ),
       child: BlocConsumer<HomeCuibtCubit, HomeCuibtState>(
+        listenWhen: (previous, current) =>
+            previous.isLoggedIn != current.isLoggedIn,
         listener: (context, state) {
-          if (!state.isLoggedIn && context.read<BottomNavCubit>().state > 2) {
+          if (state.isLoggedIn) {
             context.read<BottomNavCubit>().goToHome();
           }
         },
@@ -119,10 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const WishlistScreen(),
                         state.isLoggedIn
                             ? const ProfileView()
-                            : BlocProvider(
-                                create: (context) => instance<LoginCubit>(),
-                                child: const LoginView(showCloseButton: false),
-                              ),
+                            : const GuestProfileView(),
                       ],
                     );
                   },
@@ -145,7 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       context.read<HomeCuibtCubit>().fetchHomeData();
                       context.read<CartCubit>().getCartCount();
                       context.read<NotificationCubit>().getUnreadCount();
-                      context.read<WishlistCubit>().syncLocalWishlistWithRemote();
+                      context
+                          .read<WishlistCubit>()
+                          .syncLocalWishlistWithRemote();
                     },
                   ),
                 ],

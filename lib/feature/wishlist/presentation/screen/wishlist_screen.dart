@@ -29,109 +29,106 @@ class _WishlistScreenState extends State<WishlistScreen> {
   Widget build(BuildContext context) {
     final canPop = Navigator.of(context).canPop();
     return Scaffold(
-      backgroundColor: const Color(0xFFF9FAF8),
-      appBar: canPop
-          ? AppBar(
-              title: Text(
-                'قائمة المفضلة',
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.bold,
-                  color: ColorManger.primary,
-                ),
-              ),
-              centerTitle: true,
-              backgroundColor: Colors.white,
-              elevation: 0.5,
-              surfaceTintColor: Colors.transparent,
-              leading: IconButton(
+      // backgroundColor: const Color(0xFFF9FAF8),
+      appBar: AppBar(
+        title: Text(
+          'قائمة المفضلة',
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+            color: ColorManger.primary,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        surfaceTintColor: Colors.transparent,
+        leading: canPop
+            ? IconButton(
                 icon: Icon(
                   Icons.arrow_back,
                   color: ColorManger.primary,
                   size: 22.sp,
                 ),
                 onPressed: () => Navigator.of(context).pop(),
-              ),
-            )
-          : null,
-      body: Padding(
-        padding: EdgeInsets.only(top: canPop ? 0 : 45.h),
-        child: BlocConsumer<WishlistCubit, WishlistState>(
-          listener: (context, state) {
-            if (state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: Colors.red.shade700,
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            }
-          },
-          builder: (context, state) {
-            if (state.status == WishlistStatus.loading && state.items.isEmpty) {
-              return _buildShimmerGrid();
-            }
-
-            if (state.status == WishlistStatus.error && state.items.isEmpty) {
-              return GlobalError(
-                onRetry: () {
-                  context.read<WishlistCubit>().getWishlist();
-                },
-              );
-            }
-
-            if (state.items.isEmpty) {
-              return const EmptyWishlistView();
-            }
-
-            return RefreshIndicator(
-              color: ColorManger.primary,
-              backgroundColor: Colors.white,
-              onRefresh: () async {
-                await context.read<WishlistCubit>().getWishlist();
-              },
-              child: GridView.builder(
-                padding: EdgeInsets.only(
-                  left: 14.w,
-                  right: 14.w,
-                  top: 14.h,
-                  bottom: 90.h,
-                ),
-                physics: const AlwaysScrollableScrollPhysics(),
-                itemCount: state.items.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.72,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 16,
-                ),
-                itemBuilder: (context, index) {
-                  final product = state.items[index].toProductEntity();
-                  return TweenAnimationBuilder<double>(
-                    key: ValueKey('wishlist_prod_${product.id}'),
-                    tween: Tween<double>(begin: 0.0, end: 1.0),
-                    duration: Duration(
-                      milliseconds: 260 + (index.clamp(0, 6) * 35),
-                    ),
-                    curve: Curves.easeOutBack,
-                    builder: (context, value, child) {
-                      final clampedVal = value.clamp(0.0, 1.0);
-                      return Opacity(
-                        opacity: clampedVal,
-                        child: Transform.translate(
-                          offset: Offset(0, (1.0 - clampedVal) * 16),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: ProductCard(product: product),
-                  );
-                },
+              )
+            : null,
+      ),
+      body: BlocConsumer<WishlistCubit, WishlistState>(
+        listener: (context, state) {
+          if (state.errorMessage != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.errorMessage!),
+                backgroundColor: Colors.red.shade700,
+                behavior: SnackBarBehavior.floating,
               ),
             );
-          },
-        ),
+          }
+        },
+        builder: (context, state) {
+          if (state.status == WishlistStatus.loading && state.items.isEmpty) {
+            return _buildShimmerGrid();
+          }
+
+          if (state.status == WishlistStatus.error && state.items.isEmpty) {
+            return GlobalError(
+              onRetry: () {
+                context.read<WishlistCubit>().getWishlist();
+              },
+            );
+          }
+
+          if (state.items.isEmpty) {
+            return const EmptyWishlistView();
+          }
+
+          return RefreshIndicator(
+            color: ColorManger.primary,
+            backgroundColor: Colors.white,
+            onRefresh: () async {
+              await context.read<WishlistCubit>().getWishlist();
+            },
+            child: GridView.builder(
+              padding: EdgeInsets.only(
+                left: 14.w,
+                right: 14.w,
+                top: 2.h,
+                bottom: 90.h,
+              ),
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemCount: state.items.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.72,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 16,
+              ),
+              itemBuilder: (context, index) {
+                final product = state.items[index].toProductEntity();
+                return TweenAnimationBuilder<double>(
+                  key: ValueKey('wishlist_prod_${product.id}'),
+                  tween: Tween<double>(begin: 0.0, end: 1.0),
+                  duration: Duration(
+                    milliseconds: 260 + (index.clamp(0, 6) * 35),
+                  ),
+                  curve: Curves.easeOutBack,
+                  builder: (context, value, child) {
+                    final clampedVal = value.clamp(0.0, 1.0);
+                    return Opacity(
+                      opacity: clampedVal,
+                      child: Transform.translate(
+                        offset: Offset(0, (1.0 - clampedVal) * 16),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: ProductCard(product: product),
+                );
+              },
+            ),
+          );
+        },
       ),
     );
   }

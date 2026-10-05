@@ -140,81 +140,77 @@ class HomeBody extends StatelessWidget {
                   ),
                   SizedBox(width: 8.w),
                 ],
-                if (state.isLoggedIn) ...[
-                  _buildHeaderButton(
-                    key: cartKey,
-                    onTap: () {
-                      final isLoggedIn = context
-                          .read<HomeCuibtCubit>()
-                          .state
-                          .isLoggedIn;
-                      if (isLoggedIn) {
-                        Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pushNamed(Routes.cartRoute);
-                      } else {
-                        Navigator.of(
-                          context,
-                          rootNavigator: true,
-                        ).pushNamed(Routes.loginRoute);
-                      }
+
+                _buildHeaderButton(
+                  key: cartKey,
+                  onTap: () {
+                    final isLoggedIn = context
+                        .read<HomeCuibtCubit>()
+                        .state
+                        .isLoggedIn;
+                    if (isLoggedIn) {
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(Routes.cartRoute);
+                    } else {
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamed(Routes.loginRoute);
+                    }
+                  },
+                  child: ValueListenableBuilder<double>(
+                    valueListenable: CartAnimationHelper.cartBounceNotifier,
+                    builder: (context, scale, childWidget) {
+                      return Transform.scale(scale: scale, child: childWidget);
                     },
-                    child: ValueListenableBuilder<double>(
-                      valueListenable: CartAnimationHelper.cartBounceNotifier,
-                      builder: (context, scale, childWidget) {
-                        return Transform.scale(
-                          scale: scale,
-                          child: childWidget,
-                        );
-                      },
-                      child: BlocBuilder<CartCubit, CartState>(
-                        buildWhen: (previous, current) =>
-                            previous.totalItemsCount != current.totalItemsCount,
-                        builder: (context, cartState) {
-                          final count = cartState.totalItemsCount;
-                          return Stack(
-                            clipBehavior: Clip.none,
-                            alignment: Alignment.center,
-                            children: [
-                              Icon(
-                                Iconsax.bag_happy,
-                                color: ColorManger.primaryLight,
-                                size: 20.sp,
-                              ),
-                              if (count > 0)
-                                PositionedDirectional(
-                                  top: -11,
-                                  end: 8,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(3),
-                                    decoration: const BoxDecoration(
-                                      color: ColorManger.chipProtein,
-                                      shape: BoxShape.circle,
+                    child: BlocBuilder<CartCubit, CartState>(
+                      buildWhen: (previous, current) =>
+                          previous.totalItemsCount != current.totalItemsCount,
+                      builder: (context, cartState) {
+                        final count = cartState.totalItemsCount;
+                        return Stack(
+                          clipBehavior: Clip.none,
+                          alignment: Alignment.center,
+                          children: [
+                            Icon(
+                              Iconsax.bag_happy,
+                              color: ColorManger.primaryLight,
+                              size: 20.sp,
+                            ),
+                            if (count > 0)
+                              PositionedDirectional(
+                                top: -11,
+                                end: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: const BoxDecoration(
+                                    color: ColorManger.chipProtein,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Text(
+                                    count > 99 ? '99+' : '$count',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    constraints: const BoxConstraints(
-                                      minWidth: 16,
-                                      minHeight: 16,
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      count > 99 ? '99+' : '$count',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 9,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
+                                    textAlign: TextAlign.center,
                                   ),
                                 ),
-                            ],
-                          );
-                        },
-                      ),
+                              ),
+                          ],
+                        );
+                      },
                     ),
                   ),
-                ],
+                ),
               ],
             );
           },

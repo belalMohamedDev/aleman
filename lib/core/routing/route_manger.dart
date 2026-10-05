@@ -16,6 +16,10 @@ import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:aleman/feature/home/presentation/screen/category_products_screen.dart';
 import 'package:aleman/feature/home/presentation/screen/home_screen.dart';
 import 'package:aleman/feature/onboarding/presentation/screen/on_boarding_screen.dart';
+import 'package:aleman/feature/profile/presentation/screen/about_us_screen.dart';
+import 'package:aleman/feature/profile/presentation/screen/contact_support_screen.dart';
+import 'package:aleman/feature/profile/presentation/screen/privacy_policy_screen.dart';
+import 'package:aleman/feature/profile/presentation/screen/terms_and_conditions_screen.dart';
 import 'package:aleman/feature/profile/presentation/screen/profile_view.dart';
 import 'package:aleman/feature/profile/presentation/screen/change_password_screen.dart';
 import 'package:aleman/feature/order/presentation/screen/checkout_screen.dart';
@@ -139,6 +143,18 @@ class RouteGenerator {
           ),
           settings,
         );
+
+      case Routes.aboutUsRoute:
+        return _buildFadeRoute(const AboutUsScreen(), settings);
+
+      case Routes.termsAndConditionsRoute:
+        return _buildFadeRoute(const TermsAndConditionsScreen(), settings);
+
+      case Routes.privacyPolicyRoute:
+        return _buildFadeRoute(const PrivacyPolicyScreen(), settings);
+
+      case Routes.contactSupportRoute:
+        return _buildFadeRoute(const ContactSupportScreen(), settings);
 
       // ---------------------- DEFAULT -----------------------
       case Routes.noRoute:

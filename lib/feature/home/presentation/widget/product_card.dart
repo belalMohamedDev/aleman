@@ -101,12 +101,11 @@ class ProductCard extends StatelessWidget {
                   width: double.infinity,
                   height: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF7F8FA),
+                    color: ColorManger.primaryLight.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(13.r),
                     ),
                   ),
-                  padding: EdgeInsets.all(6.w),
                   child: CachedNetworkImage(
                     imageUrl: "${ApiConstants.baseUrl}${product.imageUrl}",
                     fit: BoxFit.contain,
@@ -181,13 +180,6 @@ class ProductCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              // BoxShadow(
-                              //   color: Colors.black.withValues(alpha: 0.0),
-                              //   blurRadius: 0,
-                              //   offset: const Offset(0, 1),
-                              // ),
-                            ],
                           ),
                           child: Icon(
                             isWishlisted ? Iconsax.heart5 : Iconsax.heart,
@@ -252,9 +244,9 @@ class ProductCard extends StatelessWidget {
                             Text(
                               '${product.price}',
                               style: TextStyle(
-                                color: ColorManger.primary,
+                                color: ColorManger.goldDark,
                                 fontWeight: FontWeight.w900,
-                                fontSize: 13.sp,
+                                fontSize: 15.sp,
                                 height: 1.1,
                               ),
                               maxLines: 1,
