@@ -13,8 +13,6 @@ class OrderSuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWesal = order.orderType == 1;
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -57,21 +55,19 @@ class OrderSuccessScreen extends StatelessWidget {
               ),
               SizedBox(height: 12.h),
               Container(
-                padding: EdgeInsets.all(14.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
                 decoration: BoxDecoration(
-                  color: ColorManger.backgroundItem,
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(color: Colors.black.withOpacity(0.06)),
+                  color: Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(14.r),
+                  border: Border.all(color: Colors.grey.shade200, width: 0.05),
                 ),
                 child: Text(
-                  isWesal
-                      ? 'سيقوم فريق لوجستيات مصنع آل إيمان بتجهيز شحنتك والتواصل معك لتأكيد وصول سيارة الشحن إلى عنوانك.'
-                      : 'تم تسجيل إذن التحميل الخاص بسيارتك في أرض المصنع. يمكنك التوجه للمصنع للاستلام في الموعد المحدد.',
+                  'سيقوم فريق الإيمان بمراجعة طلبك وتأكيد الأوردر قبل التنفيذ، مع العلم أن السعر مقيد بوقت التنفيذ وليس الطلب.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 13.sp,
                     color: Colors.black87,
-                    height: 1.5,
+                    height: 1.55,
                   ),
                 ),
               ),

@@ -72,15 +72,17 @@ class _CheckoutScreenContent extends StatelessWidget {
         return GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: Scaffold(
-            backgroundColor: const Color(0xFFF9F9FB),
+            backgroundColor: Colors.grey.shade50,
             appBar: AppBar(
               title: const Text(
                 'إتمام الشراء',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               centerTitle: true,
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.grey.shade50,
               elevation: 0,
+              scrolledUnderElevation: 0,
+              surfaceTintColor: Colors.transparent,
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back, color: Colors.black87),
                 onPressed: () {
@@ -298,8 +300,9 @@ class _CheckoutScreenContent extends StatelessWidget {
 
     final isSubmitting = state.status == CheckoutStatus.submitting;
     final isWesalBeforeTruck = state.isWesal && state.currentStep == 1;
-    final shipping =
-        (state.isFactoryPickup || isWesalBeforeTruck) ? 0.0 : state.shippingFee;
+    final shipping = (state.isFactoryPickup || isWesalBeforeTruck)
+        ? 0.0
+        : state.shippingFee;
     final finalTotal = (cartSubtotal - state.discount + shipping).clamp(
       0.0,
       double.infinity,

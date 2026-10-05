@@ -1,5 +1,3 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:aleman/core/style/color/color_manger.dart';
 import 'package:aleman/feature/order/cubit/checkout_state.dart';
 import 'package:aleman/feature/order/data/model/enums/order_enums.dart';
@@ -19,6 +17,15 @@ class ReviewStepWidget extends StatelessWidget {
     required this.onNotesChanged,
   });
 
+  String _formatPrice(double price) {
+    final parts = price.toStringAsFixed(2).split('.');
+    final wholePart = parts[0].replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
+    return '$wholePart.${parts[1]}';
+  }
+
   @override
   Widget build(BuildContext context) {
     final finalTotal = (cartSubtotal - state.discount + state.shippingFee)
@@ -27,144 +34,173 @@ class ReviewStepWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'مراجعة وتأكيد تفاصيل الطلب',
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.bold,
-            color: ColorManger.primary,
-          ),
-        ),
-        SizedBox(height: 12.h),
-
+        // Fulfillment Info Card
+        _buildSectionHeader('تفاصيل الاستلام والتوصيل'),
+        SizedBox(height: 8.h),
         _buildFulfillmentCard(),
-        SizedBox(height: 12.h),
+        SizedBox(height: 16.h),
 
-        // Payment Card
+        // Payment Info Card
+        _buildSectionHeader('طريقة الدفع'),
+        SizedBox(height: 8.h),
         _buildPaymentCard(),
-        SizedBox(height: 14.h),
+        SizedBox(height: 16.h),
 
-        // Notes input
-        Text(
-          'ملاحظات إضافية على الطلب',
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
-            color: ColorManger.primary,
-          ),
-        ),
-        SizedBox(height: 6.h),
-        TextFormField(
-          initialValue: state.notes ?? '',
-          onChanged: onNotesChanged,
-          maxLines: 3,
-          decoration: InputDecoration(
-            hintText: 'هل توجد أي ملاحظات خاصة بالتحميل أو التسليم أو التوقيت؟',
-            hintStyle: TextStyle(fontSize: 12.sp, color: Colors.grey),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(color: Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide(
-                color: ColorManger.primaryLight,
-                width: 1.5,
+        // Order Notes
+        _buildSectionHeader('ملاحظات إضافية (اختياري)'),
+        SizedBox(height: 8.h),
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.02),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
+            ],
+          ),
+          child: TextFormField(
+            initialValue: state.notes ?? '',
+            onChanged: onNotesChanged,
+            maxLines: 3,
+            style: TextStyle(fontSize: 13.sp, color: const Color(0xFF0F172A)),
+            decoration: InputDecoration(
+              hintText: 'هل توجد أي تعليمات خاصة بالتحميل أو التسليم؟',
+              hintStyle: TextStyle(
+                fontSize: 12.sp,
+                color: Colors.grey.shade400,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.r),
+                borderSide: BorderSide(color: Colors.grey.shade200),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.r),
+                borderSide: BorderSide(color: Colors.grey.shade200),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16.r),
+                borderSide: BorderSide(
+                  color: ColorManger.primaryLight,
+                  width: 1.5,
+                ),
+              ),
+              contentPadding: EdgeInsets.all(14.r),
             ),
-            filled: true,
-            fillColor: Colors.white,
           ),
         ),
         SizedBox(height: 16.h),
 
         // Invoice Pricing Breakdown
+        _buildSectionHeader('ملخص الفاتورة'),
+        SizedBox(height: 8.h),
         _buildPriceSummaryCard(finalTotal),
         SizedBox(height: 20.h),
       ],
     );
   }
 
-  Widget _buildFulfillmentCard() {
-    final primary = ColorManger.primaryLight;
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 13.5.sp,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey.shade700,
+        ),
+      ),
+    );
+  }
 
+  Widget _buildFulfillmentCard() {
     return Container(
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(
-                state.isWesal ? Iconsax.car : Iconsax.building_35,
-                color: primary,
-                size: 22.sp,
+              Container(
+                padding: EdgeInsets.all(8.r),
+                decoration: BoxDecoration(
+                  color: ColorManger.primaryLight.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(
+                  state.isWesal ? Iconsax.truck_fast : Iconsax.buildings,
+                  color: ColorManger.primaryLight,
+                  size: 20.sp,
+                ),
               ),
-              SizedBox(width: 15.w),
+              SizedBox(width: 10.w),
               Text(
-                state.isWesal
-                    ? 'طريقة الاستلام: وصال'
-                    : 'طريقة الاستلام: أرض المصنع ',
+                state.isWesal ? 'توصيل وصال للموقع' : 'استلام من أرض المصنع',
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
-                  color: primary,
+                  color: const Color(0xFF0F172A),
                 ),
               ),
             ],
           ),
-          Divider(height: 20.h, color: Colors.grey.shade200),
+          Divider(height: 24.h, color: Colors.grey.shade100),
           if (state.isWesal) ...[
             _buildInfoRow(
               'عنوان التوصيل',
               state.selectedAddress?.fullAddress ?? 'غير محدد',
             ),
             if (state.totalWeightTons > 0) ...[
-              SizedBox(height: 6.h),
+              SizedBox(height: 8.h),
               _buildInfoRow(
-                'إجمالي الكمية (الوزن)',
+                'إجمالي وزن الشحنة',
                 '${state.totalWeightTons.toStringAsFixed(1)} طن',
               ),
             ],
-            SizedBox(height: 6.h),
+            SizedBox(height: 8.h),
             _buildInfoRow(
               'نوع سيارة الشحن',
               state.selectedTruckType != null
                   ? (state.requiredTrucksCount > 1
-                        ? '${state.selectedTruckType!.title} (${state.requiredTrucksCount} سيارات مطلوبة)'
+                        ? '${state.selectedTruckType!.title} (${state.requiredTrucksCount} سيارات)'
                         : state.selectedTruckType!.title)
                   : 'غير محدد',
             ),
-            SizedBox(height: 6.h),
+            SizedBox(height: 8.h),
             _buildInfoRow(
               state.requiredTrucksCount > 1
                   ? 'تكلفة الشحن الإجمالية'
                   : 'تكلفة الشحن',
-              '${state.shippingFee} ج.م',
+              '${_formatPrice(state.shippingFee)} ج.م',
             ),
           ] else ...[
             _buildInfoRow('اسم السائق', state.driverName),
-            SizedBox(height: 6.h),
-            _buildInfoRow('رقم لوحة العربية', state.vehiclePlateNumber),
-            SizedBox(height: 6.h),
-            _buildInfoRow('رقم الرخصة', state.driverLicenseNumber),
+            SizedBox(height: 8.h),
+            _buildInfoRow('رقم لوحة السيارة', state.vehiclePlateNumber),
+            SizedBox(height: 8.h),
+            _buildInfoRow('رقم رخصة القيادة', state.driverLicenseNumber),
             if (state.expectedPickupDate != null) ...[
-              SizedBox(height: 6.h),
+              SizedBox(height: 8.h),
               _buildInfoRow(
                 'موعد التحميل',
                 '${state.expectedPickupDate!.year}/${state.expectedPickupDate!.month}/${state.expectedPickupDate!.day}',
               ),
             ],
-            // SizedBox(height: 6.h),
           ],
         ],
       ),
@@ -173,43 +209,61 @@ class ReviewStepWidget extends StatelessWidget {
 
   Widget _buildPaymentCard() {
     return Container(
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade300),
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Iconsax.card5, color: ColorManger.primaryLight, size: 22.sp),
-              SizedBox(width: 8.w),
+              Container(
+                padding: EdgeInsets.all(8.r),
+                decoration: BoxDecoration(
+                  color: ColorManger.primaryLight.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: Icon(
+                  Iconsax.wallet_3,
+                  color: ColorManger.primaryLight,
+                  size: 20.sp,
+                ),
+              ),
+              SizedBox(width: 10.w),
               Text(
-                'طريقة الدفع',
+                state.paymentMethod.title,
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.bold,
-                  color: ColorManger.primaryLight,
+                  color: const Color(0xFF0F172A),
                 ),
               ),
             ],
           ),
-          Divider(height: 20.h, color: Colors.grey.shade200),
+          Divider(height: 24.h, color: Colors.grey.shade100),
           _buildInfoRow('طريقة السداد', state.paymentMethod.title),
           if (state.paymentMethod == PaymentMethodType.bankTransfer) ...[
-            SizedBox(height: 6.h),
+            SizedBox(height: 8.h),
             _buildInfoRow(
               'حالة السداد',
               'سداد بالتحويل بعد موافقة واعتماد إدارة المصنع',
             ),
           ],
           if (state.couponCode != null && state.couponCode!.isNotEmpty) ...[
-            SizedBox(height: 6.h),
+            SizedBox(height: 8.h),
             _buildInfoRow(
               'كوبون الخصم',
-              '${state.couponCode} (-${state.discount} ج.م)',
+              '${state.couponCode} (-${_formatPrice(state.discount)} ج.م)',
             ),
           ],
         ],
@@ -221,84 +275,76 @@ class ReviewStepWidget extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: ColorManger.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.black.withOpacity(0.06)),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: Colors.grey.shade100),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'ملخص الفاتورة',
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.bold,
-              color: ColorManger.primary,
-            ),
-          ),
-          SizedBox(height: 12.h),
-
           if (state.totalWeightTons > 0) ...[
             _buildSummaryRow(
               'إجمالي وزن الطلبات',
               '${state.totalWeightTons.toStringAsFixed(1)} طن',
             ),
-            SizedBox(height: 8.h),
+            SizedBox(height: 10.h),
           ],
-
-          _buildSummaryRow('إجمالي سعر المنتجات', '$cartSubtotal ج.م'),
-
+          _buildSummaryRow(
+            'إجمالي سعر المنتجات',
+            '${_formatPrice(cartSubtotal)} ج.م',
+          ),
           if (state.discount > 0) ...[
-            SizedBox(height: 8.h),
+            SizedBox(height: 10.h),
             _buildSummaryRow(
               'قيمة الخصم',
-              '- ${state.discount} ج.م',
+              '- ${_formatPrice(state.discount)} ج.م',
               isDiscount: true,
             ),
           ],
-
           if (state.isWesal && state.shippingFee > 0) ...[
-            SizedBox(height: 8.h),
+            SizedBox(height: 10.h),
             _buildSummaryRow(
               state.requiredTrucksCount > 1
-                  ? 'تكلفة الشحن والتوصيل (${state.requiredTrucksCount} سيارات)'
+                  ? 'تكلفة الشحن (${state.requiredTrucksCount} سيارات)'
                   : 'تكلفة الشحن والتوصيل',
-              '${state.shippingFee} ج.م',
+              '${_formatPrice(state.shippingFee)} ج.م',
             ),
             if (state.shippingDiscountAmount > 0) ...[
-              SizedBox(height: 6.h),
+              SizedBox(height: 8.h),
               _buildSummaryRow(
                 state.shippingPromotion?.discountPercentage != null
                     ? 'خصم عرض الشحن (${state.shippingPromotion!.discountPercentage!.toInt()}%)'
                     : 'خصم عرض الشحن الترويجي',
-                '- ${state.shippingDiscountAmount.toInt()} ج.م',
+                '- ${_formatPrice(state.shippingDiscountAmount)} ج.م',
                 isDiscount: true,
               ),
             ],
           ],
-
-          Divider(height: 24.h, color: Colors.grey.shade300),
-
+          Divider(height: 24.h, color: Colors.grey.shade200),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: Text(
-                  'إجمالي سعر الطلب النهائي',
-                  style: TextStyle(
-                    fontSize: 15.sp,
-                    fontWeight: FontWeight.bold,
-                    color: ColorManger.primary,
-                  ),
+              Text(
+                'المجموع النهائي',
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF0F172A),
                 ),
               ),
-              SizedBox(width: 8.w),
               Text(
-                '$finalTotal ج.م',
+                '${_formatPrice(finalTotal)} ج.م',
                 style: TextStyle(
-                  fontSize: 17.sp,
-                  fontWeight: FontWeight.bold,
-                  color: ColorManger.goldDark,
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w800,
+                  color: ColorManger.primary,
                 ),
               ),
             ],
@@ -308,22 +354,28 @@ class ReviewStepWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(String title, String value) {
+  Widget _buildInfoRow(String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title,
-          style: TextStyle(fontSize: 13.sp, color: Colors.grey.shade700),
+          label,
+          style: TextStyle(
+            fontSize: 12.5.sp,
+            color: Colors.grey.shade500,
+            fontWeight: FontWeight.w500,
+          ),
         ),
+        SizedBox(width: 12.w),
         Flexible(
           child: Text(
             value,
             textAlign: TextAlign.end,
             style: TextStyle(
-              fontSize: 13.sp,
+              fontSize: 12.5.sp,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: const Color(0xFF0F172A),
             ),
           ),
         ),
@@ -332,26 +384,27 @@ class ReviewStepWidget extends StatelessWidget {
   }
 
   Widget _buildSummaryRow(
-    String title,
+    String label,
     String value, {
     bool isDiscount = false,
   }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(fontSize: 13.sp, color: Colors.black54),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(width: 8.w),
         Text(
           value,
           style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
-            color: isDiscount ? Colors.redAccent : ColorManger.primaryLight,
+            fontSize: 13.5.sp,
+            fontWeight: FontWeight.w700,
+            color: isDiscount ? Colors.green.shade700 : const Color(0xFF0F172A),
           ),
         ),
       ],

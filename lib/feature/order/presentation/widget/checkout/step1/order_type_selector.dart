@@ -19,12 +19,15 @@ class OrderTypeSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'اختر طريقة استلام الطلب',
-          style: TextStyle(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.bold,
-            color: ColorManger.primary,
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          child: Text(
+            'طريقة الاستلام',
+            style: TextStyle(
+              fontSize: 13.5.sp,
+              fontWeight: FontWeight.bold,
+              color: Colors.grey.shade700,
+            ),
           ),
         ),
         SizedBox(height: 10.h),
@@ -33,9 +36,9 @@ class OrderTypeSelector extends StatelessWidget {
             Expanded(
               child: _buildTypeCard(
                 type: OrderType.delivery,
-                icon: Iconsax.car5,
+                icon: Iconsax.truck_fast,
                 title: 'وصال',
-                subtitle: 'المصنع يوصل للعنوان',
+                subtitle: 'توصيل إلى موقعك',
                 isSelected: selectedType == OrderType.delivery,
               ),
             ),
@@ -43,9 +46,9 @@ class OrderTypeSelector extends StatelessWidget {
             Expanded(
               child: _buildTypeCard(
                 type: OrderType.factoryPickup,
-                icon: Iconsax.buildings5,
+                icon: Iconsax.buildings,
                 title: 'أرض المصنع',
-                subtitle: 'عربيات العميل تحمل',
+                subtitle: 'تحميل بسياراتك',
                 isSelected: selectedType == OrderType.factoryPickup,
               ),
             ),
@@ -63,90 +66,85 @@ class OrderTypeSelector extends StatelessWidget {
     required bool isSelected,
   }) {
     final primary = ColorManger.primaryLight;
-    final gold = ColorManger.goldDark;
 
     return InkWell(
       onTap: () => onTypeChanged(type),
-      borderRadius: BorderRadius.circular(14.r),
+      borderRadius: BorderRadius.circular(16.r),
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 14.h),
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
         decoration: BoxDecoration(
-          color: isSelected
-              ? ColorManger.primaryLight.withValues(alpha: 0.01)
-              : Colors.white,
-          borderRadius: BorderRadius.circular(14.r),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
-            color: isSelected
-                ? ColorManger.primaryLight.withValues(alpha: 0.3)
-                : Colors.grey.shade300,
-            width: 1,
+            color: isSelected ? primary : Colors.grey.shade200,
+            width: 0.01,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: primary.withValues(alpha: 0.09),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.02),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+          boxShadow: [
+            BoxShadow(
+              color: isSelected
+                  ? primary.withValues(alpha: 0.08)
+                  : Colors.black.withValues(alpha: 0.02),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Icon(
-                  icon,
-                  size: 26.sp,
-                  color: isSelected ? primary : Colors.grey.shade600,
+                Container(
+                  padding: EdgeInsets.all(8.r),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? primary.withValues(alpha: 0.1)
+                        : Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Icon(
+                    icon,
+                    size: 22.sp,
+                    color: isSelected
+                        ? ColorManger.primary
+                        : Colors.grey.shade600,
+                  ),
                 ),
                 Container(
-                  width: 20.w,
-                  height: 20.w,
+                  width: 18.w,
+                  height: 18.w,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isSelected ? primary : Colors.grey.shade400,
-                      width: 2,
+                      color: isSelected ? primary : Colors.grey.shade300,
+                      width: 0.0,
                     ),
                     color: isSelected ? primary : Colors.transparent,
                   ),
                   child: isSelected
-                      ? const Icon(Icons.check, size: 14, color: Colors.white)
+                      ? const Icon(Icons.check, size: 12, color: Colors.white)
                       : null,
                 ),
               ],
             ),
-            SizedBox(height: 10.h),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 15.sp,
-                  fontWeight: FontWeight.bold,
-                  color: isSelected ? primary : Colors.black87,
-                ),
+            SizedBox(height: 12.h),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.bold,
+                color: isSelected ? const Color(0xFF0F172A) : Colors.black87,
               ),
             ),
-            SizedBox(height: 4.h),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                subtitle,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  color: isSelected ? gold : Colors.grey.shade600,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                ),
+            SizedBox(height: 2.h),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 11.sp,
+                color: Colors.grey.shade500,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ],
