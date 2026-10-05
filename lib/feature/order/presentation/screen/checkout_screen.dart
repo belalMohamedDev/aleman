@@ -418,9 +418,7 @@ class _CheckoutScreenContent extends StatelessWidget {
                           ),
                         )
                       : Text(
-                          !state.isLastStep
-                              ? 'احفظ واستمر'
-                              : 'تأكيد وإرسال الطلب',
+                          state.nextButtonTitle,
                           style: TextStyle(
                             fontSize: 15.sp,
                             fontWeight: FontWeight.bold,

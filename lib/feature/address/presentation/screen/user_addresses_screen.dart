@@ -45,7 +45,7 @@ class _UserAddressesView extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             centerTitle: true,
-            backgroundColor: Colors.white,
+            backgroundColor: const Color(0xFFF9F9FB),
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black87),

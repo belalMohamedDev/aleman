@@ -75,10 +75,7 @@ class ProfileImagePickerBottomSheet extends StatelessWidget {
             Text(
               'اختر من المعرض أو التقط صورة جديدة',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Colors.grey.shade600,
-              ),
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
             ),
             SizedBox(height: 20.h),
             Row(
@@ -108,30 +105,31 @@ class ProfileImagePickerBottomSheet extends StatelessWidget {
                 ),
               ],
             ),
-            if (hasExistingImage) ...[
-              SizedBox(height: 12.h),
-              TextButton.icon(
-                onPressed: () {
-                  Navigator.of(context).maybePop();
-                  cubit.removeProfileImage();
-                },
-                icon: Icon(Iconsax.trash, size: 18.sp, color: Colors.red),
-                label: Text(
-                  'حذف الصورة الحالية',
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red,
-                  ),
-                ),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 12.h),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-              ),
-            ],
+            SizedBox(height: 20.h),
+            // if (hasExistingImage) ...[
+            //   SizedBox(height: 12.h),
+            //   TextButton.icon(
+            //     onPressed: () {
+            //       Navigator.of(context).maybePop();
+            //       cubit.removeProfileImage();
+            //     },
+            //     icon: Icon(Iconsax.trash, size: 18.sp, color: Colors.red),
+            //     label: Text(
+            //       'حذف الصورة الحالية',
+            //       style: TextStyle(
+            //         fontSize: 13.sp,
+            //         fontWeight: FontWeight.w600,
+            //         color: Colors.red,
+            //       ),
+            //     ),
+            //     style: TextButton.styleFrom(
+            //       padding: EdgeInsets.symmetric(vertical: 12.h),
+            //       shape: RoundedRectangleBorder(
+            //         borderRadius: BorderRadius.circular(12.r),
+            //       ),
+            //     ),
+            //   ),
+            // ],
           ],
         ),
       ),

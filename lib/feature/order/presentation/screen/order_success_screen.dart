@@ -2,9 +2,11 @@
 
 import 'package:aleman/core/routing/routes.dart';
 import 'package:aleman/core/style/color/color_manger.dart';
+import 'package:aleman/core/style/images/asset_manger.dart';
 import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 
 class OrderSuccessScreen extends StatelessWidget {
   final OrderResponseModel order;
@@ -22,20 +24,8 @@ class OrderSuccessScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              Container(
-                width: 100.w,
-                height: 100.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: ColorManger.primaryLight.withOpacity(0.12),
-                ),
-                child: Icon(
-                  Icons.check_circle,
-                  size: 68.sp,
-                  color: ColorManger.primaryLight,
-                ),
-              ),
-              SizedBox(height: 20.h),
+              Lottie.asset(ImageAsset.congratsJson),
+
               Text(
                 'تم استلام طلبك بنجاح!',
                 style: TextStyle(

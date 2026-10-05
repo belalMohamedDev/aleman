@@ -45,33 +45,28 @@ class FactoryPickupFormWidget extends StatelessWidget {
     final tomorrow = DateTime(now.year, now.month, now.day + 1);
     final dayAfter = DateTime(now.year, now.month, now.day + 2);
 
+    final selectedDate = expectedPickupDate ?? today;
+
     final isTodaySelected =
-        expectedPickupDate != null &&
-        expectedPickupDate!.year == today.year &&
-        expectedPickupDate!.month == today.month &&
-        expectedPickupDate!.day == today.day;
+        selectedDate.year == today.year &&
+        selectedDate.month == today.month &&
+        selectedDate.day == today.day;
 
     final isTomorrowSelected =
-        expectedPickupDate != null &&
-        expectedPickupDate!.year == tomorrow.year &&
-        expectedPickupDate!.month == tomorrow.month &&
-        expectedPickupDate!.day == tomorrow.day;
+        selectedDate.year == tomorrow.year &&
+        selectedDate.month == tomorrow.month &&
+        selectedDate.day == tomorrow.day;
 
     final isDayAfterSelected =
-        expectedPickupDate != null &&
-        expectedPickupDate!.year == dayAfter.year &&
-        expectedPickupDate!.month == dayAfter.month &&
-        expectedPickupDate!.day == dayAfter.day;
+        selectedDate.year == dayAfter.year &&
+        selectedDate.month == dayAfter.month &&
+        selectedDate.day == dayAfter.day;
 
     final isCustomSelected =
-        expectedPickupDate != null &&
-        !isTodaySelected &&
-        !isTomorrowSelected &&
-        !isDayAfterSelected;
+        !isTodaySelected && !isTomorrowSelected && !isDayAfterSelected;
 
-    final formattedDate = expectedPickupDate != null
-        ? '${expectedPickupDate!.year}/${expectedPickupDate!.month}/${expectedPickupDate!.day}'
-        : null;
+    final formattedDate =
+        '${selectedDate.year}/${selectedDate.month}/${selectedDate.day}';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,15 +84,14 @@ class FactoryPickupFormWidget extends StatelessWidget {
                   color: Colors.grey.shade700,
                 ),
               ),
-              if (formattedDate != null)
-                Text(
-                  formattedDate,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.bold,
-                    color: ColorManger.primary,
-                  ),
+              Text(
+                formattedDate,
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  fontWeight: FontWeight.bold,
+                  color: ColorManger.primary,
                 ),
+              ),
             ],
           ),
         ),
@@ -140,11 +134,11 @@ class FactoryPickupFormWidget extends StatelessWidget {
               child: _buildDateChip(
                 label: isCustomSelected ? 'مخصص' : 'تاريخ آخر',
                 sublabel: isCustomSelected
-                    ? '${expectedPickupDate!.day}/${expectedPickupDate!.month}'
+                    ? '${selectedDate.day}/${selectedDate.month}'
                     : 'اختيار 📅',
                 isSelected: isCustomSelected,
                 icon: Iconsax.calendar_edit,
-                onTap: () => _openCustomDatePicker(context),
+                onTap: () => _openCustomDatePicker(context, selectedDate),
               ),
             ),
           ],
@@ -198,7 +192,7 @@ class FactoryPickupFormWidget extends StatelessWidget {
               style: TextStyle(
                 fontSize: 11.sp,
                 fontWeight: FontWeight.bold,
-                color: isSelected ? ColorManger.primary : Colors.black87,
+                color: isSelected ? ColorManger.primary : Colors.grey.shade500,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -220,11 +214,13 @@ class FactoryPickupFormWidget extends StatelessWidget {
     );
   }
 
-  Future<void> _openCustomDatePicker(BuildContext context) async {
+  Future<void> _openCustomDatePicker(
+    BuildContext context,
+    DateTime selectedDate,
+  ) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate:
-          expectedPickupDate ?? DateTime.now().add(const Duration(days: 1)),
+      initialDate: selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 30)),
       builder: (context, child) {

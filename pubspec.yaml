@@ -67,6 +67,7 @@ dependencies:
   shimmer: ^4.0.0
   smart_auth: ^3.2.0
   file_picker: ^12.3.0
+  lottie: ^3.6.1
 
 dev_dependencies:
   flutter_test:
@@ -111,6 +112,7 @@ flutter:
     - assets/image/
     - assets/icons/
     - assets/sounds/
+    - assets/json/
     - lang/
 
   # An image asset can refer to one or more resolution-specific "variants", see

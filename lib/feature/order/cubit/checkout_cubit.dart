@@ -27,11 +27,14 @@ class CheckoutCubit extends Cubit<CheckoutState> {
   ) : super(const CheckoutState());
 
   void initFromCart({required double totalWeightTons}) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     emit(
       state.copyWith(
         totalWeightTons: totalWeightTons,
         clearSelectedTruckType: true,
         shippingFee: 0.0,
+        expectedPickupDate: state.expectedPickupDate ?? today,
       ),
     );
   }
@@ -122,12 +125,15 @@ class CheckoutCubit extends Cubit<CheckoutState> {
 
   void changeOrderType(OrderType type) {
     if (type == OrderType.factoryPickup) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
       emit(
         state.copyWith(
           orderType: type,
           shippingFee: 0.0,
           currentStep: 1,
           estimatedDelivery: 'استلام فوري بمجرد تجهيز الطلب في أرض المصنع',
+          expectedPickupDate: state.expectedPickupDate ?? today,
         ),
       );
     } else {

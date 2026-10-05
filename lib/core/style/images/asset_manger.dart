@@ -1,7 +1,11 @@
 const String iconPath = 'assets/icons';
 const String imagePath = 'assets/image';
+const String jsonPath = 'assets/json';
 
 class ImageAsset {
+  // json / lottie
+  static const String congratsJson = '$jsonPath/cong.json';
+
   //onBoading screen
   static const String chickenIcon = '$iconPath/chicken.png';
   static const String eggIcon = '$iconPath/egg.png';

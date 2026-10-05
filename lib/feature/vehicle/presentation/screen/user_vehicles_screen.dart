@@ -45,7 +45,7 @@ class _UserVehiclesView extends StatelessWidget {
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             centerTitle: true,
-            backgroundColor: Colors.white,
+            backgroundColor: const Color(0xFFF9F9FB),
             elevation: 0,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.black87),
@@ -156,9 +156,9 @@ class _VehicleCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: vehicle.isDefault
-              ? ColorManger.buttonColor.withValues(alpha: 0.8)
+              ? ColorManger.primaryLight
               : Colors.grey.shade200,
-          width: vehicle.isDefault ? 1.5 : 1,
+          width: 0.01,
         ),
         boxShadow: [
           BoxShadow(
@@ -245,59 +245,14 @@ class _VehicleCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                PopupMenuButton<String>(
-                  color: Colors.white,
-                  icon: const Icon(Icons.more_vert, color: Colors.black54),
-                  onSelected: (val) {
-                    if (val == 'default') {
-                      cubit.setDefaultVehicle(vehicle.id);
-                    } else if (val == 'edit') {
-                      AddEditVehicleBottomSheet.show(
-                        context,
-                        vehicleToEdit: vehicle,
-                        vehicleCubit: cubit,
-                      );
-                    } else if (val == 'delete') {
-                      _showDeleteDialog(context);
-                    }
-                  },
-                  itemBuilder: (_) => [
-                    if (!vehicle.isDefault)
-                      const PopupMenuItem(
-                        value: 'default',
-                        child: Row(
-                          children: [
-                            Icon(Icons.check_circle_outline, size: 18),
-                            SizedBox(width: 8),
-                            Text('تعيين كافتراضي'),
-                          ],
-                        ),
-                      ),
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_outlined, size: 18),
-                          SizedBox(width: 8),
-                          Text('تعديل'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.delete_outline,
-                            size: 18,
-                            color: Colors.red,
-                          ),
-                          SizedBox(width: 8),
-                          Text('حذف', style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                    ),
-                  ],
+                IconButton(
+                  icon: Icon(
+                    Iconsax.more,
+                    color: Colors.grey.shade600,
+                    size: 20.sp,
+                  ),
+                  onPressed: () => _showActionsBottomSheet(context),
+                  tooltip: 'خيارات',
                 ),
               ],
             ),
@@ -308,32 +263,21 @@ class _VehicleCard extends StatelessWidget {
             // Vehicle Plate Number
             Row(
               children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10.w,
-                    vertical: 4.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1F2F4),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.pin, size: 15, color: Colors.black54),
-                      SizedBox(width: 4.w),
-                      Text(
-                        vehicle.vehiclePlateNumber,
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 1,
-                          color: Colors.black87,
-                        ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.pin, size: 15, color: Colors.black54),
+                    SizedBox(width: 4.w),
+                    Text(
+                      vehicle.vehiclePlateNumber,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                        color: Colors.black87,
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 if (vehicle.driverPhone != null) ...[
                   SizedBox(width: 12.w),
@@ -353,7 +297,7 @@ class _VehicleCard extends StatelessWidget {
                 ],
               ],
             ),
-
+            SizedBox(height: 3.h),
             // License if available
             if (vehicle.driverLicenseNumber != null) ...[
               SizedBox(height: 8.h),
@@ -362,7 +306,7 @@ class _VehicleCard extends StatelessWidget {
                 style: TextStyle(fontSize: 12.sp, color: Colors.black54),
               ),
             ],
-
+            SizedBox(height: 3.h),
             // Notes if available
             if (vehicle.notes != null && vehicle.notes!.isNotEmpty) ...[
               SizedBox(height: 6.h),
@@ -381,20 +325,200 @@ class _VehicleCard extends StatelessWidget {
     );
   }
 
+  void _showActionsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (bottomSheetCtx) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Drag handle
+                Center(
+                  child: Container(
+                    width: 40.w,
+                    height: 4.h,
+                    margin: EdgeInsets.only(bottom: 16.h),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      borderRadius: BorderRadius.circular(2.r),
+                    ),
+                  ),
+                ),
+
+                // Header with vehicle & driver info
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(8.w),
+                      decoration: BoxDecoration(
+                        color: ColorManger.primaryLight.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Icon(
+                        Iconsax.truck_fast,
+                        color: ColorManger.primaryLight,
+                        size: 20.sp,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            vehicle.driverName,
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: 2.h),
+                          Text(
+                            'لوحة: ${vehicle.vehiclePlateNumber}',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Colors.black54,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 16.h),
+                Divider(height: 1, color: Colors.grey.shade100),
+                SizedBox(height: 8.h),
+
+                // Option 1: Set Default (if not already default)
+                if (!vehicle.isDefault) ...[
+                  _buildBottomSheetActionItem(
+                    icon: Iconsax.tick_circle,
+                    iconColor: ColorManger.primaryLight,
+                    iconBgColor: ColorManger.primaryLight.withValues(
+                      alpha: 0.1,
+                    ),
+                    title: 'تعيين كافتراضي',
+                    onTap: () {
+                      Navigator.pop(bottomSheetCtx);
+                      cubit.setDefaultVehicle(vehicle.id);
+                    },
+                  ),
+                  SizedBox(height: 4.h),
+                ],
+
+                // Option 2: Edit
+                _buildBottomSheetActionItem(
+                  icon: Iconsax.edit_2,
+                  iconColor: Colors.black87,
+                  iconBgColor: Colors.grey.shade100,
+                  title: 'تعديل البيانات',
+                  onTap: () {
+                    Navigator.pop(bottomSheetCtx);
+                    AddEditVehicleBottomSheet.show(
+                      context,
+                      vehicleToEdit: vehicle,
+                      vehicleCubit: cubit,
+                    );
+                  },
+                ),
+                SizedBox(height: 4.h),
+
+                // Option 3: Delete
+                _buildBottomSheetActionItem(
+                  icon: Iconsax.trash,
+                  iconColor: Colors.red.shade600,
+                  iconBgColor: Colors.red.shade50,
+                  title: 'حذف السيارة',
+                  titleColor: Colors.red.shade600,
+                  onTap: () {
+                    Navigator.pop(bottomSheetCtx);
+                    _showDeleteDialog(context);
+                  },
+                ),
+                SizedBox(height: 8.h),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBottomSheetActionItem({
+    required IconData icon,
+    required Color iconColor,
+    required Color iconBgColor,
+    required String title,
+    Color? titleColor,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 10.h),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: iconBgColor,
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+              child: Icon(icon, color: iconColor, size: 18.sp),
+            ),
+            SizedBox(width: 14.w),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: titleColor ?? Colors.black87,
+                ),
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 13.sp,
+              color: Colors.grey.shade400,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _showDeleteDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
         backgroundColor: Colors.white,
-        title: const Text('تأكيد الحذف', style: TextStyle(color: Colors.black)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        title: const Text(
+          'تأكيد الحذف',
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+        ),
         content: Text(
           'هل أنت متأكد من حذف بيانات السائق "${vehicle.driverName}" ورقم السيارة "${vehicle.vehiclePlateNumber}"؟',
-          style: TextStyle(color: Colors.black),
+          style: TextStyle(color: Colors.black87, fontSize: 13.5.sp),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogCtx),
-            child: const Text('إلغاء'),
+            child: const Text('إلغاء', style: TextStyle(color: Colors.grey)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -404,6 +528,10 @@ class _VehicleCard extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.redAccent,
               foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              elevation: 0,
             ),
             child: const Text('حذف'),
           ),

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:aleman/feature/address/data/model/user_address_model.dart';
 import 'package:aleman/feature/order/data/model/calculate_shipping_model.dart';
 import 'package:aleman/feature/order/data/model/enums/order_enums.dart';
@@ -106,6 +107,32 @@ class CheckoutState {
   List<String> get stepTitles => isWesal
       ? const ['الاستلام', 'الشاحنة', 'الدفع', 'المراجعة']
       : const ['الاستلام', 'الدفع', 'المراجعة'];
+
+  String get nextButtonTitle {
+    if (isLastStep) return 'تأكيد وإرسال الطلب';
+
+    if (isWesal) {
+      switch (currentStep) {
+        case 1:
+          return 'متابعة لاختيار الشاحنة';
+        case 2:
+          return 'متابعة لطريقة الدفع';
+        case 3:
+          return 'متابعة لمراجعة الطلب';
+        default:
+          return 'متابعة';
+      }
+    } else {
+      switch (currentStep) {
+        case 1:
+          return 'متابعة لطريقة الدفع';
+        case 2:
+          return 'متابعة لمراجعة الطلب';
+        default:
+          return 'متابعة';
+      }
+    }
+  }
 
   CheckoutState copyWith({
     CheckoutStatus? status,
