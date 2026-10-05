@@ -7,8 +7,10 @@ import 'package:aleman/core/statsScreen/global_error.dart';
 import 'package:aleman/feature/cart/presentation/screen/cart_loading.dart';
 import 'package:aleman/feature/cart/presentation/widget/cart_item_card.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:iconsax/iconsax.dart';
 
 class CartBody extends StatefulWidget {
   const CartBody({super.key});
@@ -50,40 +52,39 @@ class _CartBodyState extends State<CartBody> {
           children: [
             Expanded(
               child: ListView.separated(
-                padding: const EdgeInsets.all(16),
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 itemCount: cart.items.length,
-                separatorBuilder: (context, index) =>
-                    const SizedBox(height: 16),
+                separatorBuilder: (context, index) => SizedBox(height: 12.h),
                 itemBuilder: (context, index) {
                   final item = cart.items[index];
                   return Dismissible(
                     key: ValueKey(item.id),
                     direction: DismissDirection.endToStart,
                     onDismissed: (_) {
+                      HapticFeedback.mediumImpact();
                       context.read<CartCubit>().deleteCartItem(item.id);
                     },
                     background: Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.only(right: 24),
+                      alignment: AlignmentDirectional.centerEnd,
+                      padding: EdgeInsetsDirectional.only(end: 22.w),
                       decoration: BoxDecoration(
-                        color: Colors.redAccent,
-                        borderRadius: BorderRadius.circular(20),
+                        color: const Color(0xFFEF4444),
+                        borderRadius: BorderRadius.circular(20.r),
                       ),
-                      child: const Column(
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                            Icons.delete_outline,
-                            color: Colors.white,
-                            size: 28,
-                          ),
-                          SizedBox(height: 4),
+                          Icon(Iconsax.trash, color: Colors.white, size: 22.sp),
+                          SizedBox(height: 4.h),
                           Text(
                             'حذف',
                             style: TextStyle(
                               color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 11.5.sp,
                             ),
                           ),
                         ],

@@ -30,13 +30,18 @@ class CartScreen extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
                           color: Colors.black87,
                           fontWeight: FontWeight.bold,
-                          fontSize: 14.sp,
+                          fontSize: 16.sp,
                         ),
                       ),
                 centerTitle: true,
                 backgroundColor: Colors.transparent,
                 elevation: 0,
-                iconTheme: IconThemeData(color: ColorManger.primary),
+                scrolledUnderElevation: 0,
+                surfaceTintColor: Colors.transparent,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.black87),
+                  onPressed: () => Navigator.of(context).maybePop(),
+                ),
                 // actions: isEmpty
                 //     ? null
                 //     : [
