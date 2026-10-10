@@ -15,7 +15,9 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _exitController;
+  late final AnimationController _controller;
+
+  // Logo entrance
   late final Animation<double> _logoScale;
   late final Animation<double> _logoFade;
 
@@ -23,34 +25,35 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Remove native splash instantly. Since this screen is identical,
-      // the user won't notice the swap.
-      FlutterNativeSplash.remove();
-    });
+    FlutterNativeSplash.remove();
 
-    _exitController = AnimationController(
+    _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1400),
+      duration: const Duration(milliseconds: 1300),
     );
 
-    // 0-800ms: Hold steady (opacity 1.0, scale 1.0)
-    // 800-1400ms: Fade out to 0.0 and scale up to 1.5
-    // Start small (0.55) to match the padded native Android 12 logo, and grow gradually.
-    _logoScale = Tween<double>(begin: 0.55, end: 1.5).animate(
-      CurvedAnimation(parent: _exitController, curve: Curves.easeInOut),
+    // Logo entrance: Spring/Pop from 0.65 to 1.0
+    _logoScale = Tween<double>(begin: 0.65, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.65, curve: Curves.easeOutBack),
+      ),
     );
 
-    // Keep logo fully visible so it fades out exactly *with* the page transition
-    _logoFade = Tween<double>(begin: 1.0, end: 1.0).animate(_exitController);
+    _logoFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.45, curve: Curves.easeOut),
+      ),
+    );
 
-    _exitController.addStatusListener((status) {
+    _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _navigateToNextScreen();
       }
     });
 
-    _exitController.forward();
+    _controller.forward();
   }
 
   bool _hasNavigated = false;
@@ -71,14 +74,14 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _exitController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final logoSize = (size.width * 0.65).clamp(220.0, 300.0);
+    final logoSize = (size.width * 0.58).clamp(210.0, 260.0);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -90,7 +93,7 @@ class _SplashScreenState extends State<SplashScreen>
         backgroundColor: Colors.white,
         body: Center(
           child: AnimatedBuilder(
-            animation: _exitController,
+            animation: _controller,
             builder: (context, child) {
               return Opacity(
                 opacity: _logoFade.value,

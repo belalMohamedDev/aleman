@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -163,14 +164,14 @@ class NotificationService {
       if (token != null && token.isNotEmpty) {
         appLogger.info('Retrieved FCM Token: $token');
         await SharedPrefHelper.setSecuredString(PrefKeys.fcmDeviceToken, token);
-        await syncTokenWithBackend(token);
+        unawaited(syncTokenWithBackend(token));
       }
 
       // Listen for token updates
       messaging.onTokenRefresh.listen((newToken) async {
         appLogger.info('FCM Token refreshed: $newToken');
         await SharedPrefHelper.setSecuredString(PrefKeys.fcmDeviceToken, newToken);
-        await syncTokenWithBackend(newToken);
+        unawaited(syncTokenWithBackend(newToken));
       });
     } catch (e) {
       appLogger.warning('Could not get or refresh FCM token: $e');

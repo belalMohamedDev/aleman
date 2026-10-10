@@ -80,11 +80,11 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, state) {
           final showLoginPrompt = state.showLoginPrompt;
 
-          return Scaffold(
-            extendBody: true,
-            body: Stack(
-              children: [
-                BlocBuilder<BottomNavCubit, int>(
+          return Stack(
+            children: [
+              Scaffold(
+                extendBody: true,
+                body: BlocBuilder<BottomNavCubit, int>(
                   builder: (context, activeIndex) {
                     final safeIndex = activeIndex.clamp(0, 3);
                     return IndexedStack(
@@ -124,17 +124,119 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                 ),
-                if (showLoginPrompt) ...[
-                  Positioned.fill(
-                    child: GestureDetector(
-                      onTap: () =>
-                          context.read<HomeCuibtCubit>().dismissLoginPrompt(),
-                      child: Container(
-                        color: Colors.black.withValues(alpha: 0.55),
-                      ),
+
+                bottomNavigationBar: const CustomBottomNavBar(),
+
+                // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+                // floatingActionButton: BlocBuilder<CartCubit, CartState>(
+                //   buildWhen: (previous, current) =>
+                //       previous.totalItemsCount != current.totalItemsCount,
+                //   builder: (context, cartState) {
+                //     final count = cartState.totalItemsCount;
+                //     return (state.bannersError != null &&
+                //             state.categoriesError != null &&
+                //             state.productsError != null)
+                //         ? const SizedBox.shrink()
+                //         : Stack(
+                //             clipBehavior: Clip.none,
+                //             children: [
+                //               ValueListenableBuilder<double>(
+                //                 valueListenable:
+                //                     CartAnimationHelper.cartBounceNotifier,
+                //                 builder: (context, bounceScale, fabChild) {
+                //                   return Transform.scale(
+                //                     scale: bounceScale,
+                //                     child: fabChild,
+                //                   );
+                //                 },
+                //                 child: FloatingActionButton(
+                //                   key: _cartKey,
+                //                   heroTag: null,
+                //                   elevation: 0,
+                //                   highlightElevation: 3,
+                //                   clipBehavior: Clip.none,
+                //                   shape: const CircleBorder(),
+                //                   backgroundColor: Colors.transparent,
+                //                   //  ColorManger.white.withValues(
+                //                   //   alpha: 0.7,
+                //                   // ),
+                //                   onPressed: () {
+                //                     if (state.isLoggedIn) {
+                //                       Navigator.pushNamed(
+                //                         context,
+                //                         Routes.cartRoute,
+                //                       );
+                //                     } else {
+                //                       _navigateToLogin();
+                //                     }
+                //                   },
+                //                   child: Transform.translate(
+                //                     offset: Offset(-8.w, 1.h),
+                //                     child: Transform.rotate(
+                //                       angle: -0.09,
+                //                       child: Image.asset(
+                //                         ImageAsset.cart,
+                //                         width: 65.w,
+                //                         height: 65.h,
+                //                         fit: BoxFit.contain,
+                //                         errorBuilder: (context, error, stackTrace) {
+                //                           return const SizedBox.shrink();
+                //                         },
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ),
+                //               ),
+
+                //               // Easter egg animation: eggs filling the cart basket
+                //               const Positioned.fill(child: CartEggsBadge()),
+
+                //               if (count > 0 && state.isLoggedIn)
+                //                 PositionedDirectional(
+                //                   top: -4,
+                //                   start: 15,
+                //                   child: Container(
+                //                     padding: EdgeInsets.symmetric(
+                //                       horizontal: 8.w,
+                //                       vertical: 2.5.h,
+                //                     ),
+                //                     decoration: BoxDecoration(
+                //                       color: ColorManger.chipProtein,
+                //                       borderRadius: BorderRadius.circular(10.r),
+                //                     ),
+                //                     constraints: BoxConstraints(
+                //                       minWidth: 18.w,
+                //                       minHeight: 18.h,
+                //                     ),
+                //                     alignment: Alignment.center,
+                //                     child: Text(
+                //                       '$count',
+                //                       style: TextStyle(
+                //                         color: Colors.white,
+                //                         fontSize: 12.sp,
+                //                         fontWeight: FontWeight.bold,
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ),
+                //             ],
+                //           );
+                //   },
+                // ),
+              ),
+              if (showLoginPrompt) ...[
+                Positioned.fill(
+                  child: GestureDetector(
+                    onTap: () =>
+                        context.read<HomeCuibtCubit>().dismissLoginPrompt(),
+                    child: Container(
+                      color: Colors.black.withValues(alpha: 0.55),
                     ),
                   ),
-                  QuickLoginCard(
+                ),
+                Material(
+                  type: MaterialType.transparency,
+                  child: QuickLoginCard(
                     onDismiss: () =>
                         context.read<HomeCuibtCubit>().dismissLoginPrompt(),
                     onLoginSuccess: () {
@@ -142,112 +244,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       context.read<HomeCuibtCubit>().fetchHomeData();
                       context.read<CartCubit>().getCartCount();
                       context.read<NotificationCubit>().getUnreadCount();
-                      context
-                          .read<WishlistCubit>()
-                          .syncLocalWishlistWithRemote();
+                      context.read<WishlistCubit>().syncLocalWishlistWithRemote();
                     },
                   ),
-                ],
+                ),
               ],
-            ),
-            bottomNavigationBar: const CustomBottomNavBar(),
-
-            // floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-            // floatingActionButton: BlocBuilder<CartCubit, CartState>(
-            //   buildWhen: (previous, current) =>
-            //       previous.totalItemsCount != current.totalItemsCount,
-            //   builder: (context, cartState) {
-            //     final count = cartState.totalItemsCount;
-            //     return (state.bannersError != null &&
-            //             state.categoriesError != null &&
-            //             state.productsError != null)
-            //         ? const SizedBox.shrink()
-            //         : Stack(
-            //             clipBehavior: Clip.none,
-            //             children: [
-            //               ValueListenableBuilder<double>(
-            //                 valueListenable:
-            //                     CartAnimationHelper.cartBounceNotifier,
-            //                 builder: (context, bounceScale, fabChild) {
-            //                   return Transform.scale(
-            //                     scale: bounceScale,
-            //                     child: fabChild,
-            //                   );
-            //                 },
-            //                 child: FloatingActionButton(
-            //                   key: _cartKey,
-            //                   heroTag: null,
-            //                   elevation: 0,
-            //                   highlightElevation: 3,
-            //                   clipBehavior: Clip.none,
-            //                   shape: const CircleBorder(),
-            //                   backgroundColor: Colors.transparent,
-            //                   //  ColorManger.white.withValues(
-            //                   //   alpha: 0.7,
-            //                   // ),
-            //                   onPressed: () {
-            //                     if (state.isLoggedIn) {
-            //                       Navigator.pushNamed(
-            //                         context,
-            //                         Routes.cartRoute,
-            //                       );
-            //                     } else {
-            //                       _navigateToLogin();
-            //                     }
-            //                   },
-            //                   child: Transform.translate(
-            //                     offset: Offset(-8.w, 1.h),
-            //                     child: Transform.rotate(
-            //                       angle: -0.09,
-            //                       child: Image.asset(
-            //                         ImageAsset.cart,
-            //                         width: 65.w,
-            //                         height: 65.h,
-            //                         fit: BoxFit.contain,
-            //                         errorBuilder: (context, error, stackTrace) {
-            //                           return const SizedBox.shrink();
-            //                         },
-            //                       ),
-            //                     ),
-            //                   ),
-            //                 ),
-            //               ),
-
-            //               // Easter egg animation: eggs filling the cart basket
-            //               const Positioned.fill(child: CartEggsBadge()),
-
-            //               if (count > 0 && state.isLoggedIn)
-            //                 PositionedDirectional(
-            //                   top: -4,
-            //                   start: 15,
-            //                   child: Container(
-            //                     padding: EdgeInsets.symmetric(
-            //                       horizontal: 8.w,
-            //                       vertical: 2.5.h,
-            //                     ),
-            //                     decoration: BoxDecoration(
-            //                       color: ColorManger.chipProtein,
-            //                       borderRadius: BorderRadius.circular(10.r),
-            //                     ),
-            //                     constraints: BoxConstraints(
-            //                       minWidth: 18.w,
-            //                       minHeight: 18.h,
-            //                     ),
-            //                     alignment: Alignment.center,
-            //                     child: Text(
-            //                       '$count',
-            //                       style: TextStyle(
-            //                         color: Colors.white,
-            //                         fontSize: 12.sp,
-            //                         fontWeight: FontWeight.bold,
-            //                       ),
-            //                     ),
-            //                   ),
-            //                 ),
-            //             ],
-            //           );
-            //   },
-            // ),
+            ],
           );
         },
       ),

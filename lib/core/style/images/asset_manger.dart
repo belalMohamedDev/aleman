@@ -11,6 +11,7 @@ class ImageAsset {
   static const String eggIcon = '$iconPath/egg.png';
   static const String noRoute = '$iconPath/noRoute.svg';
   static const String alemanLogo = '$imagePath/logoAleman.png';
+  static const String alemanLogoAndroid12 = '$imagePath/logoAleman_android12.png';
   static const String farmer = '$iconPath/farmer.png';
   static const String loginFarmer = '$iconPath/loginFarmer.png';
   static const String whatsapp = '$iconPath/whatsapp.png';
