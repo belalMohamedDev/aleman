@@ -121,40 +121,7 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (product.isFeatured)
-                  PositionedDirectional(
-                    top: 6.h,
-                    start: 6.w,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 5.w,
-                        vertical: 2.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorManger.primary,
-                        borderRadius: BorderRadius.circular(4.r),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Iconsax.star1,
-                            color: ColorManger.gold,
-                            size: 8.sp,
-                          ),
-                          SizedBox(width: 2.w),
-                          Text(
-                            'مميز',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 8.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+
                 PositionedDirectional(
                   top: 8.h,
                   end: 5.w,
