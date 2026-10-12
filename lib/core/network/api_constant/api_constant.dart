@@ -37,6 +37,7 @@ class ApiConstants {
   static const String wishlistToggle = '/api/wishlist/toggle';
   static const String wishlistIds = '/api/wishlist/ids';
   static const String wishlistCount = '/api/wishlist/count';
+  static const String voiceAssistant = '/api/Assistant/process-voice-command';
 
   static const int apiTimeOut = 120 * 1000;
 }

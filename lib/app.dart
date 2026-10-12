@@ -28,11 +28,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(create: (context) => instance<NetworkCubit>()),
         BlocProvider(
-          create: (context) => instance<CartCubit>()..getCartCount(),
+          create: (context) => instance<CartCubit>(),
         ),
         BlocProvider(
-          create: (context) =>
-              instance<NotificationCubit>()..getUnreadCount(),
+          create: (context) => instance<NotificationCubit>(),
         ),
         BlocProvider(
           create: (context) => instance<BottomNavCubit>(),

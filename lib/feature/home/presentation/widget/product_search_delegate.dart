@@ -13,6 +13,8 @@ import 'package:aleman/feature/cart/logic/cubit/cart_cubit.dart';
 import 'package:aleman/feature/cart/logic/cubit/cart_state.dart';
 import 'package:aleman/feature/home/logic/cubit/home_cuibt_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:aleman/core/services/voice_recognition_service.dart';
+import 'package:aleman/feature/voice_assistant/presentation/widget/ai_voice_assistant_sheet.dart';
 import 'package:aleman/core/utils/cart_animation_helper.dart';
 
 class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
@@ -58,6 +60,15 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
           onPressed: () {
             query = '';
             showSuggestions(context);
+          },
+        )
+      else
+        IconButton(
+          icon: Icon(Iconsax.microphone_2, color: ColorManger.primary, size: 20.sp),
+          tooltip: 'المساعد الصوتي الذكي',
+          onPressed: () {
+            close(context, null);
+            AiVoiceAssistantSheet.show(context);
           },
         ),
       BlocProvider.value(
@@ -191,11 +202,15 @@ class ProductSearchDelegate extends SearchDelegate<ProductEntity?> {
   }
 
   Widget _buildProductList(BuildContext context) {
+    final cleanQuery =
+        VoiceRecognitionService.normalizeArabic(query.trim().toLowerCase());
     final List<ProductEntity> filteredProducts = products.where((product) {
-      final nameLower = product.name.toLowerCase();
-      final descLower = product.description.toLowerCase();
-      final queryLower = query.toLowerCase();
-      return nameLower.contains(queryLower) || descLower.contains(queryLower);
+      final nameNorm =
+          VoiceRecognitionService.normalizeArabic(product.name.toLowerCase());
+      final descNorm = VoiceRecognitionService.normalizeArabic(
+        product.description.toLowerCase(),
+      );
+      return nameNorm.contains(cleanQuery) || descNorm.contains(cleanQuery);
     }).toList();
 
     if (filteredProducts.isEmpty) {

@@ -11,6 +11,11 @@ class ImageAsset {
   static const String eggIcon = '$iconPath/egg.png';
   static const String noRoute = '$iconPath/noRoute.svg';
   static const String alemanLogo = '$imagePath/logoAleman.png';
+  static const String alemanEmblem = '$imagePath/logooAleman.png';
+  static const String alemanTextLogo = '$imagePath/aleman_text_logo.png';
+  static const String alemanArabicText = '$imagePath/aleman_arabic_text.png';
+  static const String alemanEnglishText = '$imagePath/aleman_english_text.png';
+  static const String splashCircleEmblem = '$imagePath/splash_circle_emblem.png';
   static const String alemanLogoAndroid12 = '$imagePath/logoAleman_android12.png';
   static const String farmer = '$iconPath/farmer.png';
   static const String loginFarmer = '$iconPath/loginFarmer.png';

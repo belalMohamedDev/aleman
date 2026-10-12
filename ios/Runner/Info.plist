@@ -66,6 +66,10 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
+		<key>NSMicrophoneUsageDescription</key>
+		<string>نحتاج للوصول إلى الميكروفون للبحث الصوتي عن منتجات الأعلاف.</string>
+		<key>NSSpeechRecognitionUsageDescription</key>
+		<string>نحتاج لإذن التعرف على الصوت لتحويل صوتك إلى نص للبحث عن المنتجات.</string>
 		<key>UIStatusBarHidden</key>
 		<false/>
 	</dict>

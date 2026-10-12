@@ -1,7 +1,14 @@
 flutter_native_splash:
   color: "#FFFFFF"
-  image: "assets/image/logoAleman.png"
+  color_dark: "#FFFFFF"
+  image: "assets/image/transparent_dot.png"
   
   android_12:
     color: "#FFFFFF"
-    image: "assets/image/logoAleman_android12.png"
+    color_dark: "#FFFFFF"
+    image: "assets/image/transparent_dot.png"
+    icon_background_color: "#FFFFFF"
+  
+  android: true
+  ios: true
+

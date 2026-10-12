@@ -38,6 +38,8 @@ import 'package:aleman/feature/order/data/model/order_response_model.dart';
 import 'package:aleman/feature/order/data/model/small_merchants_orders_response.dart';
 import 'package:aleman/feature/order/data/model/merchant_review_request.dart';
 import 'package:aleman/feature/order/data/model/upload_receipt_response.dart';
+import 'package:aleman/feature/voice_assistant/data/model/voice_assistant_request.dart';
+import 'package:aleman/feature/voice_assistant/data/model/voice_assistant_response.dart';
 
 part 'app_api.g.dart';
 
@@ -253,4 +255,9 @@ abstract class AppServiceClient {
 
   @DELETE(ApiConstants.wishlist)
   Future<dynamic> clearWishlistService();
+
+  @POST(ApiConstants.voiceAssistant)
+  Future<VoiceAssistantResponse> processVoiceCommand(
+    @Body() VoiceAssistantRequest request,
+  );
 }

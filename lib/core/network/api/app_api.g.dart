@@ -1376,7 +1376,7 @@ class _AppServiceClient implements AppServiceClient {
     final _result = await _dio.fetch<List<dynamic>>(_options);
     late List<int> _value;
     try {
-      _value = _result.data!.map((dynamic i) => i as int).toList();
+      _value = _result.data!.cast<int>();
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options, response: _result);
       rethrow;
@@ -1423,6 +1423,36 @@ class _AppServiceClient implements AppServiceClient {
     );
     final _result = await _dio.fetch(_options);
     final _value = _result.data;
+    return _value;
+  }
+
+  @override
+  Future<VoiceAssistantResponse> processVoiceCommand(
+    VoiceAssistantRequest request,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _options = _setStreamType<VoiceAssistantResponse>(
+      Options(method: 'POST', headers: _headers, extra: _extra)
+          .compose(
+            _dio.options,
+            '/api/Assistant/process-voice-command',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late VoiceAssistantResponse _value;
+    try {
+      _value = VoiceAssistantResponse.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
     return _value;
   }
 

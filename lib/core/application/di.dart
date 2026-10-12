@@ -44,6 +44,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:get_it/get_it.dart';
+import 'package:aleman/core/services/voice_recognition_service.dart';
+import 'package:aleman/core/services/tts_service.dart';
+import 'package:aleman/feature/voice_assistant/data/repository/voice_assistant_repository.dart';
+import 'package:aleman/feature/voice_assistant/data/repository/voice_assistant_repository_impl.dart';
+import 'package:aleman/feature/voice_assistant/logic/cubit/voice_assistant_cubit.dart';
 import 'package:image_picker/image_picker.dart';
 
 final instance = GetIt.instance;
@@ -78,6 +83,18 @@ Future<void> _initAppModule() async {
 
   instance
     ..registerLazySingleton<AppServiceClient>(() => AppServiceClient(dio))
+    ..registerLazySingleton<VoiceRecognitionService>(VoiceRecognitionService.new)
+    ..registerLazySingleton<TtsService>(TtsService.new)
+    ..registerLazySingleton<VoiceAssistantRepository>(
+      () => VoiceAssistantRepositoryImpl(instance<AppServiceClient>()),
+    )
+    ..registerFactory<VoiceAssistantCubit>(
+      () => VoiceAssistantCubit(
+        instance<VoiceAssistantRepository>(),
+        instance<VoiceRecognitionService>(),
+        instance<TtsService>(),
+      ),
+    )
     ..registerSingleton<GlobalKey<NavigatorState>>(navigatorKey)
     ..registerFactory<AppLogicCubit>(() => AppLogicCubit());
 }
